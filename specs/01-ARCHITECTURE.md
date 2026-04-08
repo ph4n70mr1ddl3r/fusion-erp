@@ -40,11 +40,21 @@
 | ar-service | `services/ar-service` | `data/ar.db` | 8012 | Accounts Receivable |
 | fa-service | `services/fa-service` | `data/fa.db` | 8013 | Fixed Assets |
 | cm-service | `services/cm-service` | `data/cm.db` | 8014 | Cash Management |
+| tax-service | `services/tax-service` | `data/tax.db` | 8015 | Tax Management |
+| ic-service | `services/ic-service` | `data/ic.db` | 8016 | Intercompany Accounting |
 | proc-service | `services/proc-service` | `data/proc.db` | 8020 | Procurement |
 | inv-service | `services/inv-service` | `data/inv.db` | 8021 | Inventory |
 | om-service | `services/om-service` | `data/om.db` | 8022 | Order Management |
 | mfg-service | `services/mfg-service` | `data/mfg.db` | 8023 | Manufacturing |
+| expense-service | `services/expense-service` | `data/expense.db` | 8024 | Expense Management |
+| rev-service | `services/rev-service` | `data/rev.db` | 8025 | Revenue Management (ASC 606) |
+| pricing-service | `services/pricing-service` | `data/pricing.db` | 8026 | Advanced Pricing |
+| planning-service | `services/planning-service` | `data/planning.db` | 8027 | MRP & Supply Chain Planning |
+| dms-service | `services/dms-service` | `data/dms.db` | 8028 | Document Management |
+| etl-service | `services/etl-service` | `data/etl.db` | 8029 | Data Import/Export |
 | pm-service | `services/pm-service` | `data/pm.db` | 8030 | Project Management |
+| lease-service | `services/lease-service` | `data/lease.db` | 8031 | Lease Accounting |
+| collections-service | `services/collections-service` | `data/collections.db` | 8032 | Collections & Credit |
 | workflow-service | `services/workflow-service` | `data/workflow.db` | 8040 | Workflow & Approvals |
 | report-service | `services/report-service` | `data/report.db` | 8050 | Reporting & Analytics |
 

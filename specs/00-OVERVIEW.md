@@ -20,6 +20,16 @@ Build a full-featured, enterprise-grade ERP system cloning the capabilities of O
 | 10 | Project Management | `pm-service` | `15-PROJECT-MANAGEMENT.md` |
 | 11 | Workflow Engine | `workflow-service` | `16-WORKFLOW.md` |
 | 12 | Reporting & Analytics | `report-service` | `17-REPORTING.md` |
+| 13 | Tax Management | `tax-service` | `23-TAX-MANAGEMENT.md` |
+| 14 | Intercompany Accounting | `ic-service` | `24-INTERCOMPANY.md` |
+| 15 | Expense Management | `expense-service` | `25-EXPENSE-MANAGEMENT.md` |
+| 16 | Revenue Management (ASC 606) | `rev-service` | `26-REVENUE-MANAGEMENT.md` |
+| 17 | Advanced Pricing | `pricing-service` | `27-ADVANCED-PRICING.md` |
+| 18 | Supply Chain Planning / MRP | `planning-service` | `28-SUPPLY-CHAIN-PLANNING.md` |
+| 19 | Document Management | `dms-service` | `29-DOCUMENT-MANAGEMENT.md` |
+| 20 | Data Import/Export | `etl-service` | `30-DATA-IMPORT-EXPORT.md` |
+| 21 | Lease Accounting (IFRS 16/ASC 842) | `lease-service` | `31-LEASE-ACCOUNTING.md` |
+| 22 | Collections & Credit Management | `collections-service` | `32-COLLECTIONS-CREDIT.md` |
 
 ## Supporting Infrastructure
 
@@ -63,11 +73,24 @@ AI agents MUST follow this build order. Each stage depends on the prior stage be
 14. `15-PROJECT-MANAGEMENT.md` - Projects, tasks, costing
 15. `16-WORKFLOW.md` - Approval flows, business rules engine
 
-### Stage 4 - Intelligence & Delivery
-16. `17-REPORTING.md` - Financial reports, dashboards, analytics
-17. `20-FRONTEND.md` - Web UI (Rust/WASM + HTML/CSS)
-18. `21-DEPLOYMENT.md` - Containerization, orchestration
-19. `22-TESTING.md` - Integration testing, load testing
+### Stage 4 - Financial Extensions
+16. `23-TAX-MANAGEMENT.md` - Tax engine, determination, reporting
+17. `24-INTERCOMPANY.md` - Intercompany transactions, elimination
+18. `25-EXPENSE-MANAGEMENT.md` - Employee expenses, policies, per diems
+19. `26-REVENUE-MANAGEMENT.md` - ASC 606 revenue recognition
+20. `31-LEASE-ACCOUNTING.md` - IFRS 16/ASC 842 lease accounting
+
+### Stage 5 - Supply Chain Extensions
+21. `27-ADVANCED-PRICING.md` - Price lists, promotions, discount engine
+22. `28-SUPPLY-CHAIN-PLANNING.md` - MRP, demand forecasting, planned orders
+23. `32-COLLECTIONS-CREDIT.md` - Collections, credit scoring, dunning
+
+### Stage 6 - Cross-Cutting Services & Delivery
+24. `29-DOCUMENT-MANAGEMENT.md` - Universal file attachments
+25. `30-DATA-IMPORT-EXPORT.md` - Bulk data loading, templates
+26. `20-FRONTEND.md` - Web UI (Rust/WASM + HTML/CSS)
+27. `21-DEPLOYMENT.md` - Containerization, orchestration
+28. `22-TESTING.md` - Integration testing, load testing
 
 ### Cross-Cutting (Build in parallel with Stage 1+)
 - `18-MULTI-TENANCY.md` - Tenant isolation layer
@@ -105,6 +128,16 @@ fusion/
 │   ├── pm-service/                 # Project Management
 │   ├── workflow-service/           # Workflow & Approvals
 │   ├── report-service/             # Reporting & Analytics
+│   ├── tax-service/                # Tax Management
+│   ├── ic-service/                 # Intercompany Accounting
+│   ├── expense-service/            # Expense Management
+│   ├── rev-service/                # Revenue Management (ASC 606)
+│   ├── pricing-service/            # Advanced Pricing
+│   ├── planning-service/           # MRP & Supply Chain Planning
+│   ├── dms-service/                # Document Management
+│   ├── etl-service/                # Data Import/Export
+│   ├── lease-service/              # Lease Accounting
+│   ├── collections-service/        # Collections & Credit Management
 │   └── gateway-service/            # API Gateway / BFF
 ├── migrations/
 │   ├── auth/

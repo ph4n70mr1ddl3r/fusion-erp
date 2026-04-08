@@ -35,13 +35,27 @@ Read specs in this exact order for each stage:
 15. `15-PROJECT-MANAGEMENT.md`
 16. `16-WORKFLOW.md`
 
-**Stage 4 — Intelligence & Delivery:**
-17. `17-REPORTING.md`
-18. `18-MULTI-TENANCY.md`
-19. `19-INTEGRATION.md`
-20. `20-FRONTEND.md`
-21. `21-DEPLOYMENT.md`
-22. `22-TESTING.md`
+**Stage 4 — Financial Extensions:**
+17. `23-TAX-MANAGEMENT.md` — Tax engine (AP/AR depend on tax calculation)
+18. `24-INTERCOMPANY.md` — Intercompany transactions
+19. `25-EXPENSE-MANAGEMENT.md` — Employee expenses, corporate cards
+20. `26-REVENUE-MANAGEMENT.md` — ASC 606 revenue recognition
+21. `31-LEASE-ACCOUNTING.md` — IFRS 16/ASC 842 lease accounting
+
+**Stage 5 — Supply Chain Extensions:**
+22. `27-ADVANCED-PRICING.md` — Price lists, promotions, discount engine
+23. `28-SUPPLY-CHAIN-PLANNING.md` — MRP, demand forecasting
+24. `32-COLLECTIONS-CREDIT.md` — Collections, credit scoring, dunning
+
+**Stage 6 — Cross-Cutting Services & Delivery:**
+25. `29-DOCUMENT-MANAGEMENT.md` — Universal file attachments
+26. `30-DATA-IMPORT-EXPORT.md` — Bulk data loading, templates
+27. `17-REPORTING.md`
+28. `18-MULTI-TENANCY.md`
+29. `19-INTEGRATION.md`
+30. `20-FRONTEND.md`
+31. `21-DEPLOYMENT.md`
+32. `22-TESTING.md`
 
 ### 2.2 How to Read Each Spec
 Every module spec follows this structure:
@@ -169,20 +183,31 @@ auth-service ──────────────────────�
   │                                                        │
 gl-service ────────────────────────────────────────────────┤
   │                                                         │
-  ├── ap-service ───────────────────────────────────────────┤
-  ├── ar-service ───────────────────────────────────────────┤
+  ├── ap-service ─── (also depends on: Tax, Workflow) ─────┤
+  ├── ar-service ─── (also depends on: Tax, Pricing) ──────┤
   ├── fa-service ───────────────────────────────────────────┤
   ├── cm-service ───────────────────────────────────────────┤
   │                                                         │
 inv-service ───────────────────────────────────────────────┤
   │                                                         │
-  ├── proc-service ─── (also depends on: AP, Workflow) ───┤
-  ├── om-service ───── (also depends on: AR, INV, Workflow)│
+  ├── proc-service ─── (also depends on: AP, Tax, Workflow)┤
+  ├── om-service ───── (also depends on: AR, Pricing, INV) │
   ├── mfg-service ──── (also depends on: GL) ──────────────┤
   │                                                         │
 workflow-service ──────────────────────────────────────────┤
   │                                                         │
-pm-service ──── (depends on: GL, AR, Workflow) ───────────┤
+pm-service ──── (depends on: GL, AR, RevMgmt, Workflow) ──┤
+                                                           │
+tax-service ────── (depends on: GL) ───────────────────────┤
+ic-service ─────── (depends on: GL, AP, AR) ───────────────┤
+expense-service ── (depends on: AP, GL, PM, Workflow) ─────┤
+rev-service ────── (depends on: AR, OM, PM, GL) ──────────┤
+pricing-service ── (depends on: OM, AR, Proc) ─────────────┤
+planning-service ─ (depends on: INV, Proc, MFG, OM) ──────┤
+dms-service ────── (cross-cutting, no service deps) ───────┤
+etl-service ────── (depends on: ALL services for data) ────┤
+lease-service ──── (depends on: GL, AP, FA, CM) ──────────┤
+collections-service (depends on: AR, OM, GL, Workflow) ────┤
                                                            │
 report-service ──── (depends on: ALL services) ────────────┘
 ```
