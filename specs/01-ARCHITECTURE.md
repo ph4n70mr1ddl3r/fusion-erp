@@ -55,6 +55,21 @@
 | pm-service | `services/pm-service` | `data/pm.db` | 8030 | Project Management |
 | lease-service | `services/lease-service` | `data/lease.db` | 8031 | Lease Accounting |
 | collections-service | `services/collections-service` | `data/collections.db` | 8032 | Collections & Credit |
+| epm-service | `services/epm-service` | `data/epm.db` | 8060 | Enterprise Performance Management |
+| risk-service | `services/risk-service` | `data/risk.db` | 8061 | Risk Management & Compliance |
+| ai-service | `services/ai-service` | `data/ai.db` | 8062 | AI/ML Platform & AI Agents |
+| wms-service | `services/wms-service` | `data/wms.db` | 8063 | Warehouse Management |
+| tms-service | `services/tms-service` | `data/tms.db` | 8064 | Transportation Management |
+| plm-service | `services/plm-service` | `data/plm.db` | 8065 | Product Lifecycle Management |
+| gtm-service | `services/gtm-service` | `data/gtm.db` | 8066 | Global Trade Management |
+| eam-service | `services/eam-service` | `data/eam.db` | 8067 | Enterprise Asset Management |
+| quality-service | `services/quality-service` | `data/quality.db` | 8068 | Quality Management |
+| sus-service | `services/sus-service` | `data/sus.db` | 8069 | Sustainability / ESG |
+| assistant-service | `services/assistant-service` | `data/assistant.db` | 8070 | Digital Assistant / Conversational AI |
+| iot-service | `services/iot-service` | `data/iot.db` | 8071 | IoT Integration |
+| supplier-service | `services/supplier-service` | `data/supplier.db` | 8072 | Supplier Portal & Sourcing |
+| mobile-service | `services/mobile-service` | `data/mobile.db` | 8073 | Mobile Application Framework |
+| chain-service | `services/chain-service` | `data/chain.db` | 8074 | Blockchain & Digital Thread |
 | workflow-service | `services/workflow-service` | `data/workflow.db` | 8040 | Workflow & Approvals |
 | report-service | `services/report-service` | `data/report.db` | 8050 | Reporting & Analytics |
 
@@ -179,6 +194,111 @@
 - Data export (CSV, PDF, Excel)
 - Real-time metrics aggregation
 
+#### epm-service (Port 8060)
+- Planning scenarios and budget versions
+- Financial consolidation (multi-entity, multi-currency)
+- Account reconciliation and close management
+- Cost allocation engine
+- Budget vs. actual analysis
+
+#### risk-service (Port 8061)
+- Separation of Duties (SoD) rules and violation detection
+- User access certification campaigns
+- Audit policy management and event logging
+- Transaction control and fraud detection
+- Compliance reporting (SOX, GDPR, etc.)
+
+#### ai-service (Port 8062)
+- AI agent framework (document recognition, anomaly detection, forecasting)
+- ML model registry, training, and deployment
+- Natural language query processing
+- Intelligent document recognition (OCR)
+- Predictive analytics and anomaly detection
+
+#### wms-service (Port 8063)
+- Warehouse, zone, and location management
+- Wave planning and execution
+- Task management (pick, put, replenish, pack, ship)
+- Inbound receiving and putaway
+- Outbound shipping and cross-docking
+
+#### tms-service (Port 8064)
+- Carrier management and rate shopping
+- Shipment planning and booking
+- Load planning and optimization
+- Freight audit and payment
+- Track and trace with real-time visibility
+
+#### plm-service (Port 8065)
+- Product lifecycle management (concept to obsolescence)
+- Engineering BOM and change management (ECR/ECN)
+- Product configurator (rule-based configuration)
+- Innovation management and idea scoring
+- Supplier design collaboration
+
+#### gtm-service (Port 8066)
+- Restricted party screening
+- Product classification (HS codes, ECCN)
+- Import/export license management
+- Customs declarations and filing
+- Landed cost simulation
+
+#### eam-service (Port 8067)
+- Operating asset lifecycle management
+- Preventive and predictive maintenance scheduling
+- Maintenance work order management
+- Asset failure tracking and root cause analysis
+- Safety permits and lockout/tagout
+
+#### quality-service (Port 8068)
+- Inspection plan management (incoming, in-process, final)
+- Non-conformance reporting (NCR)
+- Corrective and preventive action (CAPA)
+- Statistical process control (SPC)
+- Quality certificate management (CoA, CoC)
+
+#### sus-service (Port 8069)
+- Carbon emissions tracking (Scope 1, 2, 3)
+- Energy, water, and waste management
+- ESG data collection and reporting (GRI, SASB, TCFD, CSRD)
+- Sustainability targets and net-zero trajectory
+- Supplier ESG assessment
+
+#### assistant-service (Port 8070)
+- Conversational AI interface (natural language)
+- Proactive notification management
+- Quick action shortcuts
+- Approval shortcuts (mobile/assistant)
+- Multi-channel support (web, mobile, Slack, Teams)
+
+#### iot-service (Port 8071)
+- IoT device registration and management
+- Telemetry data ingestion and aggregation
+- Alert rule engine for threshold violations
+- Device command and control
+- Edge computing configuration
+
+#### supplier-service (Port 8072)
+- Supplier self-registration and qualification
+- Sourcing events (RFI, RFQ, RFP, auction)
+- Supplier bid management
+- Supplier performance scorecards
+- Punchout/hosted catalog management
+
+#### mobile-service (Port 8073)
+- Device registration and management
+- Push notification delivery
+- Offline data sync with conflict resolution
+- Mobile screen configuration
+- Barcode/QR/NFC scanning
+
+#### chain-service (Port 8074)
+- Blockchain network and smart contract management
+- Asset tokenization and provenance tracking
+- Certification anchoring on blockchain
+- Supply chain digital thread
+- Third-party verification requests
+
 ---
 
 ## 3. Communication Patterns
@@ -286,6 +406,66 @@ target = "http://localhost:8011"
 [routes.ar]
 prefix = "/api/v1/ar"
 target = "http://localhost:8012"
+
+[routes.epm]
+prefix = "/api/v1/epm"
+target = "http://localhost:8060"
+
+[routes.risk]
+prefix = "/api/v1/risk"
+target = "http://localhost:8061"
+
+[routes.ai]
+prefix = "/api/v1/ai"
+target = "http://localhost:8062"
+
+[routes.wms]
+prefix = "/api/v1/wms"
+target = "http://localhost:8063"
+
+[routes.tms]
+prefix = "/api/v1/tms"
+target = "http://localhost:8064"
+
+[routes.plm]
+prefix = "/api/v1/plm"
+target = "http://localhost:8065"
+
+[routes.gtm]
+prefix = "/api/v1/gtm"
+target = "http://localhost:8066"
+
+[routes.eam]
+prefix = "/api/v1/eam"
+target = "http://localhost:8067"
+
+[routes.quality]
+prefix = "/api/v1/quality"
+target = "http://localhost:8068"
+
+[routes.sus]
+prefix = "/api/v1/sus"
+target = "http://localhost:8069"
+
+[routes.assistant]
+prefix = "/api/v1/assistant"
+target = "http://localhost:8070"
+
+[routes.iot]
+prefix = "/api/v1/iot"
+target = "http://localhost:8071"
+
+[routes.supplier]
+prefix = "/api/v1/supplier"
+target = "http://localhost:8072"
+
+[routes.mobile]
+prefix = "/api/v1/mobile"
+target = "http://localhost:8073"
+
+[routes.chain]
+prefix = "/api/v1/chain"
+target = "http://localhost:8074"
 # ... etc
 ```
 

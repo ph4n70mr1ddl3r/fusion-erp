@@ -30,6 +30,21 @@ Build a full-featured, enterprise-grade ERP system cloning the capabilities of O
 | 20 | Data Import/Export | `etl-service` | `30-DATA-IMPORT-EXPORT.md` |
 | 21 | Lease Accounting (IFRS 16/ASC 842) | `lease-service` | `31-LEASE-ACCOUNTING.md` |
 | 22 | Collections & Credit Management | `collections-service` | `32-COLLECTIONS-CREDIT.md` |
+| 23 | Enterprise Performance Management | `epm-service` | `33-EPM.md` |
+| 24 | Risk Management & Compliance | `risk-service` | `34-RISK-COMPLIANCE.md` |
+| 25 | AI/ML Platform & AI Agents | `ai-service` | `35-AI-ML-PLATFORM.md` |
+| 26 | Warehouse Management (WMS) | `wms-service` | `36-WAREHOUSE-MANAGEMENT.md` |
+| 27 | Transportation Management (TMS) | `tms-service` | `37-TRANSPORTATION-MANAGEMENT.md` |
+| 28 | Product Lifecycle Management | `plm-service` | `38-PRODUCT-LIFECYCLE.md` |
+| 29 | Global Trade Management | `gtm-service` | `39-GLOBAL-TRADE.md` |
+| 30 | Enterprise Asset Management | `eam-service` | `40-ENTERPRISE-ASSET.md` |
+| 31 | Quality Management | `quality-service` | `41-QUALITY-MANAGEMENT.md` |
+| 32 | Sustainability / ESG | `sus-service` | `42-SUSTAINABILITY.md` |
+| 33 | Digital Assistant / Conversational AI | `assistant-service` | `43-DIGITAL-ASSISTANT.md` |
+| 34 | IoT Integration | `iot-service` | `44-IOT-INTEGRATION.md` |
+| 35 | Supplier Portal & Sourcing | `supplier-service` | `45-SUPPLIER-PORTAL.md` |
+| 36 | Mobile Application Framework | `mobile-service` | `46-MOBILE.md` |
+| 37 | Blockchain & Digital Thread | `chain-service` | `47-BLOCKCHAIN.md` |
 
 ## Supporting Infrastructure
 
@@ -85,12 +100,35 @@ AI agents MUST follow this build order. Each stage depends on the prior stage be
 22. `28-SUPPLY-CHAIN-PLANNING.md` - MRP, demand forecasting, planned orders
 23. `32-COLLECTIONS-CREDIT.md` - Collections, credit scoring, dunning
 
-### Stage 6 - Cross-Cutting Services & Delivery
-24. `29-DOCUMENT-MANAGEMENT.md` - Universal file attachments
-25. `30-DATA-IMPORT-EXPORT.md` - Bulk data loading, templates
-26. `20-FRONTEND.md` - Web UI (Rust/WASM + HTML/CSS)
-27. `21-DEPLOYMENT.md` - Containerization, orchestration
-28. `22-TESTING.md` - Integration testing, load testing
+### Stage 6 - Advanced Supply Chain
+24. `36-WAREHOUSE-MANAGEMENT.md` - WMS, wave planning, picking, receiving, shipping
+25. `37-TRANSPORTATION-MANAGEMENT.md` - TMS, carrier management, freight audit, routing
+26. `38-PRODUCT-LIFECYCLE.md` - PLM, engineering BOM, change management, configurator
+27. `39-GLOBAL-TRADE.md` - GTM, customs, restricted party screening, landed cost
+28. `41-QUALITY-MANAGEMENT.md` - Quality inspections, NCR, CAPA, SPC, certificates
+
+### Stage 7 - Enterprise Extensions
+29. `33-EPM.md` - Planning, consolidation, reconciliation, allocations
+30. `34-RISK-COMPLIANCE.md` - SoD, access certifications, audit, transaction controls
+31. `40-ENTERPRISE-ASSET.md` - Asset operations, preventive/predictive maintenance
+32. `42-SUSTAINABILITY.md` - ESG reporting, carbon tracking, sustainability targets
+
+### Stage 8 - AI & Intelligence
+33. `35-AI-ML-PLATFORM.md` - AI agents, ML models, forecasting, anomaly detection
+34. `43-DIGITAL-ASSISTANT.md` - Conversational AI, notifications, quick actions
+35. `44-IOT-INTEGRATION.md` - IoT devices, telemetry, edge computing, alerts
+
+### Stage 9 - Collaboration & Delivery
+36. `45-SUPPLIER-PORTAL.md` - Supplier self-service, sourcing, catalogs, scorecards
+37. `46-MOBILE.md` - Mobile framework, offline sync, push notifications, scanning
+38. `47-BLOCKCHAIN.md` - Blockchain traceability, provenance, certifications
+
+### Stage 10 - Cross-Cutting Services & Delivery
+39. `29-DOCUMENT-MANAGEMENT.md` - Universal file attachments
+40. `30-DATA-IMPORT-EXPORT.md` - Bulk data loading, templates
+41. `20-FRONTEND.md` - Web UI (Rust/WASM + HTML/CSS)
+42. `21-DEPLOYMENT.md` - Containerization, orchestration
+43. `22-TESTING.md` - Integration testing, load testing
 
 ### Cross-Cutting (Build in parallel with Stage 1+)
 - `18-MULTI-TENANCY.md` - Tenant isolation layer
@@ -138,6 +176,21 @@ fusion/
 │   ├── etl-service/                # Data Import/Export
 │   ├── lease-service/              # Lease Accounting
 │   ├── collections-service/        # Collections & Credit Management
+│   ├── epm-service/                # Enterprise Performance Management
+│   ├── risk-service/               # Risk Management & Compliance
+│   ├── ai-service/                 # AI/ML Platform & AI Agents
+│   ├── wms-service/                # Warehouse Management
+│   ├── tms-service/                # Transportation Management
+│   ├── plm-service/                # Product Lifecycle Management
+│   ├── gtm-service/                # Global Trade Management
+│   ├── eam-service/                # Enterprise Asset Management
+│   ├── quality-service/            # Quality Management
+│   ├── sus-service/                # Sustainability / ESG
+│   ├── assistant-service/          # Digital Assistant
+│   ├── iot-service/                # IoT Integration
+│   ├── supplier-service/           # Supplier Portal & Sourcing
+│   ├── mobile-service/             # Mobile Application Framework
+│   ├── chain-service/              # Blockchain & Digital Thread
 │   └── gateway-service/            # API Gateway / BFF
 ├── migrations/
 │   ├── auth/
