@@ -1,0 +1,441 @@
+# 01 - Microservices Architecture Specification
+
+## 1. Architecture Principles
+
+### 1.1 Domain-Driven Design (DDD)
+- The system MUST be decomposed into bounded contexts, each mapping to exactly one microservice.
+- Each bounded context owns its data, logic, and API surface.
+- Ubiquitous language within each context MUST be consistent (e.g., "Invoice" in AP means supplier invoice; in AR it means customer invoice).
+- Aggregate roots define transactional boundaries within a service.
+
+### 1.2 Service Autonomy
+- Each service MUST be independently deployable, testable, and scalable.
+- Services MUST NOT share databases. Data access is only via published APIs (REST or gRPC).
+- Services MUST NOT make assumptions about another service's internal implementation.
+- Each service owns its SQLite database file: `data/{service_name}.db`.
+
+### 1.3 Eventual Consistency
+- Cross-service consistency MUST use eventual consistency, not distributed transactions.
+- The Saga pattern MUST be used for business processes spanning multiple services.
+- Services MUST be designed to tolerate temporary inconsistency.
+
+### 1.4 Fail-Fast and Resilience
+- Services MUST validate input at the boundary (API layer) and fail fast on invalid data.
+- Circuit breaker pattern MUST be used for inter-service gRPC calls.
+- Services MUST degrade gracefully when dependencies are unavailable.
+- Retries with exponential backoff MUST be used for transient failures.
+
+---
+
+## 2. Service Catalog
+
+### 2.1 Service Registry
+
+| Service | Crate | Database | Port | Bounded Context |
+|---------|-------|----------|------|-----------------|
+| auth-service | `services/auth-service` | `data/auth.db` | 8001 | Identity & Access |
+| gateway-service | `services/gateway-service` | none | 8000 | API Gateway |
+| gl-service | `services/gl-service` | `data/gl.db` | 8010 | General Ledger |
+| ap-service | `services/ap-service` | `data/ap.db` | 8011 | Accounts Payable |
+| ar-service | `services/ar-service` | `data/ar.db` | 8012 | Accounts Receivable |
+| fa-service | `services/fa-service` | `data/fa.db` | 8013 | Fixed Assets |
+| cm-service | `services/cm-service` | `data/cm.db` | 8014 | Cash Management |
+| proc-service | `services/proc-service` | `data/proc.db` | 8020 | Procurement |
+| inv-service | `services/inv-service` | `data/inv.db` | 8021 | Inventory |
+| om-service | `services/om-service` | `data/om.db` | 8022 | Order Management |
+| mfg-service | `services/mfg-service` | `data/mfg.db` | 8023 | Manufacturing |
+| pm-service | `services/pm-service` | `data/pm.db` | 8030 | Project Management |
+| workflow-service | `services/workflow-service` | `data/workflow.db` | 8040 | Workflow & Approvals |
+| report-service | `services/report-service` | `data/report.db` | 8050 | Reporting & Analytics |
+
+### 2.2 Service Responsibilities
+
+#### auth-service (Port 8001)
+- User authentication (login, logout, token refresh)
+- User CRUD and credential management
+- Role and permission management
+- JWT token issuance and validation
+- API key management for service-to-service auth
+- Audit trail for all security events
+
+#### gateway-service (Port 8000)
+- Single external entry point (reverse proxy)
+- JWT validation and tenant extraction
+- Request routing to backend services
+- Rate limiting (per tenant)
+- Request/response logging
+- CORS handling
+- API versioning
+
+#### gl-service (Port 8010)
+- Chart of accounts management (multi-segment)
+- Journal entry creation, editing, posting
+- Period management (open, close, reopen)
+- Currency translation and revaluation
+- Budget management
+- Balance calculation and storage
+- Trial balance, balance sheet, income statement data
+
+#### ap-service (Port 8011)
+- Supplier management
+- Invoice entry (header + lines)
+- Invoice approval workflow
+- Payment processing and selection
+- Payment matching (invoice ↔ payment)
+- Aging reports
+- GL integration (auto-generate journal entries)
+
+#### ar-service (Port 8012)
+- Customer management
+- Invoice and memo creation
+- Receipt processing and application
+- Credit memo management
+- Collections and dunning
+- Aging reports
+- GL integration (auto-generate journal entries)
+
+#### fa-service (Port 8013)
+- Asset registration and categorization
+- Depreciation calculation (straight-line, declining balance, units of production)
+- Asset transfers and reclassifications
+- Asset retirement and disposal
+- Depreciation posting to GL
+- Asset reporting
+
+#### cm-service (Port 8014)
+- Bank account management
+- Cash receipt and disbursement recording
+- Bank statement import and reconciliation
+- Cash positioning and forecasting
+- GL integration for all cash transactions
+
+#### proc-service (Port 8020)
+- Requisition creation and approval
+- Purchase order management
+- Supplier catalog management
+- Goods receipt and inspection
+- Three-way match (PO ↔ Receipt ↔ Invoice)
+- Blanket agreements and contracts
+
+#### inv-service (Port 8021)
+- Item master management
+- Warehouse and location management
+- On-hand quantity tracking
+- Stock movements (receipts, issues, transfers)
+- Costing (FIFO, LIFO, weighted average, standard)
+- Cycle counting and physical inventory
+- Reorder point management
+
+#### om-service (Port 8022)
+- Sales order management
+- Order fulfillment and allocation
+- Shipping and delivery tracking
+- Return management (RMA)
+- Pricing and discount management
+- Credit check integration
+- Invoice generation integration with AR
+
+#### mfg-service (Port 8023)
+- Bill of Materials (BOM) management
+- Work order creation and scheduling
+- Routing and operations management
+- Production reporting (material consumption, labor, output)
+- Quality inspection
+- Cost roll-up
+- Integration with inventory for material movements
+
+#### pm-service (Port 8030)
+- Project definition and structuring (WBS)
+- Task management and scheduling
+- Resource allocation
+- Time and expense entry
+- Project costing and billing
+- Revenue recognition
+- Integration with GL for project accounting
+
+#### workflow-service (Port 8040)
+- Approval workflow definition
+- Rule-based routing (amount thresholds, role-based)
+- Parallel and sequential approval chains
+- Delegation and substitution
+- Notification management (email, in-app)
+- Workflow history and audit
+
+#### report-service (Port 8050)
+- Financial report generation
+- Operational dashboard data
+- Ad-hoc query builder
+- Report scheduling and distribution
+- Data export (CSV, PDF, Excel)
+- Real-time metrics aggregation
+
+---
+
+## 3. Communication Patterns
+
+### 3.1 External Communication (Client → Gateway → Service)
+- Protocol: HTTP/1.1 or HTTP/2 over TLS
+- Format: JSON (application/json)
+- Entry point: gateway-service on port 8000
+- Gateway proxies requests to internal services via HTTP
+- All external requests MUST go through the gateway
+
+```
+Client → HTTPS → Gateway (:8000) → HTTP → Service (:80XX)
+```
+
+### 3.2 Internal Communication (Service ↔ Service)
+- Protocol: gRPC over HTTP/2
+- Format: Protocol Buffers (proto3)
+- Direct service-to-service calls using tonic client
+- Service addresses resolved from configuration (no service mesh required)
+
+```
+ap-service → gRPC → gl-service
+ar-service → GRS → inv-service
+```
+
+### 3.3 Asynchronous Communication (Event Bus)
+- In-process event bus using tokio broadcast channels
+- Events published to a central event dispatcher
+- Services subscribe to events they care about
+- Events are durable — stored in a local event log table before dispatch
+
+**Event Flow:**
+```
+Publisher Service → Event Log Table → tokio::broadcast → Subscriber Services
+```
+
+**Standard Event Envelope:**
+```json
+{
+  "event_id": "uuid-v7",
+  "event_type": "journal.posted",
+  "source_service": "gl-service",
+  "tenant_id": "tenant-uuid",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "correlation_id": "request-uuid",
+  "payload": { ... }
+}
+```
+
+### 3.4 Saga Pattern for Distributed Transactions
+
+**Orchestration-style Sagas:**
+- The initiating service acts as the saga coordinator.
+- Each step invokes the next service via gRPC.
+- On failure, the coordinator triggers compensating transactions in reverse order.
+
+**Example: Purchase Order → Goods Receipt → Invoice → Payment → GL Entries**
+
+```
+proc-service: Create PO
+  → inv-service: Reserve stock (on PO approval)
+  → inv-service: Receive goods (on goods receipt)
+  → ap-service: Create invoice (on invoice receipt)
+  → ap-service: Create payment (on payment run)
+  → gl-service: Post journal entries (on each step)
+```
+
+If payment fails:
+1. ap-service: Reverse payment
+2. ap-service: Reverse invoice (or leave for manual resolution)
+3. GL entries remain (they represent what happened)
+
+**Saga State Table (per service):**
+```sql
+CREATE TABLE saga_instances (
+    id TEXT PRIMARY KEY,
+    tenant_id TEXT NOT NULL,
+    saga_type TEXT NOT NULL,
+    current_step INTEGER NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('RUNNING','COMPLETED','COMPENSATING','FAILED')),
+    payload TEXT NOT NULL,  -- JSON
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+```
+
+---
+
+## 4. Gateway Pattern
+
+### 4.1 Request Routing
+- Gateway maintains a routing table mapping URL prefixes to backend services.
+- Route configuration loaded from `gateway-routes.toml`.
+
+```toml
+[routes.gl]
+prefix = "/api/v1/gl"
+target = "http://localhost:8010"
+
+[routes.ap]
+prefix = "/api/v1/ap"
+target = "http://localhost:8011"
+
+[routes.ar]
+prefix = "/api/v1/ar"
+target = "http://localhost:8012"
+# ... etc
+```
+
+### 4.2 Gateway Middleware Stack (ordered)
+1. **Rate Limiting** — per-tenant, configurable limits
+2. **CORS** — allowed origins from configuration
+3. **Request ID** — generate UUID if not present, pass via X-Request-Id
+4. **Authentication** — validate JWT, extract user_id, tenant_id, roles
+5. **Tenant Resolution** — verify tenant exists and is active
+6. **Request Logging** — log method, path, user, tenant
+7. **Proxy** — forward to backend service
+8. **Response Logging** — log status, duration
+9. **Error Handling** — standardize error responses
+
+### 4.3 Rate Limiting
+- Default: 100 requests/minute per tenant
+- Configurable per tenant and per route
+- Headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+- Returns 429 Too Many Requests when exceeded
+
+---
+
+## 5. Configuration Management
+
+### 5.1 Configuration Structure
+Each service loads configuration from:
+1. Environment variables (highest precedence)
+2. `.env` file in service directory
+3. Default config file: `config/{service_name}.toml`
+
+### 5.2 Standard Configuration Schema
+```toml
+[service]
+name = "gl-service"
+port = 8010
+log_level = "info"
+
+[database]
+path = "data/gl.db"
+pool_max_size = 8
+pool_min_idle = 2
+
+[jwt]
+public_key_path = "config/jwt-public.pem"
+issuer = "fusion-erp"
+audience = "fusion-erp-api"
+
+[events]
+enabled = true
+bus_address = "127.0.0.1:9090"
+
+[services.auth]
+url = "http://localhost:8001"
+[services.gl]
+url = "http://localhost:8010"
+# ... other service URLs
+```
+
+---
+
+## 6. Error Handling
+
+### 6.1 Standard Error Codes
+Errors use a structured code format: `{SERVICE}_{CATEGORY}_{NUMBER}`
+
+| Service | Prefix | Examples |
+|---------|--------|---------|
+| Auth | AUTH | AUTH_LOGIN_001 (invalid credentials), AUTH_TOKEN_001 (expired token) |
+| GL | GL | GL_PERIOD_001 (period closed), GL_JOURNAL_001 (unbalanced entry) |
+| AP | AP | AP_INVOICE_001 (duplicate invoice number), AP_PAYMENT_001 (insufficient funds) |
+| AR | AR | AR_INVOICE_001, AR_RECEIPT_001 |
+| General | GEN | GEN_VALIDATION_001, GEN_NOT_FOUND_001, GEN_CONFLICT_001 |
+
+### 6.2 Error Response Format
+```json
+{
+  "error": {
+    "code": "GL_PERIOD_001",
+    "message": "Cannot post to a closed period",
+    "details": [
+      {
+        "field": "period_name",
+        "issue": "Period 'Jan-2024' is closed",
+        "suggestion": "Use an open period or reopen this period"
+      }
+    ],
+    "request_id": "req-uuid",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+### 6.3 Circuit Breaker Configuration
+- Threshold: 5 consecutive failures
+- Open duration: 30 seconds
+- Half-open: allow 1 request, if success → close, if failure → stay open
+- Implementation: tower circuit-breaker middleware or custom using `tokio::sync::watch`
+
+---
+
+## 7. Crate Dependencies (per service)
+
+### 7.1 Common Dependencies
+```toml
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+axum = "0.8"
+tonic = "0.12"
+prost = "0.13"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v7"] }
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json"] }
+thiserror = "2"
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace", "request-id"] }
+validator = { version = "0.19", features = ["derive"] }
+```
+
+### 7.2 Service-Specific
+```toml
+# auth-service only
+jsonwebtoken = "9"
+bcrypt = "0.16"
+
+# Database
+rusqlite = { version = "0.32", features = ["bundled"] }
+r2d2 = "0.8"
+r2d2_sqlite = "0.25"
+
+# Metrics
+prometheus = "0.13"
+```
+
+---
+
+## 8. Health Check and Readiness
+
+Every service MUST expose:
+
+### 8.1 Liveness Probe
+```
+GET /health → 200 OK { "status": "alive" }
+```
+
+### 8.2 Readiness Probe
+```
+GET /ready → 200 OK { "status": "ready", "checks": { "database": "ok", "dependencies": "ok" } }
+```
+Returns 503 if database or critical dependencies are unavailable.
+
+### 8.3 Metrics
+```
+GET /metrics → Prometheus text format
+```
+Standard metrics:
+- `fusion_http_requests_total{method, path, status}`
+- `fusion_http_request_duration_seconds{method, path}`
+- `fusion_grpc_requests_total{service, method, status}`
+- `fusion_db_pool_size{service}`
+- `fusion_db_pool_available{service}`
