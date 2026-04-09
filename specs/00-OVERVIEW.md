@@ -136,6 +136,81 @@ Build a full-featured, enterprise-grade ERP system cloning the capabilities of O
 | 126 | Higher Education | `highered-service` | `136-HIGHER-EDUCATION.md` |
 | 127 | Public Sector | `publicsector-service` | `137-PUBLIC-SECTOR.md` |
 | 128 | Communications | `comms-service` | `138-COMMUNICATIONS.md` |
+| 129 | Supplier Management | `suppliermgmt-service` | `139-SUPPLIER-MANAGEMENT.md` |
+| 130 | Demand Management | `demand-service` | `140-DEMAND-MANAGEMENT.md` |
+| 131 | Sales & Operations Planning (S&OP) | `sop-service` | `141-SALES-OPERATIONS-PLANNING.md` |
+| 132 | Supply Chain Collaboration | `sccollab-service` | `142-SUPPLY-CHAIN-COLLABORATION.md` |
+| 133 | Backlog Management | `backlog-service` | `143-BACKLOG-MANAGEMENT.md` |
+| 134 | Mixed-Mode Manufacturing | `mixedmfg-service` | `144-MIXED-MODE-MANUFACTURING.md` |
+| 135 | Shipping Execution | `shipping-service` | `145-SHIPPING-EXECUTION.md` |
+| 136 | Talent Review | `talentreview-service` | `146-TALENT-REVIEW.md` |
+| 137 | Oracle Journeys | `journeys-service` | `147-ORACLE-JOURNEYS.md` |
+| 138 | HCM Analytics | `hcmanalytics-service` | `148-HCM-ANALYTICS.md` |
+| 139 | ERP Analytics | `erpanalytics-service` | `149-ERP-ANALYTICS.md` |
+| 140 | BI Publisher | `bipublisher-service` | `150-BI-PUBLISHER.md` |
+| 141 | Redwood UX Design System | — | `151-REDWOOD-UX.md` |
+| 142 | Disclosure Management | `disclosure-service` | `152-DISCLOSURE-MANAGEMENT.md` |
+| 143 | Supplemental Data Management | `supplementaldata-service` | `153-SUPPLEMENTAL-DATA.md` |
+| 144 | Financial Reporting | `financialreport-service` | `154-FINANCIAL-REPORTING.md` |
+| 145 | Smart View for Office | `smartview-service` | `155-SMART-VIEW-OFFICE.md` |
+| 146 | EPM Automate | `epmautomate-service` | `156-EPM-AUTOMATE.md` |
+| 147 | Procurement Analytics | `procurementanalytics-service` | `157-PROCUREMENT-ANALYTICS.md` |
+| 148 | Project Costing | `projectcosting-service` | `158-PROJECT-COSTING.md` |
+| 149 | Project Billing | `projectbilling-service` | `159-PROJECT-BILLING.md` |
+| 150 | Resource Management | `resource-service` | `160-RESOURCE-MANAGEMENT.md` |
+| 151 | Workforce Predictions | `wfpredictions-service` | `161-WORKFORCE-PREDICTIONS.md` |
+| 152 | Product Development | `productdev-service` | `162-PRODUCT-DEVELOPMENT.md` |
+| 153 | Functional Setup Manager | `fsm-service` | `163-FUNCTIONAL-SETUP-MANAGER.md` |
+| 154 | Enterprise Search | `search-service` | `164-ENTERPRISE-SEARCH.md` |
+| 155 | Notification Center | `notification-service` | `165-NOTIFICATION-CENTER.md` |
+| 156 | Connected Worker | `connectedworker-service` | `166-CONNECTED-WORKER.md` |
+| 157 | Maintenance Cloud | `maintenance-service` | `167-MAINTENANCE-CLOUD.md` |
+| 158 | Maxymiser (CX Testing) | `maxymiser-service` | `168-MAXYMISER.md` |
+| 159 | Goals Management | `goals-service` | `169-GOALS-MANAGEMENT.md` |
+| 160 | Touchpoints (Continuous Check-ins) | `touchpoints-service` | `170-TOUCHPOINTS.md` |
+| 161 | Guided Learning | `guidedlearning-service` | `171-GUIDED-LEARNING.md` |
+| 162 | B2B Gateway / EDI | `b2bgateway-service` | `172-B2B-GATEWAY.md` |
+| 163 | Enterprise Scheduler | `scheduler-service` | `173-ENTERPRISE-SCHEDULER.md` |
+| 164 | OTBI (Transactional BI) | `otbi-service` | `174-OTBI.md` |
+| 165 | Oracle Grow | `grow-service` | `175-ORACLE-GROW.md` |
+| 166 | Spreadsheet Designer | `spreadsheet-service` | `176-SPREADSHEET-DESIGNER.md` |
+| 167 | Access Governor | `accessgov-service` | `177-ACCESS-GOVERNOR.md` |
+| 168 | Sandbox Management | `sandbox-service` | `178-SANDBOX-MANAGEMENT.md` |
+| 169 | CX Sales Engagement | `salesengagement-service` | `179-SALES-ENGAGEMENT.md` |
+| 170 | MDF Management | `mdf-service` | `180-MDF-MANAGEMENT.md` |
+| 171 | Eloqua (B2B Marketing) | `eloqua-service` | `181-ELOQUA.md` |
+| 172 | Responsys (B2C Marketing) | `responsys-service` | `182-RESPONSYS.md` |
+| 173 | CX Advertising | `cxadvertising-service` | `183-CX-ADVERTISING.md` |
+| 174 | Content Management | `content-service` | `184-CONTENT-MANAGEMENT.md` |
+| 175 | Planning and Budgeting | `planningbudget-service` | `185-PLANNING-BUDGETING.md` |
+| 176 | Oracle Health | `oraclehealth-service` | `186-ORACLE-HEALTH.md` |
+| 177 | Calculation Manager | `calcmanager-service` | `187-CALCULATION-MANAGER.md` |
+| 178 | Supplier Qualification | `supplierqual-service` | `188-SUPPLIER-QUALIFICATION.md` |
+| 179 | HCM Now | `hcmnow-service` | `189-HCM-NOW.md` |
+| 180 | Oracle ME Platform | `oracleme-service` | `190-ORACLE-ME.md` |
+| 181 | Data Relationship Management | `drm-service` | `191-DATA-RELATIONSHIP-MGMT.md` |
+| 182 | Retail Industry | `retail-service` | `192-RETAIL.md` |
+| 183 | Automotive Industry | `automotive-service` | `193-AUTOMOTIVE.md` |
+| 184 | Oil & Gas Industry | `oilgas-service` | `194-OIL-GAS.md` |
+| 185 | Life Sciences Industry | `lifescience-service` | `195-LIFE-SCIENCES.md` |
+| 186 | Consumer Goods Industry | `consumergoods-service` | `196-CONSUMER-GOODS.md` |
+| 187 | High Tech Industry | `hightech-service` | `197-HIGH-TECH.md` |
+| 188 | Wholesale Distribution Industry | `wholesale-service` | `198-WHOLESALE-DISTRIBUTION.md` |
+| 189 | Travel & Transportation Industry | `travel-service` | `199-TRAVEL-TRANSPORTATION.md` |
+| 190 | Industrial Manufacturing Industry | `industrialmfg-service` | `200-INDUSTRIAL-MFG.md` |
+| 191 | Restaurants Industry | `restaurants-service` | `201-RESTAURANTS.md` |
+| 192 | Fusion Data Intelligence Platform | `fdiplatform-service` | `202-FUSION-DATA-INTELLIGENCE.md` |
+| 193 | Clinically Integrated Supply Chain | `clinicalsc-service` | `203-CLINICAL-SUPPLY-CHAIN.md` |
+| 194 | Taleo Migration | `taleomigration-service` | `204-TALEO-MIGRATION.md` |
+| 195 | Siebel Migration | `siebelmigration-service` | `205-SIEBEL-MIGRATION.md` |
+| 196 | Construction & Engineering Industry | `construction-service` | `206-CONSTRUCTION-ENGINEERING.md` |
+| 197 | Financial Services Industry | `financialservices-service` | `207-FINANCIAL-SERVICES.md` |
+| 198 | Utilities Industry | `utilities-service` | `208-UTILITIES.md` |
+| 199 | Professional Services Industry | `profservices-service` | `209-PROFESSIONAL-SERVICES.md` |
+| 200 | Aerospace & Defense Industry | `aerospace-service` | `210-AEROSPACE-DEFENSE.md` |
+| 201 | Media & Entertainment Industry | `media-service` | `211-MEDIA-ENTERTAINMENT.md` |
+
+> For a categorized view of all specs grouped by domain, see `00-INDEX.md`.
 
 ## Supporting Infrastructure
 
@@ -327,6 +402,121 @@ AI agents MUST follow this build order. Each stage depends on the prior stage be
 114. `117-EPM-PLATFORM.md` - OLAP engine, dimensions, calculation manager, data integration
 115. `118-FREEFORM-PLANNING.md` - Freeform budgeting, ad-hoc modeling, sandboxed planning
 
+### Stage 28 - Supply Chain Advanced
+116. `120-SELF-SERVICE-PROCUREMENT.md` - Employee requisitions, guided buying, catalogs
+117. `121-PROCESS-MANUFACTURING.md` - Formula-based production, batch tracking
+118. `122-PRODUCTION-SCHEDULING.md` - Shop floor scheduling, constraint-based planning
+119. `123-SMART-OPERATIONS.md` - IoT-enabled operational intelligence, OEE
+120. `124-SOURCING.md` - RFQ/RFP/auction, bid evaluation, award
+121. `125-SUPPLY-CHAIN-EXECUTION.md` - End-to-end logistics orchestration
+122. `139-SUPPLIER-MANAGEMENT.md` - Supplier lifecycle, qualification, risk, scoring
+123. `140-DEMAND-MANAGEMENT.md` - Statistical forecasting, demand sensing
+124. `141-SALES-OPERATIONS-PLANNING.md` - Cross-functional S&OP, consensus planning
+
+### Stage 29 - SCM Logistics & Fulfillment
+125. `142-SUPPLY-CHAIN-COLLABORATION.md` - Trading partner collaboration, visibility
+126. `143-BACKLOG-MANAGEMENT.md` - Order backlog prioritization, allocation
+127. `144-MIXED-MODE-MANUFACTURING.md` - Discrete + process + lean hybrid
+128. `145-SHIPPING-EXECUTION.md` - Outbound shipment planning, carrier selection
+
+### Stage 30 - HCM Talent & Experience
+129. `146-TALENT-REVIEW.md` - Calibration sessions, 9-box matrix
+130. `147-ORACLE-JOURNEYS.md` - Guided process templates for life events
+131. `161-WORKFORCE-PREDICTIONS.md` - AI/ML attrition and performance predictions
+132. `169-GOALS-MANAGEMENT.md` - Goal cascading, OKR/KPI management
+133. `170-TOUCHPOINTS.md` - Continuous check-ins, 1-on-1 meetings
+134. `171-GUIDED-LEARNING.md` - In-app contextual help, walkthroughs
+135. `175-ORACLE-GROW.md` - AI-powered growth recommendations
+136. `189-HCM-NOW.md` - Rapid HCM deployment, configuration templates
+
+### Stage 31 - CX Sales & Service Extensions
+137. `126-B2C-SERVICE.md` - High-volume consumer support
+138. `127-INTELLIGENT-ADVISOR.md` - Rule-based policy automation
+139. `128-LIVE-EXPERIENCE.md` - Co-browsing, screen sharing, video
+140. `129-SERVICE-CENTER.md` - Unified agent workspace
+141. `130-PARTNER-RELATIONSHIP-MANAGEMENT.md` - Partner portals, deal registration
+142. `131-CX-ANALYTICS.md` - Journey analytics, sentiment, churn prediction
+143. `179-SALES-ENGAGEMENT.md` - Sales sequences, outreach cadences
+
+### Stage 32 - CX Marketing & Commerce Extensions
+144. `168-MAXYMISER.md` - A/B testing, personalization
+145. `180-MDF-MANAGEMENT.md` - Market development funds, partner co-marketing
+146. `181-ELOQUA.md` - B2B marketing automation, lead scoring
+147. `182-RESPONSYS.md` - B2C cross-channel marketing
+148. `183-CX-ADVERTISING.md` - Customer-driven advertising activation
+
+### Stage 33 - EPM & Reporting Extensions
+149. `152-DISCLOSURE-MANAGEMENT.md` - SEC filings, XBRL tagging
+150. `153-SUPPLEMENTAL-DATA.md` - Non-financial data collection
+151. `154-FINANCIAL-REPORTING.md` - Pixel-perfect financial reports
+152. `155-SMART-VIEW-OFFICE.md` - Microsoft Office integration
+153. `156-EPM-AUTOMATE.md` - CLI automation, scripting
+154. `185-PLANNING-BUDGETING.md` - Enterprise planning, budgeting, forecasting
+155. `187-CALCULATION-MANAGER.md` - Centralized business rule calculations
+
+### Stage 34 - Financial & Project Extensions
+156. `158-PROJECT-COSTING.md` - Cost tracking, burdening, capitalization
+157. `159-PROJECT-BILLING.md` - T&M, fixed price, cost-plus billing
+158. `160-RESOURCE-MANAGEMENT.md` - Resource planning, utilization tracking
+
+### Stage 35 - Platform Services
+159. `162-PRODUCT-DEVELOPMENT.md` - ECOs, BOM lifecycle, NPI
+160. `163-FUNCTIONAL-SETUP-MANAGER.md` - Implementation project management
+161. `164-ENTERPRISE-SEARCH.md` - Unified full-text search
+162. `165-NOTIFICATION-CENTER.md` - Centralized multi-channel notifications
+163. `166-CONNECTED-WORKER.md` - IoT workforce safety, wearables
+164. `167-MAINTENANCE-CLOUD.md` - Production asset maintenance
+165. `172-B2B-GATEWAY.md` - EDI, B2B messaging
+166. `173-ENTERPRISE-SCHEDULER.md` - Centralized job scheduling
+167. `174-OTBI.md` - Real-time operational analytics
+168. `176-SPREADSHEET-DESIGNER.md` - Web-based Excel-like reports
+169. `177-ACCESS-GOVERNOR.md` - Access certification, SoD analysis
+170. `178-SANDBOX-MANAGEMENT.md` - Isolated test environments
+171. `184-CONTENT-MANAGEMENT.md` - Enterprise content management
+172. `188-SUPPLIER-QUALIFICATION.md` - Supplier onboarding, compliance
+173. `190-ORACLE-ME.md` - Conversational AI platform
+174. `191-DATA-RELATIONSHIP-MGMT.md` - Master data governance, hierarchies
+
+### Stage 36 - Advanced Platform & Health
+175. `132-DESKLESS-WORKFORCE.md` - Mobile-first HR for frontline workers
+176. `133-PAYROLL-INTERFACE-CONNECT.md` - Third-party payroll integration
+177. `134-AI-AGENTS-SUITE.md` - Cross-application AI agents
+178. `135-DOCUMENT-IO-AGENT.md` - AI document capture and processing
+179. `186-ORACLE-HEALTH.md` - Clinical data management
+180. `202-FUSION-DATA-INTELLIGENCE.md` - Unified data platform, ML lifecycle
+
+### Stage 37 - Industry Verticals (can be built in parallel)
+181. `136-HIGHER-EDUCATION.md` - Student management
+182. `137-PUBLIC-SECTOR.md` - Government finance, constituents
+183. `138-COMMUNICATIONS.md` - Telecom billing, provisioning
+184. `192-RETAIL.md` - Store management, POS, replenishment
+185. `193-AUTOMOTIVE.md` - Dealer management, warranty
+186. `194-OIL-GAS.md` - Well lifecycle, JV accounting
+187. `195-LIFE-SCIENCES.md` - Clinical trials, pharmacovigilance
+188. `196-CONSUMER-GOODS.md` - Trade promotions, demand sensing
+189. `197-HIGH-TECH.md` - Configure-to-order, ECO, RMA
+190. `198-WHOLESALE-DISTRIBUTION.md` - Warehouse zones, route optimization
+191. `199-TRAVEL-TRANSPORTATION.md` - Fleet, revenue management
+192. `200-INDUSTRIAL-MFG.md` - Heavy equipment, OEE
+193. `201-RESTAURANTS.md` - Multi-location, menu management
+194. `203-CLINICAL-SUPPLY-CHAIN.md` - Healthcare supply chain
+195. `206-CONSTRUCTION-ENGINEERING.md` - Progress billing, BIM
+196. `207-FINANCIAL-SERVICES.md` - Banking, KYC/AML, treasury
+197. `208-UTILITIES.md` - Utility billing, meter management
+198. `209-PROFESSIONAL-SERVICES.md` - Engagement management, utilization
+199. `210-AEROSPACE-DEFENSE.md` - Gov contracts, EVM, ITAR
+200. `211-MEDIA-ENTERTAINMENT.md` - Content rights, royalties
+
+### Stage 38 - Migration Tools
+201. `204-TALEO-MIGRATION.md` - Taleo to Fusion HCM migration
+202. `205-SIEBEL-MIGRATION.md` - Siebel CRM to Fusion CX migration
+
+### Stage 39 - Analytics Extensions
+203. `148-HCM-ANALYTICS.md` - Workforce analytics, KPI dashboards
+204. `149-ERP-ANALYTICS.md` - Financial analytics, spend analysis
+205. `150-BI-PUBLISHER.md` - Template-based report generation
+206. `157-PROCUREMENT-ANALYTICS.md` - Spend analysis, supplier insights
+
 ### Cross-Cutting (Build in parallel with Stage 1+)
 - `18-MULTI-TENANCY.md` - Tenant isolation layer
 - `19-INTEGRATION.md` - Event bus, service mesh
@@ -460,6 +650,97 @@ fusion/
 │   ├── epmplatform-service/        # EPM Platform
 │   ├── freeform-service/           # Freeform Planning (Essbase)
 │   ├── strategicwf-service/        # Strategic Workforce Planning
+│   ├── selfproc-service/           # Self-Service Procurement
+│   ├── processmfg-service/         # Process Manufacturing
+│   ├── prodsched-service/          # Production Scheduling
+│   ├── smartops-service/           # Smart Operations
+│   ├── sourcing-service/           # Sourcing
+│   ├── scexec-service/             # Supply Chain Execution
+│   ├── b2cservice-service/         # B2C Service
+│   ├── advisor-service/            # Intelligent Advisor
+│   ├── liveexp-service/            # Live Experience
+│   ├── svccenter-service/          # Service Center
+│   ├── prm-service/                # Partner Relationship Management
+│   ├── cxanalytics-service/        # CX Analytics
+│   ├── deskless-service/           # Deskless Workforce
+│   ├── payrollint-service/         # Payroll Interface & Connect
+│   ├── aiagents-service/           # AI Agents Suite
+│   ├── docio-service/              # Document IO Agent
+│   ├── highered-service/           # Higher Education
+│   ├── publicsector-service/       # Public Sector
+│   ├── comms-service/              # Communications
+│   ├── suppliermgmt-service/       # Supplier Management
+│   ├── demand-service/             # Demand Management
+│   ├── sop-service/                # Sales & Operations Planning
+│   ├── sccollab-service/           # Supply Chain Collaboration
+│   ├── backlog-service/            # Backlog Management
+│   ├── mixedmfg-service/           # Mixed-Mode Manufacturing
+│   ├── shipping-service/           # Shipping Execution
+│   ├── talentreview-service/       # Talent Review
+│   ├── journeys-service/           # Oracle Journeys
+│   ├── hcmanalytics-service/       # HCM Analytics
+│   ├── erpanalytics-service/       # ERP Analytics
+│   ├── bipublisher-service/        # BI Publisher
+│   ├── disclosure-service/         # Disclosure Management
+│   ├── supplementaldata-service/   # Supplemental Data Management
+│   ├── financialreport-service/    # Financial Reporting
+│   ├── smartview-service/          # Smart View for Office
+│   ├── epmautomate-service/        # EPM Automate
+│   ├── procurementanalytics-service/ # Procurement Analytics
+│   ├── projectcosting-service/     # Project Costing
+│   ├── projectbilling-service/     # Project Billing
+│   ├── resource-service/           # Resource Management
+│   ├── wfpredictions-service/      # Workforce Predictions
+│   ├── productdev-service/         # Product Development
+│   ├── fsm-service/                # Functional Setup Manager
+│   ├── search-service/             # Enterprise Search
+│   ├── notification-service/       # Notification Center
+│   ├── connectedworker-service/    # Connected Worker
+│   ├── maintenance-service/        # Maintenance Cloud
+│   ├── maxymiser-service/          # Maxymiser (CX Testing)
+│   ├── goals-service/              # Goals Management
+│   ├── touchpoints-service/        # Touchpoints
+│   ├── guidedlearning-service/     # Guided Learning
+│   ├── b2bgateway-service/         # B2B Gateway / EDI
+│   ├── scheduler-service/          # Enterprise Scheduler
+│   ├── otbi-service/               # OTBI (Transactional BI)
+│   ├── grow-service/               # Oracle Grow
+│   ├── spreadsheet-service/        # Spreadsheet Designer
+│   ├── accessgov-service/          # Access Governor
+│   ├── sandbox-service/            # Sandbox Management
+│   ├── salesengagement-service/    # CX Sales Engagement
+│   ├── mdf-service/                # MDF Management
+│   ├── eloqua-service/             # Eloqua
+│   ├── responsys-service/          # Responsys
+│   ├── cxadvertising-service/      # CX Advertising
+│   ├── content-service/            # Content Management
+│   ├── planningbudget-service/     # Planning and Budgeting
+│   ├── oraclehealth-service/       # Oracle Health
+│   ├── calcmanager-service/        # Calculation Manager
+│   ├── supplierqual-service/       # Supplier Qualification
+│   ├── hcmnow-service/             # HCM Now
+│   ├── oracleme-service/           # Oracle ME Platform
+│   ├── drm-service/                # Data Relationship Management
+│   ├── retail-service/             # Retail Industry
+│   ├── automotive-service/         # Automotive Industry
+│   ├── oilgas-service/             # Oil & Gas Industry
+│   ├── lifescience-service/        # Life Sciences Industry
+│   ├── consumergoods-service/      # Consumer Goods Industry
+│   ├── hightech-service/           # High Tech Industry
+│   ├── wholesale-service/          # Wholesale Distribution Industry
+│   ├── travel-service/             # Travel & Transportation Industry
+│   ├── industrialmfg-service/      # Industrial Manufacturing Industry
+│   ├── restaurants-service/        # Restaurants Industry
+│   ├── fdiplatform-service/        # Fusion Data Intelligence Platform
+│   ├── clinicalsc-service/         # Clinically Integrated Supply Chain
+│   ├── taleomigration-service/     # Taleo Migration
+│   ├── siebelmigration-service/    # Siebel Migration
+│   ├── construction-service/       # Construction & Engineering Industry
+│   ├── financialservices-service/  # Financial Services Industry
+│   ├── utilities-service/          # Utilities Industry
+│   ├── profservices-service/       # Professional Services Industry
+│   ├── aerospace-service/          # Aerospace & Defense Industry
+│   ├── media-service/              # Media & Entertainment Industry
 │   └── gateway-service/            # API Gateway / BFF
 ├── migrations/
 │   ├── auth/

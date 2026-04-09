@@ -57,6 +57,245 @@ Read specs in this exact order for each stage:
 31. `21-DEPLOYMENT.md`
 32. `22-TESTING.md`
 
+> **Stages 7–38 continue below.** For a complete categorized view of all 211 specs, see `00-INDEX.md`.
+
+**Stage 7 — Enterprise Extensions:**
+33. `33-EPM.md` — Planning, consolidation, reconciliation
+34. `34-RISK-COMPLIANCE.md` — SoD, access certifications, audit
+35. `40-ENTERPRISE-ASSET.md` — Asset operations, maintenance
+36. `42-SUSTAINABILITY.md` — ESG reporting, carbon tracking
+
+**Stage 8 — AI & Intelligence:**
+37. `35-AI-ML-PLATFORM.md` — AI agents, ML models, anomaly detection
+38. `43-DIGITAL-ASSISTANT.md` — Conversational AI, notifications
+39. `44-IOT-INTEGRATION.md` — IoT devices, telemetry, edge computing
+
+**Stage 9 — Collaboration & Delivery:**
+40. `45-SUPPLIER-PORTAL.md` — Supplier self-service, sourcing
+41. `46-MOBILE.md` — Mobile framework, offline sync
+42. `47-BLOCKCHAIN.md` — Blockchain traceability, provenance
+
+**Stage 10 — Financial Extensions II:**
+43. `48-COST-MANAGEMENT.md` — Product costing, cost rollup
+44. `49-ACCOUNTING-HUB.md` — Centralized accounting for third-party
+45. `54-GRANT-MANAGEMENT.md` — Federal grant lifecycle
+46. `55-JOINT-VENTURE.md` — JV cost sharing, partner billing
+
+**Stage 11 — Supply Chain Extensions II:**
+47. `50-GLOBAL-ORDER-PROMISING.md` — ATP/CTP, delivery date promising
+48. `51-PRODUCT-HUB.md` — Product MDM, catalog publishing
+49. `52-SUPPLY-CHAIN-ORCHESTRATION.md` — Saga-based coordination
+50. `53-PROCUREMENT-CONTRACTS.md` — Contract lifecycle, compliance
+
+**Stage 12 — Revenue & Commerce:**
+51. `56-SUBSCRIPTION-MANAGEMENT.md` — Recurring billing
+52. `57-CPQ.md` — Configure-Price-Quote engine
+53. `58-CONFIGURATOR.md` — Product configuration rules engine
+54. `59-COMMERCE.md` — B2B/B2C e-commerce platform
+55. `60-CUSTOMER-DATA-PLATFORM.md` — Unified customer profiles
+56. `61-MARKETING.md` — Campaign management, automation
+
+**Stage 13 — Human Capital Management:**
+57. `62-CORE-HR.md` — Employee records, org structures
+58. `63-PAYROLL.md` — Payroll processing, payslips
+59. `64-TIME-LABOR.md` — Time tracking, overtime
+60. `65-COMPENSATION.md` — Salary plans, merit cycles
+61. `66-BENEFITS.md` — Benefits enrollment
+62. `67-RECRUITING.md` — Talent acquisition, hiring
+63. `68-PERFORMANCE-MANAGEMENT.md` — Reviews, goals, PIPs
+64. `69-LEARNING-DEVELOPMENT.md` — LMS, certifications
+65. `70-SUCCESSION-PLANNING.md` — Talent pipeline, readiness
+66. `71-CAREER-DEVELOPMENT.md` — Skills, career paths
+67. `72-ABSENCE-MANAGEMENT.md` — Leave tracking, accruals
+68. `73-WORKFORCE-SCHEDULING.md` — Shift scheduling
+69. `74-WORKFORCE-PLANNING.md` — Headcount planning
+70. `75-HR-HELP-DESK.md` — HR case management
+71. `76-WORKFORCE-SAFETY.md` — Incident reporting, OSHA
+
+**Stage 14 — Customer Experience (CX/CRM):**
+72. `77-SALES-AUTOMATION.md` — CRM, leads, opportunities
+73. `78-SALES-PLANNING.md` — Territory, quota management
+74. `79-SALES-PERFORMANCE.md` — Commissions, incentives
+75. `80-FIELD-SERVICE.md` — Technician dispatch
+76. `81-CUSTOMER-SERVICE.md` — Support tickets, SLA
+77. `82-KNOWLEDGE-MANAGEMENT.md` — Knowledge base
+78. `83-SERVICE-LOGISTICS.md` — Service parts, RMA
+79. `84-CHANNEL-MANAGEMENT.md` — Partner portal
+
+**Stage 15 — EPM & Governance Extensions:**
+80. `85-TAX-REPORTING.md` — Tax provision (ASC 740)
+81. `86-NARRATIVE-REPORTING.md` — SEC filings, XBRL
+82. `87-ENTERPRISE-DATA-MANAGEMENT.md` — Dimension governance
+83. `88-PROFITABILITY-MANAGEMENT.md` — Activity-based costing
+
+**Stage 16 — Platform & Integration:**
+84. `89-INTEGRATION-CLOUD.md` — iPaaS, adapters
+85. `90-VISUAL-BUILDER.md` — Low-code app builder
+86. `91-PROCESS-AUTOMATION.md` — RPA, process mining
+87. `92-INNOVATION-MANAGEMENT.md` — Innovation pipeline
+
+**Stage 17 — HCM Talent Extensions:**
+88. `93-OPPORTUNITY-MARKETPLACE.md` — Internal talent marketplace
+89. `94-DYNAMIC-SKILLS.md` — AI skills ontology
+90. `95-EMPLOYEE-EXPERIENCE.md` — Engagement, pulse surveys
+91. `96-ONBOARDING.md` — Onboarding journeys
+
+**Stage 18 — CX & Commerce Extensions:**
+92. `97-LOYALTY-MANAGEMENT.md` — Customer loyalty programs
+
+**Stage 19 — Advanced Manufacturing:**
+93. `98-CONTRACT-MANUFACTURING.md` — Outsourced manufacturing
+94. `99-MANUFACTURING-EXECUTION.md` — MES, shop floor, OEE
+
+**Stage 20 — Financial Close & Consolidation:**
+95. `100-FINANCIAL-CONSOLIDATION.md` — Multi-entity consolidation
+96. `101-ACCOUNT-RECONCILIATION.md` — Auto-matching, reconciliation
+97. `104-FEDERAL-FINANCIALS.md` — U.S. Federal financials
+
+**Stage 21 — Analytics & Platform Extensions:**
+98. `102-FUSION-DATA-INTELLIGENCE.md` — Cross-app analytics, KPIs
+99. `103-APPLICATION-COMPOSER.md` — Custom objects, fields
+
+**Stage 22 — Workforce Optimization:**
+100. `105-WORKFORCE-LABOR-OPTIMIZATION.md` — Labor demand forecasting
+
+**Stage 23 — HCM Experience & Governance:**
+101. `106-MANAGER-EDGE.md` — AI manager dashboard
+102. `107-WORK-LIFE.md` — Employee wellness
+103. `108-ADVANCED-HCM-CONTROLS.md` — SoD enforcement, audit
+104. `109-EXPERIENCE-DESIGN-STUDIO.md` — No-code UI customization
+105. `110-ACTIVITY-CENTERS.md` — Role-based workspaces
+
+**Stage 24 — Workforce Strategy & Digital CX:**
+106. `111-WORKFORCE-MODELING.md` — Scenario headcount modeling
+107. `112-DIGITAL-CUSTOMER-SERVICE.md` — AI chatbot, self-service
+108. `119-STRATEGIC-WORKFORCE-PLANNING.md` — Multi-year talent planning
+
+**Stage 25 — Advanced Manufacturing & Analytics:**
+109. `113-PROJECT-DRIVEN-MANUFACTURING.md` — Project-linked production
+110. `114-SCM-ANALYTICS.md` — Supply chain KPIs, dashboards
+111. `115-PROJECT-ASSET-MANAGEMENT.md` — Capital project assets
+112. `116-BUSINESS-CONTINUITY.md` — Disaster recovery
+
+**Stage 26 — EPM Foundation:**
+113. `117-EPM-PLATFORM.md` — OLAP engine, dimensions
+114. `118-FREEFORM-PLANNING.md` — Freeform budgeting
+
+**Stage 27 — Supply Chain Advanced:**
+115. `120-SELF-SERVICE-PROCUREMENT.md` — Employee requisitions
+116. `121-PROCESS-MANUFACTURING.md` — Formula-based production
+117. `122-PRODUCTION-SCHEDULING.md` — Shop floor scheduling
+118. `123-SMART-OPERATIONS.md` — IoT operational intelligence
+119. `124-SOURCING.md` — RFQ/RFP/auction
+120. `125-SUPPLY-CHAIN-EXECUTION.md` — Logistics orchestration
+121. `139-SUPPLIER-MANAGEMENT.md` — Supplier lifecycle
+122. `140-DEMAND-MANAGEMENT.md` — Statistical forecasting
+123. `141-SALES-OPERATIONS-PLANNING.md` — Cross-functional S&OP
+
+**Stage 28 — SCM Logistics & Fulfillment:**
+124. `142-SUPPLY-CHAIN-COLLABORATION.md` — Trading partner collaboration
+125. `143-BACKLOG-MANAGEMENT.md` — Order backlog prioritization
+126. `144-MIXED-MODE-MANUFACTURING.md` — Discrete + process hybrid
+127. `145-SHIPPING-EXECUTION.md` — Outbound shipment planning
+
+**Stage 29 — HCM Talent & Experience:**
+128. `146-TALENT-REVIEW.md` — Calibration sessions, 9-box
+129. `147-ORACLE-JOURNEYS.md` — Guided process templates
+130. `161-WORKFORCE-PREDICTIONS.md` — AI attrition predictions
+131. `169-GOALS-MANAGEMENT.md` — Goal cascading, OKRs
+132. `170-TOUCHPOINTS.md` — Continuous check-ins
+133. `171-GUIDED-LEARNING.md` — In-app contextual help
+134. `175-ORACLE-GROW.md` — AI growth recommendations
+135. `189-HCM-NOW.md` — Rapid HCM deployment
+
+**Stage 30 — CX Sales & Service Extensions:**
+136. `126-B2C-SERVICE.md` — Consumer support
+137. `127-INTELLIGENT-ADVISOR.md` — Rule-based policy automation
+138. `128-LIVE-EXPERIENCE.md` — Co-browsing, video
+139. `129-SERVICE-CENTER.md` — Unified agent workspace
+140. `130-PARTNER-RELATIONSHIP-MANAGEMENT.md` — Partner portals
+141. `131-CX-ANALYTICS.md` — Journey analytics, churn
+142. `179-SALES-ENGAGEMENT.md` — Sales sequences
+
+**Stage 31 — CX Marketing Extensions:**
+143. `168-MAXYMISER.md` — A/B testing, personalization
+144. `180-MDF-MANAGEMENT.md` — Market development funds
+145. `181-ELOQUA.md` — B2B marketing automation
+146. `182-RESPONSYS.md` — B2C cross-channel marketing
+147. `183-CX-ADVERTISING.md` — Advertising activation
+
+**Stage 32 — EPM & Reporting Extensions:**
+148. `152-DISCLOSURE-MANAGEMENT.md` — SEC filings, XBRL
+149. `153-SUPPLEMENTAL-DATA.md` — Non-financial data collection
+150. `154-FINANCIAL-REPORTING.md` — Financial report generation
+151. `155-SMART-VIEW-OFFICE.md` — Office integration
+152. `156-EPM-AUTOMATE.md` — CLI automation
+153. `185-PLANNING-BUDGETING.md` — Planning, budgeting
+154. `187-CALCULATION-MANAGER.md` — Business rule calculations
+
+**Stage 33 — Financial & Project Extensions:**
+155. `158-PROJECT-COSTING.md` — Cost tracking, capitalization
+156. `159-PROJECT-BILLING.md` — T&M, fixed price billing
+157. `160-RESOURCE-MANAGEMENT.md` — Resource planning
+
+**Stage 34 — Platform Services:**
+158. `162-PRODUCT-DEVELOPMENT.md` — ECOs, BOM lifecycle
+159. `163-FUNCTIONAL-SETUP-MANAGER.md` — Implementation management
+160. `164-ENTERPRISE-SEARCH.md` — Full-text search
+161. `165-NOTIFICATION-CENTER.md` — Multi-channel notifications
+162. `166-CONNECTED-WORKER.md` — IoT workforce safety
+163. `167-MAINTENANCE-CLOUD.md` — Asset maintenance
+164. `172-B2B-GATEWAY.md` — EDI, B2B messaging
+165. `173-ENTERPRISE-SCHEDULER.md` — Job scheduling
+166. `174-OTBI.md` — Real-time operational analytics
+167. `176-SPREADSHEET-DESIGNER.md` — Web-based reports
+168. `177-ACCESS-GOVERNOR.md` — Access certification, SoD
+169. `178-SANDBOX-MANAGEMENT.md` — Test environments
+170. `184-CONTENT-MANAGEMENT.md` — Enterprise content
+171. `188-SUPPLIER-QUALIFICATION.md` — Supplier onboarding
+172. `190-ORACLE-ME.md` — Conversational AI platform
+173. `191-DATA-RELATIONSHIP-MGMT.md` — Master data governance
+
+**Stage 35 — Advanced Platform:**
+174. `132-DESKLESS-WORKFORCE.md` — Mobile-first HR
+175. `133-PAYROLL-INTERFACE-CONNECT.md` — Payroll integration
+176. `134-AI-AGENTS-SUITE.md` — Cross-app AI agents
+177. `135-DOCUMENT-IO-AGENT.md` — AI document processing
+178. `186-ORACLE-HEALTH.md` — Clinical data management
+179. `202-FUSION-DATA-INTELLIGENCE.md` — Unified data platform
+
+**Stage 36 — Analytics Extensions:**
+180. `148-HCM-ANALYTICS.md` — Workforce analytics
+181. `149-ERP-ANALYTICS.md` — Financial analytics
+182. `150-BI-PUBLISHER.md` — Template-based reports
+183. `157-PROCUREMENT-ANALYTICS.md` — Spend analysis
+
+**Stage 37 — Industry Verticals (build in parallel):**
+184. `136-HIGHER-EDUCATION.md` — Student management
+185. `137-PUBLIC-SECTOR.md` — Government finance
+186. `138-COMMUNICATIONS.md` — Telecom billing
+187. `192-RETAIL.md` — Store management
+188. `193-AUTOMOTIVE.md` — Dealer management
+189. `194-OIL-GAS.md` — Well lifecycle
+190. `195-LIFE-SCIENCES.md` — Clinical trials
+191. `196-CONSUMER-GOODS.md` — Trade promotions
+192. `197-HIGH-TECH.md` — Configure-to-order
+193. `198-WHOLESALE-DISTRIBUTION.md` — Warehouse zones
+194. `199-TRAVEL-TRANSPORTATION.md` — Fleet, revenue
+195. `200-INDUSTRIAL-MFG.md` — Heavy equipment
+196. `201-RESTAURANTS.md` — Multi-location
+197. `203-CLINICAL-SUPPLY-CHAIN.md` — Healthcare supply chain
+198. `206-CONSTRUCTION-ENGINEERING.md` — Progress billing
+199. `207-FINANCIAL-SERVICES.md` — Banking, KYC/AML
+200. `208-UTILITIES.md` — Utility billing
+201. `209-PROFESSIONAL-SERVICES.md` — Engagement management
+202. `210-AEROSPACE-DEFENSE.md` — Gov contracts, EVM
+203. `211-MEDIA-ENTERTAINMENT.md` — Content rights
+
+**Stage 38 — Migration Tools:**
+204. `204-TALEO-MIGRATION.md` — Taleo to Fusion migration
+205. `205-SIEBEL-MIGRATION.md` — Siebel CRM migration
+
 ### 2.2 How to Read Each Spec
 Every module spec follows this structure:
 1. **Domain Overview** — What this service does
