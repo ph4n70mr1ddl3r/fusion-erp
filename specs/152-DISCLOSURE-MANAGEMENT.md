@@ -239,7 +239,48 @@ CREATE INDEX idx_dm_filing_package ON dm_filing_submissions(package_id);
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.disclosure.v1;
+
+service DisclosureService {
+    rpc GetPackage(GetPackageRequest) returns (GetPackageResponse);
+    rpc CreatePackage(CreatePackageRequest) returns (CreatePackageResponse);
+    rpc GenerateXBRL(GenerateXBRLRequest) returns (GenerateXBRLResponse);
+    rpc SubmitFiling(SubmitFilingRequest) returns (SubmitFilingResponse);
+}
+
+message DisclosurePackage { string id = 1; string tenant_id = 2; string name = 3; string period = 4; string package_type = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+message DisclosureSection { string id = 1; string tenant_id = 2; string package_id = 3; string section_name = 4; string content = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+
+message GetPackageRequest { string tenant_id = 1; string id = 2; }
+message GetPackageResponse { DisclosurePackage data = 1; }
+message CreatePackageRequest { string tenant_id = 1; string name = 2; string period = 3; string package_type = 4; }
+message CreatePackageResponse { DisclosurePackage data = 1; }
+message GenerateXBRLRequest { string tenant_id = 1; string package_id = 2; }
+message GenerateXBRLResponse { string xbrl_content = 1; string filing_url = 2; }
+message SubmitFilingRequest { string tenant_id = 1; string package_id = 2; string filing_type = 3; }
+message SubmitFilingResponse { string submission_id = 1; string status = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | dm_disclosure_packages | — |
+| V002 | dm_disclosure_sections | V001 |
+| V003 | dm_xbrl_mappings | V002 |
+| V004 | dm_review_audit | V003 |
+| V005 | dm_filing_submissions | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Review Workflow**: All sections must be reviewed and approved before package submission
 2. **Data Linking**: Linked financial data auto-refreshes when source data changes
@@ -252,7 +293,7 @@ CREATE INDEX idx_dm_filing_package ON dm_filing_submissions(package_id);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

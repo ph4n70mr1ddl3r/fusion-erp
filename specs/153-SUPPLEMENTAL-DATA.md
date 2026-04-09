@@ -222,7 +222,49 @@ CREATE INDEX idx_sd_history_task ON sd_collection_history(task_id, timestamp DES
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.supplemental.v1;
+
+service SupplementalDataService {
+    rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+    rpc CreateCollectionTask(CreateCollectionTaskRequest) returns (CreateCollectionTaskResponse);
+    rpc SubmitData(SubmitDataRequest) returns (SubmitDataResponse);
+    rpc GetSubmittedData(GetSubmittedDataRequest) returns (GetSubmittedDataResponse);
+}
+
+message Template { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string fields = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+message CollectionTask { string id = 1; string tenant_id = 2; string template_id = 3; string assignee_id = 4; string due_date = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+message SubmittedEntry { string id = 1; string tenant_id = 2; string task_id = 3; string data = 4; string status = 5; string created_at = 6; }
+
+message GetTemplateRequest { string tenant_id = 1; string id = 2; }
+message GetTemplateResponse { Template data = 1; }
+message CreateCollectionTaskRequest { string tenant_id = 1; string template_id = 2; string assignee_id = 3; string due_date = 4; }
+message CreateCollectionTaskResponse { CollectionTask data = 1; }
+message SubmitDataRequest { string tenant_id = 1; string task_id = 2; string data = 3; }
+message SubmitDataResponse { string submission_id = 1; string status = 2; }
+message GetSubmittedDataRequest { string tenant_id = 1; string task_id = 2; }
+message GetSubmittedDataResponse { repeated SubmittedEntry items = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sd_templates | — |
+| V002 | sd_collection_tasks | V001 |
+| V003 | sd_submitted_data | V002 |
+| V004 | sd_integration_mappings | V003 |
+| V005 | sd_collection_history | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Validation**: All data validated against template rules before submission
 2. **Approval**: Approved data locked from editing; rejected data returned with comments
@@ -234,7 +276,7 @@ CREATE INDEX idx_sd_history_task ON sd_collection_history(task_id, timestamp DES
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

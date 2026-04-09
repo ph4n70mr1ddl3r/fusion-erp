@@ -237,7 +237,50 @@ CREATE TABLE ha_custom_reports (
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.hcm_analytics.v1;
+
+service HCMAnalyticsService {
+    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
+    rpc GetKPI(GetKPIRequest) returns (GetKPIResponse);
+    rpc GetWorkforceMetrics(GetWorkforceMetricsRequest) returns (GetWorkforceMetricsResponse);
+    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+}
+
+message Dashboard { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string dashboard_type = 5; string config = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message KPIDefinition { string id = 1; string tenant_id = 2; string kpi_code = 3; string kpi_name = 4; string description = 5; string metric_type = 6; string calculation_formula = 7; string dimensions = 8; string status = 9; string created_at = 10; string updated_at = 11; }
+message KPISnapshot { string id = 1; string tenant_id = 2; string kpi_id = 3; string snapshot_date = 4; double metric_value = 5; string dimensions = 6; string created_at = 7; }
+message WorkforceMetric { string id = 1; string tenant_id = 2; string metric_date = 3; string metric_type = 4; double metric_value = 5; string department = 6; string location = 7; string created_at = 8; }
+
+message GetDashboardRequest { string tenant_id = 1; string id = 2; }
+message GetDashboardResponse { Dashboard data = 1; }
+message GetKPIRequest { string tenant_id = 1; string id = 2; }
+message GetKPIResponse { KPIDefinition data = 1; repeated KPISnapshot snapshots = 2; }
+message GetWorkforceMetricsRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; string department = 4; }
+message GetWorkforceMetricsResponse { repeated WorkforceMetric items = 1; }
+message GenerateReportRequest { string tenant_id = 1; string report_type = 2; string date_from = 3; string date_to = 4; }
+message GenerateReportResponse { string report_id = 1; string report_url = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ha_dashboards | — |
+| V002 | ha_kpi_definitions | — |
+| V003 | ha_kpi_snapshots | V002 |
+| V004 | ha_workforce_metrics | — |
+| V005 | ha_custom_reports | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Data Aggregation**: Workforce metrics aggregated daily from transactional HCM data
 2. **KPI Refresh**: KPIs refreshed at configured frequency; REAL_TIME for critical KPIs
@@ -249,7 +292,7 @@ CREATE TABLE ha_custom_reports (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

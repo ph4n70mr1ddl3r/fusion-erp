@@ -253,7 +253,49 @@ CREATE TABLE ea_custom_reports (
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.erp_analytics.v1;
+
+service ERPAnalyticsService {
+    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
+    rpc GetFinancialMetrics(GetFinancialMetricsRequest) returns (GetFinancialMetricsResponse);
+    rpc GetSpendAnalysis(GetSpendAnalysisRequest) returns (GetSpendAnalysisResponse);
+    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+}
+
+message Dashboard { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string dashboard_type = 5; string config = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message FinancialMetric { string id = 1; string tenant_id = 2; string metric_date = 3; string metric_type = 4; double metric_value = 5; string currency_code = 6; string created_at = 7; }
+message SpendEntry { string id = 1; string tenant_id = 2; string category = 3; int64 amount_cents = 4; string currency_code = 5; string period = 6; string created_at = 7; }
+
+message GetDashboardRequest { string tenant_id = 1; string id = 2; }
+message GetDashboardResponse { Dashboard data = 1; }
+message GetFinancialMetricsRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; }
+message GetFinancialMetricsResponse { repeated FinancialMetric items = 1; }
+message GetSpendAnalysisRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; string category = 4; }
+message GetSpendAnalysisResponse { repeated SpendEntry items = 1; double total_cents = 2; }
+message GenerateReportRequest { string tenant_id = 1; string report_type = 2; string date_from = 3; string date_to = 4; }
+message GenerateReportResponse { string report_id = 1; string report_url = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ea_dashboards | — |
+| V002 | ea_kpi_definitions | V001 |
+| V003 | ea_financial_metrics | V002 |
+| V004 | ea_spend_analysis | V003 |
+| V005 | ea_custom_reports | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Data Aggregation**: Financial metrics aggregated daily from ERP transactional data
 2. **Multi-Currency**: All currency-aware KPIs converted to tenant base currency
@@ -265,7 +307,7 @@ CREATE TABLE ea_custom_reports (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

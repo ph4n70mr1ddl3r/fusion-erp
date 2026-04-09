@@ -241,7 +241,48 @@ CREATE TABLE bp_burst_config (
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.bi_publisher.v1;
+
+service BIPublisherService {
+    rpc GetReportDefinition(GetReportDefinitionRequest) returns (GetReportDefinitionResponse);
+    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+    rpc ScheduleReport(ScheduleReportRequest) returns (ScheduleReportResponse);
+    rpc GetJobStatus(GetJobStatusRequest) returns (GetJobStatusResponse);
+}
+
+message ReportDefinition { string id = 1; string tenant_id = 2; string report_code = 3; string name = 4; string description = 5; string data_source = 6; string output_format = 7; string status = 8; string created_at = 9; string updated_at = 10; }
+message ReportJob { string id = 1; string tenant_id = 2; string report_id = 3; string status = 4; string output_format = 5; string output_url = 6; string started_at = 7; string completed_at = 8; string created_at = 9; }
+
+message GetReportDefinitionRequest { string tenant_id = 1; string id = 2; }
+message GetReportDefinitionResponse { ReportDefinition data = 1; }
+message GenerateReportRequest { string tenant_id = 1; string report_id = 2; string output_format = 3; string parameters = 4; }
+message GenerateReportResponse { string job_id = 1; string output_url = 2; }
+message ScheduleReportRequest { string tenant_id = 1; string report_id = 2; string schedule_cron = 3; string recipients = 4; }
+message ScheduleReportResponse { string schedule_id = 1; }
+message GetJobStatusRequest { string tenant_id = 1; string job_id = 2; }
+message GetJobStatusResponse { string job_id = 1; string status = 2; string output_url = 3; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | bp_report_definitions | — |
+| V002 | bp_report_templates | V001 |
+| V003 | bp_report_jobs | V002 |
+| V004 | bp_report_schedules | V003 |
+| V005 | bp_burst_config | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Template Validation**: Templates validated against data source schema before saving
 2. **Row Limit**: Reports exceeding row limit fail with partial results warning
@@ -254,7 +295,7 @@ CREATE TABLE bp_burst_config (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

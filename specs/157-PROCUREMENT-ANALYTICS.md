@@ -240,7 +240,273 @@ CREATE INDEX idx_pa_savings_type ON pa_savings_tracking(tenant_id, initiative_ty
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.proc_analytics.v1;
+
+service ProcurementAnalyticsService {
+    // Spend analysis
+    rpc GetSpendAnalysis(GetSpendAnalysisRequest) returns (SpendAnalysisList);
+    rpc GetSpendBySupplier(GetSpendBySupplierRequest) returns (SupplierSpendList);
+    rpc GetMaverickSpend(GetMaverickSpendRequest) returns (MaverickSpendList);
+    rpc ClassifySpend(ClassifySpendRequest) returns (ClassifySpendResponse);
+
+    // Supplier performance
+    rpc GetSupplierScorecard(GetSupplierScorecardRequest) returns (SupplierAnalytics);
+    rpc GetSupplierRankings(GetSupplierRankingsRequest) returns (SupplierRankingList);
+
+    // Contract & savings
+    rpc GetContractUtilization(GetContractUtilizationRequest) returns (ContractUtilizationList);
+    rpc CreateSavingsInitiative(CreateSavingsInitiativeRequest) returns (SavingsTracking);
+
+    // Dashboard
+    rpc GetDashboard(GetDashboardRequest) returns (DashboardData);
+}
+
+// Entity messages
+message SpendAnalysisEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string period = 3;
+    string spend_category = 4;
+    string sub_category = 5;
+    string supplier_id = 6;
+    string department_id = 7;
+    string cost_center_id = 8;
+    string legal_entity_id = 9;
+    int64 total_spend_cents = 10;
+    int32 invoice_count = 11;
+    int32 po_count = 12;
+    int64 po_backed_spend_cents = 13;
+    int64 non_po_spend_cents = 14;
+    int64 contract_spend_cents = 15;
+    int64 maverick_spend_cents = 16;
+    double maverick_spend_pct = 17;
+    int64 duplicate_spend_cents = 18;
+    int64 savings_realized_cents = 19;
+    double avg_payment_terms_days = 20;
+    int64 early_payment_discount_cents = 21;
+    int64 late_payment_penalty_cents = 22;
+}
+
+message SupplierAnalytics {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string evaluation_period = 4;
+    int64 total_spend_cents = 5;
+    int32 po_count = 6;
+    double on_time_delivery_pct = 7;
+    double quality_acceptance_pct = 8;
+    double invoice_accuracy_pct = 9;
+    double avg_lead_time_days = 10;
+    double lead_time_variability_days = 11;
+    double price_competitiveness_score = 12;
+    double responsiveness_score = 13;
+    double overall_score = 14;
+    double risk_score = 15;
+    double contract_compliance_pct = 16;
+    double sustainability_score = 17;
+    int32 incident_count = 18;
+    int32 corrective_actions_open = 19;
+}
+
+message ContractUtilization {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string period = 4;
+    int64 contracted_value_cents = 5;
+    int64 utilized_value_cents = 6;
+    double utilization_pct = 7;
+    int64 off_contract_spend_cents = 8;
+    int64 savings_vs_market_cents = 9;
+    int64 remaining_value_cents = 10;
+    int32 days_remaining = 11;
+    string renewal_risk = 12;
+}
+
+message SavingsTracking {
+    string id = 1;
+    string tenant_id = 2;
+    string initiative_name = 3;
+    string initiative_type = 4;
+    int64 baseline_spend_cents = 5;
+    int64 target_savings_cents = 6;
+    int64 realized_savings_cents = 7;
+    double savings_pct = 8;
+    string period = 9;
+    string owner_id = 10;
+    string status = 11;
+    string start_date = 12;
+    string end_date = 13;
+}
+
+// Request/Response messages
+message GetSpendAnalysisRequest {
+    string tenant_id = 1;
+    string period = 2;
+    string spend_category = 3;
+    string department_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message SpendAnalysisList {
+    repeated SpendAnalysisEntry entries = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message GetSpendBySupplierRequest {
+    string tenant_id = 1;
+    string period = 2;
+    string supplier_id = 3;
+}
+
+message SupplierSpendList {
+    repeated SpendAnalysisEntry entries = 1;
+    int64 total_spend_cents = 2;
+}
+
+message GetMaverickSpendRequest {
+    string tenant_id = 1;
+    string period = 2;
+    double threshold_pct = 3;
+}
+
+message MaverickSpendList {
+    repeated SpendAnalysisEntry entries = 1;
+    int64 total_maverick_cents = 2;
+    double maverick_pct = 3;
+}
+
+message ClassifySpendRequest {
+    string tenant_id = 1;
+    string period = 2;
+    bool reclassify_all = 3;
+}
+
+message ClassifySpendResponse {
+    int32 classified_count = 1;
+    int32 unchanged_count = 2;
+}
+
+message GetSupplierScorecardRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+    string evaluation_period = 3;
+}
+
+message GetSupplierRankingsRequest {
+    string tenant_id = 1;
+    string evaluation_period = 2;
+    int32 page_size = 3;
+}
+
+message SupplierRankingList {
+    repeated SupplierAnalytics suppliers = 1;
+    int32 total_count = 2;
+}
+
+message GetContractUtilizationRequest {
+    string tenant_id = 1;
+    string period = 2;
+    double min_utilization_pct = 3;
+    double max_utilization_pct = 4;
+}
+
+message ContractUtilizationList {
+    repeated ContractUtilization contracts = 1;
+}
+
+message CreateSavingsInitiativeRequest {
+    string tenant_id = 1;
+    string initiative_name = 2;
+    string initiative_type = 3;
+    int64 baseline_spend_cents = 4;
+    int64 target_savings_cents = 5;
+    string period = 6;
+    string owner_id = 7;
+    string start_date = 8;
+    string end_date = 9;
+}
+
+message GetDashboardRequest {
+    string tenant_id = 1;
+    string period = 2;
+}
+
+message DashboardData {
+    int64 total_spend_cents = 1;
+    double maverick_spend_pct = 2;
+    double contract_coverage_pct = 3;
+    double avg_cycle_time_days = 4;
+    int64 savings_realized_cents = 5;
+    int32 supplier_count = 6;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pa_spend_analysis | — |
+| V002 | pa_supplier_analytics | — |
+| V003 | pa_po_metrics | — |
+| V004 | pa_contract_utilization | — |
+| V005 | pa_savings_tracking | — |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.proc_analytics.v1;
+
+service ProcurementAnalyticsService {
+    rpc GetSpendAnalysis(GetSpendAnalysisRequest) returns (GetSpendAnalysisResponse);
+    rpc GetSupplierAnalytics(GetSupplierAnalyticsRequest) returns (GetSupplierAnalyticsResponse);
+    rpc GetContractUtilization(GetContractUtilizationRequest) returns (GetContractUtilizationResponse);
+    rpc GetSavingsTracking(GetSavingsTrackingRequest) returns (GetSavingsTrackingResponse);
+}
+
+message SpendItem { string id = 1; string tenant_id = 2; string category = 3; string supplier_id = 4; int64 amount_cents = 5; string currency_code = 6; string period = 7; string created_at = 8; }
+message SupplierAnalytics { string id = 1; string tenant_id = 2; string supplier_id = 3; int64 total_spend_cents = 4; double on_time_delivery_rate = 5; double quality_score = 6; string period = 7; string created_at = 8; }
+message ContractUtil { string id = 1; string tenant_id = 2; string contract_id = 3; int64 committed_cents = 4; int64 spent_cents = 5; double utilization_percent = 6; string period = 7; string created_at = 8; }
+message SavingsEntry { string id = 1; string tenant_id = 2; string category = 3; int64 savings_cents = 4; string period = 5; string created_at = 6; }
+
+message GetSpendAnalysisRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; string category = 4; }
+message GetSpendAnalysisResponse { repeated SpendItem items = 1; int64 total_cents = 2; }
+message GetSupplierAnalyticsRequest { string tenant_id = 1; string supplier_id = 2; }
+message GetSupplierAnalyticsResponse { SupplierAnalytics data = 1; }
+message GetContractUtilizationRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; }
+message GetContractUtilizationResponse { repeated ContractUtil items = 1; }
+message GetSavingsTrackingRequest { string tenant_id = 1; string period = 2; }
+message GetSavingsTrackingResponse { repeated SavingsEntry items = 1; int64 total_savings_cents = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pa_spend_analysis | — |
+| V002 | pa_supplier_analytics | V001 |
+| V003 | pa_po_metrics | V002 |
+| V004 | pa_contract_utilization | V003 |
+| V005 | pa_savings_tracking | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Spend Classification**: AI-powered spend auto-classification using invoice descriptions
 2. **Maverick Detection**: Spend outside contracted suppliers flagged as maverick
@@ -252,7 +518,7 @@ CREATE INDEX idx_pa_savings_type ON pa_savings_tracking(tenant_id, initiative_ty
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

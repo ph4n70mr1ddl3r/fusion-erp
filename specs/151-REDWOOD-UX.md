@@ -251,7 +251,49 @@ CREATE TABLE ru_accessibility_audits (
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.redwood_ux.v1;
+
+service RedwoodUXService {
+    rpc GetTheme(GetThemeRequest) returns (GetThemeResponse);
+    rpc GetComponent(GetComponentRequest) returns (GetComponentResponse);
+    rpc RenderPage(RenderPageRequest) returns (RenderPageResponse);
+    rpc RunAccessibilityAudit(RunAccessibilityAuditRequest) returns (RunAccessibilityAuditResponse);
+}
+
+message Theme { string id = 1; string tenant_id = 2; string theme_name = 3; string description = 4; string tokens = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+message Component { string id = 1; string tenant_id = 2; string component_name = 3; string category = 4; string props_schema = 5; string template = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message AccessibilityIssue { string severity = 1; string rule_id = 2; string description = 3; string element = 4; string suggestion = 5; }
+
+message GetThemeRequest { string tenant_id = 1; string id = 2; }
+message GetThemeResponse { Theme data = 1; }
+message GetComponentRequest { string tenant_id = 1; string id = 2; }
+message GetComponentResponse { Component data = 1; }
+message RenderPageRequest { string tenant_id = 1; string template_id = 2; string context = 3; }
+message RenderPageResponse { string html = 1; string css = 2; }
+message RunAccessibilityAuditRequest { string tenant_id = 1; string page_url = 2; }
+message RunAccessibilityAuditResponse { repeated AccessibilityIssue issues = 1; int32 score = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ru_design_tokens | — |
+| V002 | ru_themes | V001 |
+| V003 | ru_components | V002 |
+| V004 | ru_page_templates | V003 |
+| V005 | ru_accessibility_audits | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Token Immutability**: Published tokens cannot be deleted, only deprecated with replacement
 2. **Theme Inheritance**: Custom themes inherit from base theme; overrides explicitly defined
@@ -264,7 +306,7 @@ CREATE TABLE ru_accessibility_audits (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

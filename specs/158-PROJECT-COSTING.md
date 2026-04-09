@@ -239,7 +239,263 @@ CREATE INDEX idx_pc_cap_status ON pc_capitalization_events(tenant_id, status);
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.project_costing.v1;
+
+service ProjectCostingService {
+    // Cost budgets
+    rpc SetBudget(SetBudgetRequest) returns (CostBudget);
+    rpc GetBudgetSummary(GetBudgetSummaryRequest) returns (CostBudgetSummary);
+
+    // Cost transactions
+    rpc RecordTransaction(RecordTransactionRequest) returns (CostTransaction);
+    rpc GetTransaction(GetTransactionRequest) returns (CostTransaction);
+    rpc ListTransactions(ListTransactionsRequest) returns (TransactionList);
+    rpc ReverseTransaction(ReverseTransactionRequest) returns (CostTransaction);
+
+    // Burden & capitalization
+    rpc ApplyBurden(ApplyBurdenRequest) returns (ApplyBurdenResponse);
+    rpc CreateCapitalizationEvent(CreateCapitalizationEventRequest) returns (CapitalizationEvent);
+
+    // Cost analysis
+    rpc GetCostAnalysis(GetCostAnalysisRequest) returns (CostAnalysisResponse);
+}
+
+// Entity messages
+message CostBudget {
+    string id = 1;
+    string tenant_id = 2;
+    string project_id = 3;
+    string task_id = 4;
+    string budget_type = 5;
+    string cost_type = 6;
+    int64 budgeted_cost_cents = 7;
+    int64 committed_cost_cents = 8;
+    int64 actual_cost_cents = 9;
+    int64 remaining_budget_cents = 10;
+    int64 forecast_to_complete_cents = 11;
+    int64 estimate_at_completion_cents = 12;
+    int64 variance_cents = 13;
+    double variance_pct = 14;
+    string currency_code = 15;
+    string period = 16;
+}
+
+message CostTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string transaction_number = 3;
+    string project_id = 4;
+    string task_id = 5;
+    string cost_type = 6;
+    string source_type = 7;
+    string source_document_id = 8;
+    string source_line_id = 9;
+    string description = 10;
+    string quantity = 11;
+    string uom = 12;
+    int64 raw_cost_cents = 13;
+    int64 burden_cost_cents = 14;
+    int64 total_cost_cents = 15;
+    string currency_code = 16;
+    double exchange_rate = 17;
+    string transaction_date = 18;
+    string accounting_date = 19;
+    string gl_account_id = 20;
+    string cost_center_id = 21;
+    bool capitalized = 22;
+    string capitalization_event_id = 23;
+    string reversal_of_id = 24;
+}
+
+message CapitalizationEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string event_number = 3;
+    string project_id = 4;
+    string task_id = 5;
+    string capitalization_date = 6;
+    int64 total_capitalized_cents = 7;
+    string cost_transaction_ids = 8;
+    string asset_id = 9;
+    string asset_number = 10;
+    string gl_journal_id = 11;
+    string status = 12;
+}
+
+// Request/Response messages
+message SetBudgetRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string task_id = 3;
+    string budget_type = 4;
+    string cost_type = 5;
+    int64 budgeted_cost_cents = 6;
+    string currency_code = 7;
+    string period = 8;
+}
+
+message GetBudgetSummaryRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string period = 3;
+}
+
+message CostBudgetSummary {
+    string project_id = 1;
+    int64 total_budgeted_cents = 2;
+    int64 total_actual_cents = 3;
+    int64 total_committed_cents = 4;
+    int64 total_forecast_cents = 5;
+    int64 total_variance_cents = 6;
+    double overall_variance_pct = 7;
+    repeated CostBudget budgets = 8;
+}
+
+message RecordTransactionRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string task_id = 3;
+    string cost_type = 4;
+    string source_type = 5;
+    string source_document_id = 6;
+    string description = 7;
+    int64 raw_cost_cents = 8;
+    string currency_code = 9;
+    string transaction_date = 10;
+}
+
+message GetTransactionRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListTransactionsRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string cost_type = 3;
+    string date_from = 4;
+    string date_to = 5;
+    int32 page_size = 6;
+    string page_token = 7;
+}
+
+message TransactionList {
+    repeated CostTransaction transactions = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message ReverseTransactionRequest {
+    string transaction_id = 1;
+    string tenant_id = 2;
+    string reason = 3;
+}
+
+message ApplyBurdenRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string schedule_name = 3;
+    repeated string transaction_ids = 4;
+}
+
+message ApplyBurdenResponse {
+    int32 transactions_processed = 1;
+    int64 total_burden_cents = 2;
+}
+
+message CreateCapitalizationEventRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string task_id = 3;
+    string capitalization_date = 4;
+    repeated string transaction_ids = 5;
+}
+
+message GetCostAnalysisRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string period_from = 3;
+    string period_to = 4;
+}
+
+message CostAnalysisResponse {
+    string project_id = 1;
+    int64 total_actual_cents = 2;
+    int64 total_budgeted_cents = 3;
+    int64 total_forecast_cents = 4;
+    double cost_performance_index = 5;
+    double schedule_performance_index = 6;
+    repeated CostTrendPoint trend = 7;
+}
+
+message CostTrendPoint {
+    string period = 1;
+    int64 actual_cents = 2;
+    int64 budget_cents = 3;
+    int64 forecast_cents = 4;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pc_cost_budgets | — |
+| V002 | pc_cost_transactions | — |
+| V003 | pc_burden_schedules | — |
+| V004 | pc_capitalization_rules | — |
+| V005 | pc_capitalization_events | V002 |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.project_costing.v1;
+
+service ProjectCostingService {
+    rpc GetCostBudget(GetCostBudgetRequest) returns (GetCostBudgetResponse);
+    rpc RecordCostTransaction(RecordCostTransactionRequest) returns (RecordCostTransactionResponse);
+    rpc GetProjectCosts(GetProjectCostsRequest) returns (GetProjectCostsResponse);
+    rpc CapitalizeCosts(CapitalizeCostsRequest) returns (CapitalizeCostsResponse);
+}
+
+message CostBudget { string id = 1; string tenant_id = 2; string project_id = 3; int64 budget_cents = 4; int64 committed_cents = 5; int64 spent_cents = 6; string currency_code = 7; string period = 8; string created_at = 9; string updated_at = 10; }
+message CostTransaction { string id = 1; string tenant_id = 2; string project_id = 3; string transaction_type = 4; int64 amount_cents = 5; string currency_code = 6; string description = 7; string transaction_date = 8; string created_at = 9; }
+
+message GetCostBudgetRequest { string tenant_id = 1; string id = 2; }
+message GetCostBudgetResponse { CostBudget data = 1; }
+message RecordCostTransactionRequest { string tenant_id = 1; string project_id = 2; string transaction_type = 3; int64 amount_cents = 4; string description = 5; }
+message RecordCostTransactionResponse { CostTransaction data = 1; }
+message GetProjectCostsRequest { string tenant_id = 1; string project_id = 2; string date_from = 3; string date_to = 4; }
+message GetProjectCostsResponse { repeated CostTransaction items = 1; int64 total_cents = 2; }
+message CapitalizeCostsRequest { string tenant_id = 1; string project_id = 2; string period = 3; }
+message CapitalizeCostsResponse { string event_id = 1; int64 capitalized_cents = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pc_cost_budgets | — |
+| V002 | pc_cost_transactions | V001 |
+| V003 | pc_burden_schedules | V002 |
+| V004 | pc_capitalization_rules | V003 |
+| V005 | pc_capitalization_events | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Budget Control**: Configurable budget tolerance; hard block or warning on overrun
 2. **Burden Calculation**: Overhead applied automatically based on burden schedule rates
@@ -252,7 +508,7 @@ CREATE INDEX idx_pc_cap_status ON pc_capitalization_events(tenant_id, status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

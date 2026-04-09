@@ -267,7 +267,189 @@ CREATE INDEX idx_j_analytics_tenant ON j_journey_analytics(tenant_id, journey_ty
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.journeys.v1;
+
+service JourneysService {
+    // Template CRUD
+    rpc CreateTemplate(CreateTemplateRequest) returns (Template);
+    rpc GetTemplate(GetTemplateRequest) returns (Template);
+    rpc ListTemplates(ListTemplatesRequest) returns (TemplateList);
+    rpc PublishTemplate(PublishTemplateRequest) returns (Template);
+
+    // Instance lifecycle
+    rpc AssignJourney(AssignJourneyRequest) returns (JourneyInstance);
+    rpc GetInstance(GetInstanceRequest) returns (JourneyInstance);
+
+    // Step execution
+    rpc CompleteStep(CompleteStepRequest) returns (StepInstance);
+    rpc GetAnalytics(GetAnalyticsRequest) returns (JourneyAnalytics);
+}
+
+// Entity messages
+message Template {
+    string id = 1;
+    string tenant_id = 2;
+    string template_code = 3;
+    string template_name = 4;
+    string description = 5;
+    string journey_type = 6;
+    string target_audience = 7;
+    int32 estimated_duration_days = 8;
+    string personalization_rules = 9;
+    string eligibility_criteria = 10;
+    bool auto_assign = 11;
+    string auto_assign_trigger = 12;
+    string default_language = 13;
+    string status = 14;
+    int32 version_number = 15;
+    string published_at = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message JourneyInstance {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string person_id = 4;
+    string manager_id = 5;
+    string journey_type = 6;
+    string trigger_event = 7;
+    string status = 8;
+    string started_at = 9;
+    string completed_at = 10;
+    string target_completion = 11;
+    double completion_pct = 12;
+    int32 total_steps = 13;
+    int32 completed_steps = 14;
+    int32 overdue_steps = 15;
+    string personalization_applied = 16;
+    string assigned_by = 17;
+    string notes = 18;
+}
+
+message StepInstance {
+    string id = 1;
+    string tenant_id = 2;
+    string journey_instance_id = 3;
+    string step_id = 4;
+    string step_code = 5;
+    string step_title = 6;
+    string step_type = 7;
+    string assigned_to = 8;
+    string assignee_id = 9;
+    string status = 10;
+    string due_date = 11;
+    string started_at = 12;
+    string completed_at = 13;
+    string skipped_reason = 14;
+    string form_data = 15;
+    string integration_response = 16;
+    string notes = 17;
+    string attachments = 18;
+}
+
+message JourneyAnalytics {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string journey_type = 4;
+    string period = 5;
+    int32 instances_started = 6;
+    int32 instances_completed = 7;
+    int32 instances_cancelled = 8;
+    int32 instances_in_progress = 9;
+    double avg_completion_days = 10;
+    double avg_completion_pct = 11;
+    string step_completion_rates = 12;
+    string most_overdue_steps = 13;
+    double nps_score = 14;
+    int32 feedback_count = 15;
+}
+
+// Request/Response messages
+message CreateTemplateRequest {
+    string tenant_id = 1;
+    string template_code = 2;
+    string template_name = 3;
+    string description = 4;
+    string journey_type = 5;
+    string target_audience = 6;
+    int32 estimated_duration_days = 7;
+    string personalization_rules = 8;
+    string eligibility_criteria = 9;
+    bool auto_assign = 10;
+}
+
+message GetTemplateRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListTemplatesRequest {
+    string tenant_id = 1;
+    string journey_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message TemplateList {
+    repeated Template templates = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message PublishTemplateRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message AssignJourneyRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string person_id = 3;
+    string manager_id = 4;
+    string trigger_event = 5;
+    string assigned_by = 6;
+}
+
+message GetInstanceRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message CompleteStepRequest {
+    string step_instance_id = 1;
+    string tenant_id = 2;
+    string form_data = 3;
+    string notes = 4;
+}
+
+message GetAnalyticsRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string period = 3;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | j_journey_templates | -- |
+| V002 | j_journey_steps | V001 |
+| V003 | j_journey_instances | V001 |
+| V004 | j_step_instances | V002, V003 |
+| V005 | j_journey_analytics | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Auto-Assignment**: Journeys auto-assigned based on configured trigger events matching employee attributes
 2. **Personalization**: Steps dynamically adjusted based on employee role, location, department
@@ -280,7 +462,7 @@ CREATE INDEX idx_j_analytics_tenant ON j_journey_analytics(tenant_id, journey_ty
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

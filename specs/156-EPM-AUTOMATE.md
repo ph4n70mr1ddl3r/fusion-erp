@@ -238,7 +238,226 @@ CREATE INDEX idx_ea_audit_tenant ON ea_audit_log(tenant_id, timestamp DESC);
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.epm_automate.v1;
+
+service EpmAutomateService {
+    // Script management
+    rpc CreateScript(CreateScriptRequest) returns (Script);
+    rpc GetScript(GetScriptRequest) returns (Script);
+    rpc ListScripts(ListScriptsRequest) returns (ScriptList);
+    rpc ValidateScript(ValidateScriptRequest) returns (ValidateScriptResponse);
+
+    // Job scheduling
+    rpc CreateJob(CreateJobRequest) returns (ScheduledJob);
+    rpc ExecuteJob(ExecuteJobRequest) returns (JobExecution);
+
+    // Execution monitoring
+    rpc GetExecution(GetExecutionRequest) returns (JobExecution);
+    rpc ListExecutions(ListExecutionsRequest) returns (ExecutionList);
+}
+
+// Entity messages
+message Script {
+    string id = 1;
+    string tenant_id = 2;
+    string script_name = 3;
+    string description = 4;
+    string script_type = 5;
+    string source_code = 6;
+    string parameters = 7;
+    string target_application = 8;
+    int32 timeout_seconds = 9;
+    int32 retry_count = 10;
+    int32 retry_delay_seconds = 11;
+    string status = 12;
+    string last_modified_by = 13;
+    int32 version = 14;
+}
+
+message ScheduledJob {
+    string id = 1;
+    string tenant_id = 2;
+    string job_name = 3;
+    string script_id = 4;
+    string cron_expression = 5;
+    string timezone = 6;
+    string parameters = 7;
+    string priority = 8;
+    int32 max_concurrent = 9;
+    string active_from = 10;
+    string active_to = 11;
+    string status = 12;
+    string last_run_at = 13;
+    string last_run_status = 14;
+    string next_run_at = 15;
+    int32 total_runs = 16;
+    int32 success_count = 17;
+    int32 failure_count = 18;
+    bool notification_on_failure = 19;
+    string notification_recipients = 20;
+    string dependent_job_id = 21;
+}
+
+message JobExecution {
+    string id = 1;
+    string tenant_id = 2;
+    string job_id = 3;
+    string execution_number = 4;
+    string trigger_type = 5;
+    string status = 6;
+    string started_at = 7;
+    string completed_at = 8;
+    int32 execution_time_ms = 9;
+    string parameters = 10;
+    string output_log = 11;
+    string error_log = 12;
+    int32 records_processed = 13;
+    int32 records_succeeded = 14;
+    int32 records_failed = 15;
+    string artifacts_generated = 16;
+    int32 retry_attempt = 17;
+    string triggered_by = 18;
+}
+
+// Request/Response messages
+message CreateScriptRequest {
+    string tenant_id = 1;
+    string script_name = 2;
+    string description = 3;
+    string script_type = 4;
+    string source_code = 5;
+    string parameters = 6;
+    string target_application = 7;
+    int32 timeout_seconds = 8;
+}
+
+message GetScriptRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListScriptsRequest {
+    string tenant_id = 1;
+    string script_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ScriptList {
+    repeated Script scripts = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message ValidateScriptRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ValidateScriptResponse {
+    bool valid = 1;
+    repeated string errors = 2;
+    repeated string warnings = 3;
+}
+
+message CreateJobRequest {
+    string tenant_id = 1;
+    string job_name = 2;
+    string script_id = 3;
+    string cron_expression = 4;
+    string timezone = 5;
+    string parameters = 6;
+    string priority = 7;
+}
+
+message ExecuteJobRequest {
+    string job_id = 1;
+    string tenant_id = 2;
+    string parameters = 3;
+    string trigger_type = 4;
+}
+
+message GetExecutionRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListExecutionsRequest {
+    string tenant_id = 1;
+    string job_id = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ExecutionList {
+    repeated JobExecution executions = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ea_scripts | — |
+| V002 | ea_scheduled_jobs | V001 |
+| V003 | ea_job_executions | V002 |
+| V004 | ea_operations | — |
+| V005 | ea_audit_log | V003 |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.epm_automate.v1;
+
+service EPMAutomateService {
+    rpc GetScript(GetScriptRequest) returns (GetScriptResponse);
+    rpc ExecuteScript(ExecuteScriptRequest) returns (ExecuteScriptResponse);
+    rpc ScheduleJob(ScheduleJobRequest) returns (ScheduleJobResponse);
+    rpc GetExecutionStatus(GetExecutionStatusRequest) returns (GetExecutionStatusResponse);
+}
+
+message Script { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string script_type = 5; string content = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message JobExecution { string id = 1; string tenant_id = 2; string script_id = 3; string status = 4; string output = 5; string started_at = 6; string completed_at = 7; string created_at = 8; }
+
+message GetScriptRequest { string tenant_id = 1; string id = 2; }
+message GetScriptResponse { Script data = 1; }
+message ExecuteScriptRequest { string tenant_id = 1; string script_id = 2; string parameters = 3; }
+message ExecuteScriptResponse { string execution_id = 1; string status = 2; }
+message ScheduleJobRequest { string tenant_id = 1; string script_id = 2; string schedule_cron = 3; }
+message ScheduleJobResponse { string job_id = 1; }
+message GetExecutionStatusRequest { string tenant_id = 1; string execution_id = 2; }
+message GetExecutionStatusResponse { string execution_id = 1; string status = 2; string output = 3; string completed_at = 4; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ea_scripts | — |
+| V002 | ea_scheduled_jobs | V001 |
+| V003 | ea_job_executions | V002 |
+| V004 | ea_operations | V003 |
+| V005 | ea_audit_log | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Script Validation**: Scripts validated for syntax and parameter references before saving
 2. **Execution Queue**: Jobs queued and executed based on priority; max concurrent per tenant configurable
@@ -251,7 +470,7 @@ CREATE INDEX idx_ea_audit_tenant ON ea_audit_log(tenant_id, timestamp DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

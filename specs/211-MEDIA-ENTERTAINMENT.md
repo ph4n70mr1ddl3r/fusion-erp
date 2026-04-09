@@ -250,7 +250,470 @@ CREATE INDEX idx_me_audience_platform ON me_audience_analytics(platform, period 
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+
+package fusion.media_entertainment.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ── Service ──────────────────────────────────────────────────────────
+service MediaEntertainmentService {
+  // Content Rights
+  rpc RegisterContentRights(RegisterContentRightsRequest) returns (ContentRights);
+  rpc GetContentRights(GetContentRightsRequest) returns (ContentRights);
+  rpc ListContentRights(ListContentRightsRequest) returns (ListContentRightsResponse);
+  rpc CheckRightsAvailability(CheckRightsAvailabilityRequest) returns (CheckRightsAvailabilityResponse);
+
+  // Royalties
+  rpc CalculateRoyalties(CalculateRoyaltiesRequest) returns (CalculateRoyaltiesResponse);
+  rpc ApproveRoyalty(ApproveRoyaltyRequest) returns (Royalty);
+
+  // Advertising
+  rpc ListAdInventory(ListAdInventoryRequest) returns (ListAdInventoryResponse);
+  rpc ReserveAdInventory(ReserveAdInventoryRequest) returns (AdInventory);
+  rpc SellAdInventory(SellAdInventoryRequest) returns (AdInventory);
+
+  // Production Budgets
+  rpc CreateProduction(CreateProductionRequest) returns (ProductionBudget);
+  rpc GetProduction(GetProductionRequest) returns (ProductionBudget);
+
+  // Audience Analytics
+  rpc GetContentPerformance(GetContentPerformanceRequest) returns (AudienceAnalytics);
+  rpc GetAudienceTrends(GetAudienceTrendsRequest) returns (GetAudienceTrendsResponse);
+}
+
+// ── Enums ────────────────────────────────────────────────────────────
+enum ContentType {
+  CONTENT_TYPE_UNSPECIFIED = 0;
+  CONTENT_TYPE_FILM = 1;
+  CONTENT_TYPE_TV_SERIES = 2;
+  CONTENT_TYPE_MUSIC = 3;
+  CONTENT_TYPE_BOOK = 4;
+  CONTENT_TYPE_PODCAST = 5;
+  CONTENT_TYPE_GAME = 6;
+  CONTENT_TYPE_LIVE_EVENT = 7;
+}
+
+enum RightsType {
+  RIGHTS_TYPE_UNSPECIFIED = 0;
+  RIGHTS_TYPE_EXCLUSIVE = 1;
+  RIGHTS_TYPE_NON_EXCLUSIVE = 2;
+  RIGHTS_TYPE_TERRITORIAL = 3;
+  RIGHTS_TYPE_PLATFORM = 4;
+  RIGHTS_TYPE_WINDOWED = 5;
+}
+
+enum Platform {
+  PLATFORM_UNSPECIFIED = 0;
+  PLATFORM_THEATRICAL = 1;
+  PLATFORM_LINEAR_TV = 2;
+  PLATFORM_STREAMING = 3;
+  PLATFORM_DIGITAL = 4;
+  PLATFORM_PHYSICAL = 5;
+  PLATFORM_RADIO = 6;
+  PLATFORM_ALL = 7;
+}
+
+enum ContentRightsStatus {
+  CONTENT_RIGHTS_STATUS_UNSPECIFIED = 0;
+  CONTENT_RIGHTS_STATUS_ACTIVE = 1;
+  CONTENT_RIGHTS_STATUS_EXPIRED = 2;
+  CONTENT_RIGHTS_STATUS_TERMINATED = 3;
+  CONTENT_RIGHTS_STATUS_DISPUTED = 4;
+}
+
+enum RevenueSource {
+  REVENUE_SOURCE_UNSPECIFIED = 0;
+  REVENUE_SOURCE_STREAMING = 1;
+  REVENUE_SOURCE_THEATRICAL = 2;
+  REVENUE_SOURCE_MERCHANDISE = 3;
+  REVENUE_SOURCE_SYNC_LICENSE = 4;
+  REVENUE_SOURCE_MECHANICAL = 5;
+  REVENUE_SOURCE_PERFORMANCE = 6;
+  REVENUE_SOURCE_OTHER = 7;
+}
+
+enum RoyaltyStatus {
+  ROYALTY_STATUS_UNSPECIFIED = 0;
+  ROYALTY_STATUS_CALCULATED = 1;
+  ROYALTY_STATUS_APPROVED = 2;
+  ROYALTY_STATUS_PAID = 3;
+  ROYALTY_STATUS_DISPUTED = 4;
+}
+
+enum PlacementType {
+  PLACEMENT_TYPE_UNSPECIFIED = 0;
+  PLACEMENT_TYPE_PRE_ROLL = 1;
+  PLACEMENT_TYPE_MID_ROLL = 2;
+  PLACEMENT_TYPE_POST_ROLL = 3;
+  PLACEMENT_TYPE_DISPLAY = 4;
+  PLACEMENT_TYPE_SPONSORSHIP = 5;
+  PLACEMENT_TYPE_PRODUCT_PLACEMENT = 6;
+  PLACEMENT_TYPE_BILLBOARD = 7;
+}
+
+enum AdInventoryStatus {
+  AD_STATUS_UNSPECIFIED = 0;
+  AD_STATUS_AVAILABLE = 1;
+  AD_STATUS_RESERVED = 2;
+  AD_STATUS_SOLD = 3;
+  AD_STATUS_EXPIRED = 4;
+}
+
+enum ProductionType {
+  PRODUCTION_TYPE_UNSPECIFIED = 0;
+  PRODUCTION_TYPE_FILM = 1;
+  PRODUCTION_TYPE_TV_EPISODE = 2;
+  PRODUCTION_TYPE_SERIES = 3;
+  PRODUCTION_TYPE_COMMERCIAL = 4;
+  PRODUCTION_TYPE_MUSIC_VIDEO = 5;
+  PRODUCTION_TYPE_LIVE_EVENT = 6;
+}
+
+enum ProductionStatus {
+  PRODUCTION_STATUS_UNSPECIFIED = 0;
+  PRODUCTION_STATUS_GREEN = 1;
+  PRODUCTION_STATUS_YELLOW = 2;
+  PRODUCTION_STATUS_RED = 3;
+  PRODUCTION_STATUS_COMPLETED = 4;
+}
+
+// ── Common Messages ──────────────────────────────────────────────────
+message AuditInfo {
+  string created_at = 1;
+  string updated_at = 2;
+  string created_by = 3;
+  string updated_by = 4;
+  int32 version = 5;
+}
+
+// ── Content Rights Messages ──────────────────────────────────────────
+message ContentRights {
+  string id = 1;
+  string tenant_id = 2;
+  string content_id = 3;
+  string title = 4;
+  ContentType content_type = 5;
+  string rights_holder = 6;
+  RightsType rights_type = 7;
+  string territory = 8;                // JSON
+  Platform platform = 9;
+  string window_start = 10;
+  string window_end = 11;
+  int64 acquisition_cost_cents = 12;
+  int64 minimum_guarantee_cents = 13;
+  double revenue_share_pct = 14;
+  bool sub_licensing_allowed = 15;
+  string contract_reference = 16;
+  ContentRightsStatus status = 17;
+  AuditInfo audit = 18;
+}
+
+message RegisterContentRightsRequest {
+  string tenant_id = 1;
+  string content_id = 2;
+  string title = 3;
+  ContentType content_type = 4;
+  string rights_holder = 5;
+  RightsType rights_type = 6;
+  string territory = 7;                // JSON
+  Platform platform = 8;
+  string window_start = 9;
+  string window_end = 10;
+  int64 acquisition_cost_cents = 11;
+  int64 minimum_guarantee_cents = 12;
+  double revenue_share_pct = 13;
+  bool sub_licensing_allowed = 14;
+  string contract_reference = 15;
+  string user_id = 16;
+}
+
+message GetContentRightsRequest {
+  string id = 1;
+  string tenant_id = 2;
+}
+
+message ListContentRightsRequest {
+  string tenant_id = 1;
+  ContentType content_type = 2;
+  ContentRightsStatus status = 3;
+  Platform platform = 4;
+  string rights_holder = 5;
+  int32 page_size = 6;
+  string page_token = 7;
+}
+
+message ListContentRightsResponse {
+  repeated ContentRights rights = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message CheckRightsAvailabilityRequest {
+  string tenant_id = 1;
+  string content_id = 2;
+  Platform platform = 3;
+  string territory = 4;
+  string check_date = 5;
+}
+
+message CheckRightsAvailabilityResponse {
+  bool available = 1;
+  repeated ContentRights matching_rights = 2;
+  string reason = 3;
+}
+
+// ── Royalty Messages ─────────────────────────────────────────────────
+message Royalty {
+  string id = 1;
+  string tenant_id = 2;
+  string content_id = 3;
+  string rights_holder_id = 4;
+  string rights_holder_name = 5;
+  string royalty_period = 6;
+  RevenueSource revenue_source = 7;
+  int64 gross_revenue_cents = 8;
+  int64 deductions_cents = 9;
+  int64 net_revenue_cents = 10;
+  double royalty_rate_pct = 11;
+  int64 royalty_amount_cents = 12;
+  int64 recoupable_advance_cents = 13;
+  int64 recouped_to_date_cents = 14;
+  int64 payable_amount_cents = 15;
+  string currency_code = 16;
+  string payment_reference = 17;
+  string paid_at = 18;
+  RoyaltyStatus status = 19;
+  string created_at = 20;
+  string updated_at = 21;
+}
+
+message CalculateRoyaltiesRequest {
+  string tenant_id = 1;
+  string royalty_period = 2;
+  repeated string content_ids = 3;
+  string user_id = 4;
+}
+
+message CalculateRoyaltiesResponse {
+  repeated Royalty royalties = 1;
+  int32 total_calculated = 2;
+  int64 total_payable_cents = 3;
+}
+
+message ApproveRoyaltyRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string approved_by = 3;
+}
+
+// ── Ad Inventory Messages ────────────────────────────────────────────
+message AdInventory {
+  string id = 1;
+  string tenant_id = 2;
+  string inventory_code = 3;
+  string content_id = 4;
+  PlacementType placement_type = 5;
+  Platform platform = 6;
+  int32 available_impressions = 7;
+  int32 sold_impressions = 8;
+  int32 remaining_impressions = 9;
+  int64 cpm_rate_cents = 10;
+  int64 minimum_commitment_cents = 11;
+  string demographic_targeting = 12;   // JSON
+  string geo_targeting = 13;           // JSON
+  string flight_start = 14;
+  string flight_end = 15;
+  string advertiser_id = 16;
+  string agency_id = 17;
+  AdInventoryStatus status = 18;
+  AuditInfo audit = 19;
+}
+
+message ListAdInventoryRequest {
+  string tenant_id = 1;
+  AdInventoryStatus status = 2;
+  Platform platform = 3;
+  PlacementType placement_type = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message ListAdInventoryResponse {
+  repeated AdInventory items = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message ReserveAdInventoryRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string advertiser_id = 3;
+  string agency_id = 4;
+  int32 impressions = 5;
+  string user_id = 6;
+}
+
+message SellAdInventoryRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string advertiser_id = 3;
+  string agency_id = 4;
+  int32 impressions = 5;
+  int64 cpm_rate_cents = 6;
+  string user_id = 7;
+}
+
+// ── Production Budget Messages ───────────────────────────────────────
+message ProductionBudget {
+  string id = 1;
+  string tenant_id = 2;
+  string production_id = 3;
+  string production_name = 4;
+  ProductionType production_type = 5;
+  int64 total_budget_cents = 6;
+  int64 above_the_line_cents = 7;
+  int64 below_the_line_cents = 8;
+  int64 post_production_cents = 9;
+  int64 marketing_cents = 10;
+  int64 committed_cents = 11;
+  int64 spent_cents = 12;
+  int64 remaining_cents = 13;
+  int64 estimated_to_complete_cents = 14;
+  int64 variance_cents = 15;
+  int32 shooting_days_total = 16;
+  int32 shooting_days_completed = 17;
+  string production_start = 18;
+  string production_end = 19;
+  string producer_id = 20;
+  ProductionStatus status = 21;
+  AuditInfo audit = 22;
+}
+
+message CreateProductionRequest {
+  string tenant_id = 1;
+  string production_id = 2;
+  string production_name = 3;
+  ProductionType production_type = 4;
+  int64 total_budget_cents = 5;
+  int64 above_the_line_cents = 6;
+  int64 below_the_line_cents = 7;
+  int64 post_production_cents = 8;
+  int64 marketing_cents = 9;
+  int32 shooting_days_total = 10;
+  string production_start = 11;
+  string production_end = 12;
+  string producer_id = 13;
+  string user_id = 14;
+}
+
+message GetProductionRequest {
+  string id = 1;
+  string tenant_id = 2;
+}
+
+// ── Audience Analytics Messages ──────────────────────────────────────
+message AudienceAnalytics {
+  string id = 1;
+  string tenant_id = 2;
+  string content_id = 3;
+  string period = 4;
+  string platform = 5;
+  int32 total_views = 6;
+  int32 unique_viewers = 7;
+  double avg_watch_time_minutes = 8;
+  double completion_rate_pct = 9;
+  string demographic_breakdown = 10;   // JSON
+  string geo_breakdown = 11;           // JSON
+  int32 social_mentions = 12;
+  double sentiment_score = 13;
+  double revenue_per_view_cents = 14;
+  int32 subscriber_conversions = 15;
+  string created_at = 16;
+}
+
+message GetContentPerformanceRequest {
+  string content_id = 1;
+  string tenant_id = 2;
+  string period = 3;
+  string platform = 4;
+}
+
+message GetAudienceTrendsRequest {
+  string tenant_id = 1;
+  string period_from = 2;
+  string period_to = 3;
+  string platform = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message GetAudienceTrendsResponse {
+  repeated AudienceAnalytics analytics = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+```
+
+## 6. Migration Order
+
+| Order | Table | Depends On |
+|-------|-------|------------|
+| 1 | `me_content_rights` | — |
+| 2 | `me_royalties` | `me_content_rights` |
+| 3 | `me_ad_inventory` | — |
+| 4 | `me_production_budgets` | — |
+| 5 | `me_audience_analytics` | `me_content_rights` |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.media.v1;
+
+service MediaEntertainmentService {
+    rpc GetContentRight(GetContentRightRequest) returns (GetContentRightResponse);
+    rpc RecordRoyalty(RecordRoyaltyRequest) returns (RecordRoyaltyResponse);
+    rpc GetAdInventory(GetAdInventoryRequest) returns (GetAdInventoryResponse);
+    rpc GetAudienceAnalytics(GetAudienceAnalyticsRequest) returns (GetAudienceAnalyticsResponse);
+}
+
+message ContentRight { string id = 1; string tenant_id = 2; string content_id = 3; string territory = 4; string right_type = 5; string start_date = 6; string end_date = 7; string status = 8; string created_at = 9; string updated_at = 10; }
+message Royalty { string id = 1; string tenant_id = 2; string content_id = 3; string recipient_id = 4; int64 amount_cents = 5; string currency_code = 6; string period = 7; string status = 8; string created_at = 9; string updated_at = 10; }
+message AdSlot { string id = 1; string tenant_id = 2; string channel = 3; string slot_time = 4; int32 duration_seconds = 5; int64 rate_cents = 6; string status = 7; string created_at = 8; }
+message AudienceMetric { string id = 1; string tenant_id = 2; string content_id = 3; string metric_date = 4; int64 views = 5; int64 unique_viewers = 6; double avg_watch_time_minutes = 7; string created_at = 8; }
+
+message GetContentRightRequest { string tenant_id = 1; string id = 2; }
+message GetContentRightResponse { ContentRight data = 1; }
+message RecordRoyaltyRequest { string tenant_id = 1; string content_id = 2; string recipient_id = 3; int64 amount_cents = 4; string period = 5; }
+message RecordRoyaltyResponse { Royalty data = 1; }
+message GetAdInventoryRequest { string tenant_id = 1; string channel = 2; string date_from = 3; string date_to = 4; }
+message GetAdInventoryResponse { repeated AdSlot items = 1; }
+message GetAudienceAnalyticsRequest { string tenant_id = 1; string content_id = 2; string date_from = 3; string date_to = 4; }
+message GetAudienceAnalyticsResponse { repeated AudienceMetric items = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | me_content_rights | — |
+| V002 | me_royalties | V001 |
+| V003 | me_ad_inventory | V002 |
+| V004 | me_production_budgets | V003 |
+| V005 | me_audience_analytics | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Rights Windowing**: Content availability enforced per territorial and platform window rules
 2. **Royalty Recoupment**: Advances recouped from royalties before payments issued
@@ -261,7 +724,7 @@ CREATE INDEX idx_me_audience_platform ON me_audience_analytics(platform, period 
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

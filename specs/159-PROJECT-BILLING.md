@@ -257,7 +257,249 @@ CREATE TABLE pb_invoice_lines (
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.project_billing.v1;
+
+service ProjectBillingService {
+    // Contract management
+    rpc CreateContract(CreateContractRequest) returns (BillingContract);
+    rpc GetContract(GetContractRequest) returns (BillingContract);
+    rpc ListContracts(ListContractsRequest) returns (ContractList);
+    rpc ActivateContract(ActivateContractRequest) returns (BillingContract);
+
+    // Billing events
+    rpc CreateBillingEvent(CreateBillingEventRequest) returns (BillingEvent);
+    rpc ApproveBillingEvent(ApproveBillingEventRequest) returns (BillingEvent);
+    rpc AutoGenerateEvents(AutoGenerateEventsRequest) returns (AutoGenerateEventsResponse);
+
+    // Invoice management
+    rpc CreateInvoice(CreateInvoiceRequest) returns (ProjectInvoice);
+    rpc GetInvoice(GetInvoiceRequest) returns (ProjectInvoice);
+    rpc ApproveInvoice(ApproveInvoiceRequest) returns (ProjectInvoice);
+}
+
+// Entity messages
+message BillingContract {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_number = 3;
+    string contract_name = 4;
+    string project_id = 5;
+    string customer_id = 6;
+    string billing_method = 7;
+    int64 total_contract_value_cents = 8;
+    int64 billed_to_date_cents = 9;
+    int64 retained_to_date_cents = 10;
+    int64 revenue_recognized_cents = 11;
+    int64 remaining_value_cents = 12;
+    double retention_pct = 13;
+    int64 max_retention_cents = 14;
+    double markup_pct = 15;
+    string billing_cycle = 16;
+    string next_billing_date = 17;
+    string contract_start_date = 18;
+    string contract_end_date = 19;
+    string currency_code = 20;
+    string payment_terms = 21;
+    string status = 22;
+    int32 version = 23;
+}
+
+message BillingEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string project_id = 4;
+    string event_number = 5;
+    string event_type = 6;
+    string description = 7;
+    string billing_date = 8;
+    int64 event_amount_cents = 9;
+    int64 billable_amount_cents = 10;
+    int64 tax_amount_cents = 11;
+    int64 total_amount_cents = 12;
+    double completion_pct = 13;
+    string milestone_id = 14;
+    string cost_transactions = 15;
+    string invoice_id = 16;
+    string status = 17;
+    string approved_by = 18;
+    string approved_at = 19;
+}
+
+message ProjectInvoice {
+    string id = 1;
+    string tenant_id = 2;
+    string invoice_number = 3;
+    string contract_id = 4;
+    string project_id = 5;
+    string customer_id = 6;
+    string invoice_date = 7;
+    string due_date = 8;
+    string billing_period_start = 9;
+    string billing_period_end = 10;
+    int64 subtotal_cents = 11;
+    int64 tax_cents = 12;
+    int64 retention_held_cents = 13;
+    int64 total_amount_cents = 14;
+    string currency_code = 15;
+    string ar_invoice_id = 16;
+    string status = 17;
+    string billing_event_ids = 18;
+    string notes = 19;
+    string payment_terms = 20;
+}
+
+// Request/Response messages
+message CreateContractRequest {
+    string tenant_id = 1;
+    string contract_name = 2;
+    string project_id = 3;
+    string customer_id = 4;
+    string billing_method = 5;
+    int64 total_contract_value_cents = 6;
+    double retention_pct = 7;
+    double markup_pct = 8;
+    string billing_cycle = 9;
+    string contract_start_date = 10;
+    string contract_end_date = 11;
+    string currency_code = 12;
+    string payment_terms = 13;
+}
+
+message GetContractRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListContractsRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string customer_id = 3;
+    string status = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message ContractList {
+    repeated BillingContract contracts = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message ActivateContractRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message CreateBillingEventRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string event_type = 3;
+    string description = 4;
+    string billing_date = 5;
+    int64 event_amount_cents = 6;
+    double completion_pct = 7;
+    string cost_transactions = 8;
+}
+
+message ApproveBillingEventRequest {
+    string event_id = 1;
+    string tenant_id = 2;
+    string approved_by = 3;
+}
+
+message AutoGenerateEventsRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string billing_date = 3;
+}
+
+message AutoGenerateEventsResponse {
+    repeated BillingEvent events = 1;
+    int32 events_created = 2;
+}
+
+message CreateInvoiceRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    repeated string billing_event_ids = 3;
+    string invoice_date = 4;
+}
+
+message GetInvoiceRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ApproveInvoiceRequest {
+    string invoice_id = 1;
+    string tenant_id = 2;
+    string approved_by = 3;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pb_billing_contracts | — |
+| V002 | pb_bill_rates | V001 |
+| V003 | pb_billing_events | V001 |
+| V004 | pb_project_invoices | V001 |
+| V005 | pb_invoice_lines | V004 |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.project_billing.v1;
+
+service ProjectBillingService {
+    rpc GetBillingContract(GetBillingContractRequest) returns (GetBillingContractResponse);
+    rpc CreateBillingEvent(CreateBillingEventRequest) returns (CreateBillingEventResponse);
+    rpc GenerateInvoice(GenerateInvoiceRequest) returns (GenerateInvoiceResponse);
+    rpc GetInvoice(GetInvoiceRequest) returns (GetInvoiceResponse);
+}
+
+message BillingContract { string id = 1; string tenant_id = 2; string project_id = 3; string billing_type = 4; int64 contract_value_cents = 5; string currency_code = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message BillingEvent { string id = 1; string tenant_id = 2; string project_id = 3; string event_type = 4; int64 amount_cents = 5; string currency_code = 6; string event_date = 7; string status = 8; string created_at = 9; }
+message ProjectInvoice { string id = 1; string tenant_id = 2; string project_id = 3; string invoice_number = 4; int64 total_cents = 5; string currency_code = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message InvoiceLine { string id = 1; string tenant_id = 2; string invoice_id = 3; int32 line_number = 4; string description = 5; int64 amount_cents = 6; string created_at = 7; }
+
+message GetBillingContractRequest { string tenant_id = 1; string id = 2; }
+message GetBillingContractResponse { BillingContract data = 1; }
+message CreateBillingEventRequest { string tenant_id = 1; string project_id = 2; string event_type = 3; int64 amount_cents = 4; string description = 5; }
+message CreateBillingEventResponse { BillingEvent data = 1; }
+message GenerateInvoiceRequest { string tenant_id = 1; string project_id = 2; string period = 3; }
+message GenerateInvoiceResponse { ProjectInvoice data = 1; }
+message GetInvoiceRequest { string tenant_id = 1; string id = 2; }
+message GetInvoiceResponse { ProjectInvoice data = 1; repeated InvoiceLine lines = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pb_billing_contracts | — |
+| V002 | pb_bill_rates | V001 |
+| V003 | pb_billing_events | V002 |
+| V004 | pb_project_invoices | V003 |
+| V005 | pb_invoice_lines | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Billable Costs**: Only costs marked billable on eligible tasks generate billing events
 2. **Rate Determination**: Bill rate lookup by resource > role > contract default
@@ -270,7 +512,7 @@ CREATE TABLE pb_invoice_lines (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

@@ -222,7 +222,226 @@ CREATE INDEX idx_sv_activity_action ON sv_session_activity(tenant_id, action, ti
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.smartview.v1;
+
+service SmartViewService {
+    // Connection management
+    rpc CreateConnection(CreateConnectionRequest) returns (Connection);
+    rpc GetConnection(GetConnectionRequest) returns (Connection);
+    rpc ListConnections(ListConnectionsRequest) returns (ConnectionList);
+    rpc TestConnection(TestConnectionRequest) returns (TestConnectionResponse);
+
+    // Query operations
+    rpc SaveQuery(SaveQueryRequest) returns (SavedQuery);
+    rpc ExecuteQuery(ExecuteQueryRequest) returns (QueryResult);
+
+    // Data entry
+    rpc SubmitData(SubmitDataRequest) returns (DataSubmission);
+    rpc ValidateSubmission(ValidateSubmissionRequest) returns (ValidationResult);
+}
+
+// Entity messages
+message Connection {
+    string id = 1;
+    string tenant_id = 2;
+    string connection_name = 3;
+    string connection_type = 4;
+    string data_source_url = 5;
+    string authentication_method = 6;
+    string default_cube = 7;
+    string default_dimensionality = 8;
+    string status = 9;
+    int32 version = 10;
+}
+
+message SavedQuery {
+    string id = 1;
+    string tenant_id = 2;
+    string query_name = 3;
+    string connection_id = 4;
+    string application = 5;
+    string query_type = 6;
+    string pov_settings = 7;
+    string row_dimensions = 8;
+    string column_dimensions = 9;
+    string filters = 10;
+    string formatting_rules = 11;
+    bool refresh_on_open = 12;
+    int32 refresh_interval_minutes = 13;
+    string owner_id = 14;
+    bool is_shared = 15;
+    string shared_with = 16;
+    int32 version = 17;
+}
+
+message DataSubmission {
+    string id = 1;
+    string tenant_id = 2;
+    string connection_id = 3;
+    string submission_number = 4;
+    string source_document = 5;
+    string source_worksheet = 6;
+    string data_range = 7;
+    int32 cell_count = 8;
+    string data_payload = 9;
+    string submission_type = 10;
+    string status = 11;
+    string validation_errors = 12;
+    string submitted_at = 13;
+    string reviewed_at = 14;
+    string reviewed_by = 15;
+    string review_comments = 16;
+    string target_system_ref = 17;
+}
+
+// Request/Response messages
+message CreateConnectionRequest {
+    string tenant_id = 1;
+    string connection_name = 2;
+    string connection_type = 3;
+    string data_source_url = 4;
+    string authentication_method = 5;
+    string default_cube = 6;
+}
+
+message GetConnectionRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListConnectionsRequest {
+    string tenant_id = 1;
+    string connection_type = 2;
+    string status = 3;
+}
+
+message ConnectionList {
+    repeated Connection connections = 1;
+}
+
+message TestConnectionRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message TestConnectionResponse {
+    bool success = 1;
+    string message = 2;
+    double latency_ms = 3;
+}
+
+message SaveQueryRequest {
+    string tenant_id = 1;
+    string query_name = 2;
+    string connection_id = 3;
+    string application = 4;
+    string query_type = 5;
+    string pov_settings = 6;
+    string row_dimensions = 7;
+    string column_dimensions = 8;
+}
+
+message ExecuteQueryRequest {
+    string query_id = 1;
+    string tenant_id = 2;
+    string pov_overrides = 3;
+}
+
+message QueryResult {
+    string query_id = 1;
+    repeated string headers = 2;
+    repeated RowData rows = 3;
+    int32 row_count = 4;
+    int32 total_count = 5;
+}
+
+message RowData {
+    repeated string cells = 1;
+}
+
+message SubmitDataRequest {
+    string tenant_id = 1;
+    string connection_id = 2;
+    string source_document = 3;
+    string data_range = 4;
+    string data_payload = 5;
+    string submission_type = 6;
+}
+
+message ValidateSubmissionRequest {
+    string submission_id = 1;
+    string tenant_id = 2;
+}
+
+message ValidationResult {
+    bool valid = 1;
+    int32 total_cells = 2;
+    int32 valid_cells = 3;
+    int32 invalid_cells = 4;
+    repeated string errors = 5;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sv_connections | — |
+| V002 | sv_saved_queries | V001 |
+| V003 | sv_document_links | V001 |
+| V004 | sv_data_submissions | V001 |
+| V005 | sv_session_activity | — |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.smartview.v1;
+
+service SmartViewService {
+    rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse);
+    rpc ExecuteQuery(ExecuteQueryRequest) returns (ExecuteQueryResponse);
+    rpc SubmitData(SubmitDataRequest) returns (SubmitDataResponse);
+    rpc GetActivity(GetActivityRequest) returns (GetActivityResponse);
+}
+
+message Connection { string id = 1; string tenant_id = 2; string name = 3; string connection_type = 4; string config = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+message SessionActivity { string id = 1; string tenant_id = 2; string user_id = 3; string action = 4; string details = 5; string created_at = 6; }
+
+message GetConnectionRequest { string tenant_id = 1; string id = 2; }
+message GetConnectionResponse { Connection data = 1; }
+message ExecuteQueryRequest { string tenant_id = 1; string query_id = 2; string parameters = 3; }
+message ExecuteQueryResponse { string result_data = 1; int32 row_count = 2; }
+message SubmitDataRequest { string tenant_id = 1; string connection_id = 2; string data = 3; }
+message SubmitDataResponse { string submission_id = 1; string status = 2; }
+message GetActivityRequest { string tenant_id = 1; string user_id = 2; string date_from = 3; string date_to = 4; }
+message GetActivityResponse { repeated SessionActivity items = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sv_connections | — |
+| V002 | sv_saved_queries | V001 |
+| V003 | sv_document_links | V002 |
+| V004 | sv_data_submissions | V003 |
+| V005 | sv_session_activity | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Authentication**: All connections authenticated via OAuth2; tokens refreshed automatically
 2. **Data Caching**: Query results cached client-side; refresh on demand or scheduled interval
@@ -235,7 +454,7 @@ CREATE INDEX idx_sv_activity_action ON sv_session_activity(tenant_id, action, ti
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

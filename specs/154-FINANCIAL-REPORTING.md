@@ -231,7 +231,253 @@ CREATE INDEX idx_fr_exec_report ON fr_report_executions(report_id, created_at DE
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.financial_reporting.v1;
+
+service FinancialReportingService {
+    // Report definitions
+    rpc CreateReport(CreateReportRequest) returns (ReportDefinition);
+    rpc GetReport(GetReportRequest) returns (ReportDefinition);
+    rpc ListReports(ListReportsRequest) returns (ReportList);
+
+    // Grid design
+    rpc UpdateRow(UpdateRowRequest) returns (GridRow);
+    rpc UpdateColumn(UpdateColumnRequest) returns (GridColumn);
+
+    // Execution
+    rpc RunReport(RunReportRequest) returns (ReportExecution);
+    rpc RunBook(RunBookRequest) returns (ReportExecution);
+
+    // Drill-down
+    rpc DrillDown(DrillDownRequest) returns (DrillDownResponse);
+}
+
+// Entity messages
+message ReportDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string report_code = 3;
+    string report_name = 4;
+    string report_type = 5;
+    string description = 6;
+    string gaap_standard = 7;
+    string base_currency = 8;
+    string row_dimension = 9;
+    string column_dimension = 10;
+    string default_columns = 11;
+    string default_rows = 12;
+    string formatting_rules = 13;
+    string header_text = 14;
+    string footer_text = 15;
+    string page_layout = 16;
+    string paper_size = 17;
+    string status = 18;
+    int32 version = 19;
+}
+
+message GridRow {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    int32 row_number = 4;
+    string row_label = 5;
+    string row_type = 6;
+    string account_range = 7;
+    string formula_expression = 8;
+    string dimension_filters = 9;
+    int32 indent_level = 10;
+    bool bold = 11;
+    bool underline = 12;
+    string number_format = 13;
+    double scaling_factor = 14;
+    bool suppress_zero = 15;
+    bool show_sign_reverse = 16;
+}
+
+message GridColumn {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    int32 column_number = 4;
+    string column_label = 5;
+    string column_type = 6;
+    string period_type = 7;
+    int32 period_offset = 8;
+    string scenario_id = 9;
+    string entity_id = 10;
+    string formula_expression = 11;
+    int32 column_width = 12;
+}
+
+message ReportExecution {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    string book_id = 4;
+    string execution_number = 5;
+    string report_period = 6;
+    string scenario_id = 7;
+    string entity_scope = 8;
+    string output_format = 9;
+    string status = 10;
+    string output_path = 11;
+    int64 file_size_bytes = 12;
+    int32 page_count = 13;
+    string started_at = 14;
+    string completed_at = 15;
+    int32 execution_time_ms = 16;
+    string error_message = 17;
+    string parameters = 18;
+}
+
+// Request/Response messages
+message CreateReportRequest {
+    string tenant_id = 1;
+    string report_code = 2;
+    string report_name = 3;
+    string report_type = 4;
+    string gaap_standard = 5;
+    string base_currency = 6;
+    string row_dimension = 7;
+    string column_dimension = 8;
+}
+
+message GetReportRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListReportsRequest {
+    string tenant_id = 1;
+    string report_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ReportList {
+    repeated ReportDefinition reports = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message UpdateRowRequest {
+    string row_id = 1;
+    string tenant_id = 2;
+    string row_label = 3;
+    string row_type = 4;
+    string account_range = 5;
+    string formula_expression = 6;
+    string dimension_filters = 7;
+}
+
+message UpdateColumnRequest {
+    string column_id = 1;
+    string tenant_id = 2;
+    string column_label = 3;
+    string column_type = 4;
+    string period_type = 5;
+    int32 period_offset = 6;
+    string formula_expression = 7;
+}
+
+message RunReportRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string report_period = 3;
+    string scenario_id = 4;
+    string entity_scope = 5;
+    string output_format = 6;
+}
+
+message RunBookRequest {
+    string tenant_id = 1;
+    string book_id = 2;
+    string report_period = 3;
+    string output_format = 4;
+}
+
+message DrillDownRequest {
+    string tenant_id = 1;
+    string execution_id = 2;
+    string row_id = 3;
+    string column_id = 4;
+}
+
+message DrillDownResponse {
+    repeated JournalDetail entries = 1;
+}
+
+message JournalDetail {
+    string journal_id = 1;
+    string account_code = 2;
+    string account_name = 3;
+    int64 debit_cents = 4;
+    int64 credit_cents = 5;
+    string description = 6;
+    string je_date = 7;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | fr_report_definitions | — |
+| V002 | fr_grid_rows | V001 |
+| V003 | fr_grid_columns | V001 |
+| V004 | fr_report_books | V001 |
+| V005 | fr_report_executions | V001 |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.financial_reporting.v1;
+
+service FinancialReportingService {
+    rpc GetReport(GetReportRequest) returns (GetReportResponse);
+    rpc ExecuteReport(ExecuteReportRequest) returns (ExecuteReportResponse);
+    rpc GetReportBook(GetReportBookRequest) returns (GetReportBookResponse);
+    rpc GetExecutionStatus(GetExecutionStatusRequest) returns (GetExecutionStatusResponse);
+}
+
+message FinancialReport { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string report_type = 5; string grid_config = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message ReportBook { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string report_ids = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+
+message GetReportRequest { string tenant_id = 1; string id = 2; }
+message GetReportResponse { FinancialReport data = 1; }
+message ExecuteReportRequest { string tenant_id = 1; string report_id = 2; string period = 3; }
+message ExecuteReportResponse { string execution_id = 1; string status = 2; string output_url = 3; }
+message GetReportBookRequest { string tenant_id = 1; string id = 2; }
+message GetReportBookResponse { ReportBook data = 1; }
+message GetExecutionStatusRequest { string tenant_id = 1; string execution_id = 2; }
+message GetExecutionStatusResponse { string execution_id = 1; string status = 2; string output_url = 3; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | fr_report_definitions | — |
+| V002 | fr_grid_rows | V001 |
+| V003 | fr_grid_columns | V002 |
+| V004 | fr_report_books | V003 |
+| V005 | fr_report_executions | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Account Mapping**: Row account ranges validated against GL chart of accounts
 2. **Formula Validation**: All formulas validated for circular references before saving
@@ -243,7 +489,7 @@ CREATE INDEX idx_fr_exec_report ON fr_report_executions(report_id, created_at DE
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

@@ -244,7 +244,294 @@ CREATE INDEX idx_rm_gap_tenant ON rm_skill_gaps(tenant_id, gap_severity);
 
 ---
 
-## 5. Business Rules
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.resource_mgmt.v1;
+
+service ResourceManagementService {
+    // Resource profiles
+    rpc CreateProfile(CreateProfileRequest) returns (ResourceProfile);
+    rpc GetProfile(GetProfileRequest) returns (ResourceProfile);
+    rpc SearchProfiles(SearchProfilesRequest) returns (ProfileList);
+
+    // Resource requests
+    rpc CreateRequest(CreateResourceRequestRequest) returns (ResourceRequest);
+    rpc FindMatches(FindMatchesRequest) returns (MatchList);
+
+    // Allocations
+    rpc CreateAllocation(CreateAllocationRequest) returns (Allocation);
+    rpc ListAllocations(ListAllocationsRequest) returns (AllocationList);
+
+    // Capacity & utilization
+    rpc GetCapacity(GetCapacityRequest) returns (CapacityList);
+    rpc GetConflicts(GetConflictsRequest) returns (ConflictList);
+}
+
+// Entity messages
+message ResourceProfile {
+    string id = 1;
+    string tenant_id = 2;
+    string person_id = 3;
+    string resource_type = 4;
+    string primary_role = 5;
+    string secondary_roles = 6;
+    string skills = 7;
+    string certifications = 8;
+    double availability_pct = 9;
+    double standard_hours_week = 10;
+    int64 cost_rate_hourly_cents = 11;
+    int64 bill_rate_hourly_cents = 12;
+    string currency_code = 13;
+    string home_department = 14;
+    string home_location = 15;
+    string calendar_id = 16;
+    string status = 17;
+    int32 version = 18;
+}
+
+message ResourceRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string request_number = 3;
+    string project_id = 4;
+    string task_id = 5;
+    string requested_by = 6;
+    string role_required = 7;
+    string skills_required = 8;
+    string start_date = 9;
+    string end_date = 10;
+    double hours_per_week = 11;
+    double allocation_pct = 12;
+    string priority = 13;
+    string required_certifications = 14;
+    string location_requirement = 15;
+    string status = 16;
+    string assigned_resource_id = 17;
+    string filled_at = 18;
+}
+
+message Allocation {
+    string id = 1;
+    string tenant_id = 2;
+    string resource_id = 3;
+    string project_id = 4;
+    string task_id = 5;
+    double allocation_pct = 6;
+    double hours_per_week = 7;
+    string start_date = 8;
+    string end_date = 9;
+    string allocation_type = 10;
+    string status = 11;
+    string request_id = 12;
+    int32 version = 13;
+}
+
+message CapacityForecast {
+    string id = 1;
+    string tenant_id = 2;
+    string resource_id = 3;
+    string period_start = 4;
+    string period_end = 5;
+    string period_type = 6;
+    double available_hours = 7;
+    double allocated_hours = 8;
+    double actual_hours = 9;
+    double remaining_hours = 10;
+    double utilization_pct = 11;
+    bool overallocated = 12;
+    int32 project_count = 13;
+}
+
+// Request/Response messages
+message CreateProfileRequest {
+    string tenant_id = 1;
+    string person_id = 2;
+    string resource_type = 3;
+    string primary_role = 4;
+    string secondary_roles = 5;
+    string skills = 6;
+    string certifications = 7;
+    double availability_pct = 8;
+    int64 cost_rate_hourly_cents = 9;
+    int64 bill_rate_hourly_cents = 10;
+    string currency_code = 11;
+    string home_department = 12;
+    string home_location = 13;
+}
+
+message GetProfileRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message SearchProfilesRequest {
+    string tenant_id = 1;
+    string role = 2;
+    repeated string skills = 3;
+    double min_availability_pct = 4;
+    string location = 5;
+    string status = 6;
+    int32 page_size = 7;
+    string page_token = 8;
+}
+
+message ProfileList {
+    repeated ResourceProfile profiles = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message CreateResourceRequestRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string task_id = 3;
+    string role_required = 4;
+    string skills_required = 5;
+    string start_date = 6;
+    string end_date = 7;
+    double hours_per_week = 8;
+    double allocation_pct = 9;
+    string priority = 10;
+}
+
+message FindMatchesRequest {
+    string request_id = 1;
+    string tenant_id = 2;
+    int32 max_results = 3;
+}
+
+message MatchList {
+    repeated ResourceMatch matches = 1;
+}
+
+message ResourceMatch {
+    ResourceProfile profile = 1;
+    double match_score = 2;
+    double skill_match_pct = 3;
+    double availability_pct = 4;
+    string conflicts = 5;
+}
+
+message CreateAllocationRequest {
+    string tenant_id = 1;
+    string resource_id = 2;
+    string project_id = 3;
+    string task_id = 4;
+    double allocation_pct = 5;
+    double hours_per_week = 6;
+    string start_date = 7;
+    string end_date = 8;
+    string allocation_type = 9;
+    string request_id = 10;
+}
+
+message ListAllocationsRequest {
+    string tenant_id = 1;
+    string resource_id = 2;
+    string project_id = 3;
+    string start_date = 4;
+    string end_date = 5;
+    int32 page_size = 6;
+    string page_token = 7;
+}
+
+message AllocationList {
+    repeated Allocation allocations = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message GetCapacityRequest {
+    string tenant_id = 1;
+    string resource_id = 2;
+    string period_start = 3;
+    string period_end = 4;
+    string period_type = 5;
+}
+
+message CapacityList {
+    repeated CapacityForecast forecasts = 1;
+}
+
+message GetConflictsRequest {
+    string tenant_id = 1;
+    string start_date = 2;
+    string end_date = 3;
+}
+
+message ConflictList {
+    repeated AllocationConflict conflicts = 1;
+}
+
+message AllocationConflict {
+    string resource_id = 1;
+    string resource_name = 2;
+    string period = 3;
+    double total_allocation_pct = 4;
+    repeated Allocation overlapping_allocations = 5;
+}
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | rm_resource_profiles | — |
+| V002 | rm_resource_requests | — |
+| V003 | rm_allocations | V001 |
+| V004 | rm_capacity_forecasts | V001 |
+| V005 | rm_skill_gaps | — |
+
+---
+
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.resource_mgmt.v1;
+
+service ResourceManagementService {
+    rpc GetResourceProfile(GetResourceProfileRequest) returns (GetResourceProfileResponse);
+    rpc CreateResourceRequest(CreateResourceRequestRequest) returns (CreateResourceRequestResponse);
+    rpc AllocateResource(AllocateResourceRequest) returns (AllocateResourceResponse);
+    rpc GetCapacityForecast(GetCapacityForecastRequest) returns (GetCapacityForecastResponse);
+}
+
+message ResourceProfile { string id = 1; string tenant_id = 2; string employee_id = 3; string name = 4; string role = 5; string skills = 6; double availability_percent = 7; string department = 8; string created_at = 9; string updated_at = 10; }
+message ResourceRequest { string id = 1; string tenant_id = 2; string project_id = 3; string role = 4; string start_date = 5; string end_date = 6; double allocation_percent = 7; string status = 8; string created_at = 9; string updated_at = 10; }
+message Allocation { string id = 1; string tenant_id = 2; string request_id = 3; string resource_id = 4; double allocation_percent = 5; string start_date = 6; string end_date = 7; string status = 8; string created_at = 9; }
+message CapacityEntry { string resource_id = 1; string name = 2; double allocated_percent = 3; double available_percent = 4; string week = 5; }
+
+message GetResourceProfileRequest { string tenant_id = 1; string id = 2; }
+message GetResourceProfileResponse { ResourceProfile data = 1; }
+message CreateResourceRequestRequest { string tenant_id = 1; string project_id = 2; string role = 3; string start_date = 4; string end_date = 5; }
+message CreateResourceRequestResponse { ResourceRequest data = 1; }
+message AllocateResourceRequest { string tenant_id = 1; string request_id = 2; string resource_id = 3; double allocation_percent = 4; }
+message AllocateResourceResponse { Allocation data = 1; }
+message GetCapacityForecastRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; }
+message GetCapacityForecastResponse { repeated CapacityEntry items = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | rm_resource_profiles | — |
+| V002 | rm_resource_requests | V001 |
+| V003 | rm_allocations | V002 |
+| V004 | rm_capacity_forecasts | V003 |
+| V005 | rm_skill_gaps | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Over-Allocation Detection**: Alert when allocation exceeds 100% in any period
 2. **Skill Matching**: Resource match scored by skill relevance, proficiency, and availability
@@ -256,7 +543,7 @@ CREATE INDEX idx_rm_gap_tenant ON rm_skill_gaps(tenant_id, gap_severity);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|
