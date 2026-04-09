@@ -310,7 +310,50 @@ CREATE INDEX idx_dm_accuracy_model ON dm_forecast_accuracy(tenant_id, model_id, 
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.demand_mgmt.v1;
+
+service DemandManagementService {
+    rpc GetForecastModel(GetForecastModelRequest) returns (GetForecastModelResponse);
+    rpc RunForecast(RunForecastRequest) returns (RunForecastResponse);
+    rpc GetForecastValues(GetForecastValuesRequest) returns (GetForecastValuesResponse);
+    rpc GetForecastAccuracy(GetForecastAccuracyRequest) returns (GetForecastAccuracyResponse);
+}
+
+message ForecastModel { string id = 1; string tenant_id = 2; string name = 3; string model_type = 4; string parameters = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+message ForecastValue { string id = 1; string tenant_id = 2; string run_id = 3; string period = 4; double forecast_value = 5; double actual_value = 6; string item_id = 7; string created_at = 8; }
+
+message GetForecastModelRequest { string tenant_id = 1; string id = 2; }
+message GetForecastModelResponse { ForecastModel data = 1; }
+message RunForecastRequest { string tenant_id = 1; string model_id = 2; string period_from = 3; string period_to = 4; }
+message RunForecastResponse { string run_id = 1; string status = 2; }
+message GetForecastValuesRequest { string tenant_id = 1; string run_id = 2; }
+message GetForecastValuesResponse { repeated ForecastValue items = 1; }
+message GetForecastAccuracyRequest { string tenant_id = 1; string model_id = 2; string period = 3; }
+message GetForecastAccuracyResponse { double mape = 1; double bias = 2; double mad = 3; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | dm_forecast_models | — |
+| V002 | dm_forecast_runs | V001 |
+| V003 | dm_forecast_values | V002 |
+| V004 | dm_causal_factors | V003 |
+| V005 | dm_demand_signals | V004 |
+| V006 | dm_consensus_plans | V005 |
+| V007 | dm_forecast_accuracy | V006 |
+
+---
+
+## 7. Business Rules
 
 1. **Model Selection**: Auto-select best-fit model using tournament approach across multiple methods
 2. **Accuracy Threshold**: Alert when MAPE exceeds 25% for any item over 3 consecutive periods
@@ -323,7 +366,7 @@ CREATE INDEX idx_dm_accuracy_model ON dm_forecast_accuracy(tenant_id, model_id, 
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

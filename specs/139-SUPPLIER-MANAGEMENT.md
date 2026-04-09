@@ -320,7 +320,52 @@ CREATE INDEX idx_sm_segment_tenant ON sm_supplier_segments(tenant_id, segment);
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.supplier_mgmt.v1;
+
+service SupplierManagementService {
+    rpc GetQualificationProgram(GetQualificationProgramRequest) returns (GetQualificationProgramResponse);
+    rpc GetScorecard(GetScorecardRequest) returns (GetScorecardResponse);
+    rpc GetSupplierRisk(GetSupplierRiskRequest) returns (GetSupplierRiskResponse);
+    rpc GetSupplierSegment(GetSupplierSegmentRequest) returns (GetSupplierSegmentResponse);
+}
+
+message QualificationProgram { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string status = 5; string created_at = 6; string updated_at = 7; }
+message PerformanceScorecard { string id = 1; string tenant_id = 2; string supplier_id = 3; double quality_score = 4; double delivery_score = 5; double overall_score = 6; string period = 7; string created_at = 8; }
+message SupplierRisk { string id = 1; string tenant_id = 2; string supplier_id = 3; string risk_category = 4; string risk_level = 5; string description = 6; string created_at = 7; string updated_at = 8; }
+message SupplierSegment { string id = 1; string tenant_id = 2; string segment_name = 3; string description = 4; string criteria = 5; string created_at = 6; string updated_at = 7; }
+
+message GetQualificationProgramRequest { string tenant_id = 1; string id = 2; }
+message GetQualificationProgramResponse { QualificationProgram data = 1; }
+message GetScorecardRequest { string tenant_id = 1; string supplier_id = 2; }
+message GetScorecardResponse { PerformanceScorecard data = 1; }
+message GetSupplierRiskRequest { string tenant_id = 1; string supplier_id = 2; }
+message GetSupplierRiskResponse { SupplierRisk data = 1; }
+message GetSupplierSegmentRequest { string tenant_id = 1; string segment_id = 2; }
+message GetSupplierSegmentResponse { SupplierSegment data = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sm_qualification_programs | — |
+| V002 | sm_supplier_assessments | V001 |
+| V003 | sm_assessment_responses | V002 |
+| V004 | sm_performance_scorecards | V003 |
+| V005 | sm_supplier_risks | V004 |
+| V006 | sm_corrective_actions | V005 |
+| V007 | sm_supplier_segments | V006 |
+
+---
+
+## 7. Business Rules
 
 1. **Qualification Required**: Suppliers must pass qualification before being added to approved supplier lists
 2. **Auto-Requalification**: Trigger requalification when validity expires or risk level changes
@@ -332,7 +377,7 @@ CREATE INDEX idx_sm_segment_tenant ON sm_supplier_segments(tenant_id, segment);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

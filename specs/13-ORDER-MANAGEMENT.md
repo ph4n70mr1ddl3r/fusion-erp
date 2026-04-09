@@ -257,7 +257,49 @@ GET           /api/v1/om/reports/backlog                Permission: om.reports.v
 
 ---
 
-## 4. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.om.v1;
+
+service OrderManagementService {
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc FulfillOrder(FulfillOrderRequest) returns (FulfillOrderResponse);
+    rpc GetOrderStatus(GetOrderStatusRequest) returns (GetOrderStatusResponse);
+}
+
+message SalesOrder { string id = 1; string tenant_id = 2; string order_number = 3; string customer_id = 4; string order_date = 5; string status = 6; int64 subtotal_cents = 7; int64 tax_cents = 8; int64 total_cents = 9; string currency_code = 10; string created_at = 11; string updated_at = 12; }
+message Shipment { string id = 1; string tenant_id = 2; string shipment_number = 3; string order_id = 4; string carrier = 5; string tracking_number = 6; string status = 7; string shipped_date = 8; string created_at = 9; string updated_at = 10; }
+
+message GetOrderRequest { string tenant_id = 1; string id = 2; }
+message GetOrderResponse { SalesOrder data = 1; }
+message CreateOrderRequest { string tenant_id = 1; string customer_id = 2; string order_date = 3; }
+message CreateOrderResponse { SalesOrder data = 1; }
+message FulfillOrderRequest { string tenant_id = 1; string order_id = 2; string warehouse_id = 3; }
+message FulfillOrderResponse { Shipment data = 1; }
+message GetOrderStatusRequest { string tenant_id = 1; string id = 2; }
+message GetOrderStatusResponse { string order_id = 1; string status = 2; string tracking_number = 3; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sales_orders | — |
+| V002 | sales_order_lines | V001 |
+| V003 | shipments | V002 |
+| V004 | shipment_lines | V003 |
+| V005 | returns | V004 |
+| V006 | return_lines | V005 |
+
+---
+
+## 7. Business Rules
 
 ### 4.1 Order Processing Flow
 ```

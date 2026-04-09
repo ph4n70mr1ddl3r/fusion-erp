@@ -282,7 +282,50 @@ CREATE INDEX idx_se_track_number ON se_tracking_events(tracking_number, event_ti
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.shipping.v1;
+
+service ShippingExecutionService {
+    rpc GetShipment(GetShipmentRequest) returns (GetShipmentResponse);
+    rpc RateShipment(RateShipmentRequest) returns (RateShipmentResponse);
+    rpc ConfirmShipment(ConfirmShipmentRequest) returns (ConfirmShipmentResponse);
+    rpc GetTrackingStatus(GetTrackingStatusRequest) returns (GetTrackingStatusResponse);
+}
+
+message Shipment { string id = 1; string tenant_id = 2; string shipment_number = 3; string carrier = 4; string tracking_number = 5; string status = 6; string shipped_date = 7; string estimated_delivery = 8; string created_at = 9; string updated_at = 10; }
+message CarrierRate { string id = 1; string tenant_id = 2; string carrier = 3; string service_level = 4; int64 rate_cents = 5; string currency_code = 6; int32 transit_days = 7; }
+message TrackingEvent { string id = 1; string tenant_id = 2; string shipment_id = 3; string status = 4; string location = 5; string event_date = 6; string description = 7; string created_at = 8; }
+
+message GetShipmentRequest { string tenant_id = 1; string id = 2; }
+message GetShipmentResponse { Shipment data = 1; }
+message RateShipmentRequest { string tenant_id = 1; string shipment_id = 2; string carrier = 3; }
+message RateShipmentResponse { repeated CarrierRate rates = 1; }
+message ConfirmShipmentRequest { string tenant_id = 1; string id = 2; string carrier_id = 3; }
+message ConfirmShipmentResponse { string tracking_number = 1; string label_url = 2; }
+message GetTrackingStatusRequest { string tenant_id = 1; string shipment_id = 2; }
+message GetTrackingStatusResponse { repeated TrackingEvent events = 1; string status = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | se_shipments | — |
+| V002 | se_shipment_lines | V001 |
+| V003 | se_packages | V002 |
+| V004 | se_carrier_rates | V003 |
+| V005 | se_shipping_documents | V004 |
+| V006 | se_tracking_events | V005 |
+
+---
+
+## 7. Business Rules
 
 1. **Carrier Selection**: Auto-select lowest cost carrier meeting delivery date; manual override allowed
 2. **Consolidation**: Orders to same destination within 4-hour window eligible for consolidation
@@ -295,7 +338,7 @@ CREATE INDEX idx_se_track_number ON se_tracking_events(tracking_number, event_ti
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

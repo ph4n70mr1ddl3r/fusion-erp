@@ -276,7 +276,51 @@ CREATE INDEX idx_sop_meeting_cycle ON sop_meetings(cycle_id, meeting_type);
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.sop.v1;
+
+service SOPService {
+    rpc GetCycle(GetCycleRequest) returns (GetCycleResponse);
+    rpc CreateScenario(CreateScenarioRequest) returns (CreateScenarioResponse);
+    rpc GetGapAnalysis(GetGapAnalysisRequest) returns (GetGapAnalysisResponse);
+    rpc GetActionItems(GetActionItemsRequest) returns (GetActionItemsResponse);
+}
+
+message SOPCycle { string id = 1; string tenant_id = 2; string name = 3; string status = 4; string period_from = 5; string period_to = 6; string created_at = 7; string updated_at = 8; }
+message SOPScenario { string id = 1; string tenant_id = 2; string cycle_id = 3; string name = 4; string description = 5; string status = 6; string created_at = 7; }
+message GapEntry { string category = 1; int64 demand_cents = 2; int64 supply_cents = 3; int64 gap_cents = 4; string period = 5; }
+message ActionItem { string id = 1; string tenant_id = 2; string cycle_id = 3; string description = 4; string owner_id = 5; string due_date = 6; string status = 7; string created_at = 8; }
+
+message GetCycleRequest { string tenant_id = 1; string id = 2; }
+message GetCycleResponse { SOPCycle data = 1; }
+message CreateScenarioRequest { string tenant_id = 1; string cycle_id = 2; string name = 3; }
+message CreateScenarioResponse { SOPScenario data = 1; }
+message GetGapAnalysisRequest { string tenant_id = 1; string cycle_id = 2; }
+message GetGapAnalysisResponse { repeated GapEntry items = 1; }
+message GetActionItemsRequest { string tenant_id = 1; string cycle_id = 2; }
+message GetActionItemsResponse { repeated ActionItem items = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sop_cycles | — |
+| V002 | sop_scenarios | V001 |
+| V003 | sop_plan_lines | V002 |
+| V004 | sop_gap_analysis | V003 |
+| V005 | sop_action_items | V004 |
+| V006 | sop_meetings | V005 |
+
+---
+
+## 7. Business Rules
 
 1. **Phase Gate**: Each S&OP phase must be completed before advancing; no skipping phases
 2. **Consensus Requirement**: At least one CONSENSUS scenario must exist before executive S&OP
@@ -288,7 +332,7 @@ CREATE INDEX idx_sop_meeting_cycle ON sop_meetings(cycle_id, meeting_type);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

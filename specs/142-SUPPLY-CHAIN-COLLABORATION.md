@@ -266,7 +266,51 @@ CREATE INDEX idx_scc_except_type ON scc_exceptions(tenant_id, exception_type);
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.sc_collaboration.v1;
+
+service SCCollaborationService {
+    rpc GetAgreement(GetAgreementRequest) returns (GetAgreementResponse);
+    rpc GetCollaborativeForecast(GetCollaborativeForecastRequest) returns (GetCollaborativeForecastResponse);
+    rpc GetOrderCollaboration(GetOrderCollaborationRequest) returns (GetOrderCollaborationResponse);
+    rpc GetExceptions(GetExceptionsRequest) returns (GetExceptionsResponse);
+}
+
+message Agreement { string id = 1; string tenant_id = 2; string name = 3; string partner_id = 4; string status = 5; string created_at = 6; string updated_at = 7; }
+message CollaborativeForecast { string id = 1; string tenant_id = 2; string agreement_id = 3; string period = 4; double forecast_value = 5; string created_at = 6; }
+message OrderCollab { string id = 1; string tenant_id = 2; string agreement_id = 3; string order_id = 4; string status = 5; string created_at = 6; }
+message Exception { string id = 1; string tenant_id = 2; string agreement_id = 3; string exception_type = 4; string description = 5; string severity = 6; string created_at = 7; }
+
+message GetAgreementRequest { string tenant_id = 1; string id = 2; }
+message GetAgreementResponse { Agreement data = 1; }
+message GetCollaborativeForecastRequest { string tenant_id = 1; string agreement_id = 2; }
+message GetCollaborativeForecastResponse { CollaborativeForecast data = 1; }
+message GetOrderCollaborationRequest { string tenant_id = 1; string agreement_id = 2; }
+message GetOrderCollaborationResponse { repeated OrderCollab items = 1; }
+message GetExceptionsRequest { string tenant_id = 1; string agreement_id = 2; }
+message GetExceptionsResponse { repeated Exception items = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | scc_agreements | — |
+| V002 | scc_collaborative_forecasts | V001 |
+| V003 | scc_order_collaboration | V002 |
+| V004 | scc_capacity_commitments | V003 |
+| V005 | scc_shared_documents | V004 |
+| V006 | scc_exceptions | V005 |
+
+---
+
+## 7. Business Rules
 
 1. **SLA Monitoring**: Auto-detect SLA breaches (acknowledgment within configured hours)
 2. **Auto-Escalation**: Unacknowledged orders escalate after 2x SLA response time
@@ -278,7 +322,7 @@ CREATE INDEX idx_scc_except_type ON scc_exceptions(tenant_id, exception_type);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

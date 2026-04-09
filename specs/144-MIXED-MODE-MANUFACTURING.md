@@ -261,7 +261,50 @@ CREATE TABLE mmm_mode_transitions (
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.mixed_mfg.v1;
+
+service MixedModeManufacturingService {
+    rpc GetManufacturingMode(GetManufacturingModeRequest) returns (GetManufacturingModeResponse);
+    rpc CreateProductionOrder(CreateProductionOrderRequest) returns (CreateProductionOrderResponse);
+    rpc GetKanbanStatus(GetKanbanStatusRequest) returns (GetKanbanStatusResponse);
+    rpc TransitionMode(TransitionModeRequest) returns (TransitionModeResponse);
+}
+
+message ManufacturingMode { string id = 1; string tenant_id = 2; string name = 3; string mode_type = 4; string description = 5; string created_at = 6; string updated_at = 7; }
+message ProductionOrder { string id = 1; string tenant_id = 2; string order_number = 3; string item_id = 4; int64 quantity = 5; string mode = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message KanbanCard { string id = 1; string tenant_id = 2; string item_id = 3; int64 quantity = 4; string status = 5; string location = 6; string created_at = 7; }
+
+message GetManufacturingModeRequest { string tenant_id = 1; string id = 2; }
+message GetManufacturingModeResponse { ManufacturingMode data = 1; }
+message CreateProductionOrderRequest { string tenant_id = 1; string item_id = 2; int64 quantity = 3; string mode = 4; }
+message CreateProductionOrderResponse { ProductionOrder data = 1; }
+message GetKanbanStatusRequest { string tenant_id = 1; string item_id = 2; }
+message GetKanbanStatusResponse { repeated KanbanCard cards = 1; }
+message TransitionModeRequest { string tenant_id = 1; string order_id = 2; string new_mode = 3; }
+message TransitionModeResponse { string order_id = 1; string old_mode = 2; string new_mode = 3; string status = 4; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | mmm_manufacturing_modes | — |
+| V002 | mmm_production_orders | V001 |
+| V003 | mmm_hybrid_routings | V002 |
+| V004 | mmm_routing_operations | V003 |
+| V005 | mmm_kanban_cards | V004 |
+| V006 | mmm_mode_transitions | V005 |
+
+---
+
+## 7. Business Rules
 
 1. **Mode Selection**: Auto-select manufacturing mode based on item attributes and volume
 2. **Routing Flexibility**: Hybrid routings can combine discrete and process operations in sequence
@@ -273,7 +316,7 @@ CREATE TABLE mmm_mode_transitions (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

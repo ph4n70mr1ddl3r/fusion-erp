@@ -233,7 +233,50 @@ CREATE INDEX idx_bm_snapshot_tenant ON bm_backlog_snapshots(tenant_id, snapshot_
 
 ---
 
-## 5. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.backlog.v1;
+
+service BacklogManagementService {
+    rpc GetBacklogOrder(GetBacklogOrderRequest) returns (GetBacklogOrderResponse);
+    rpc AllocateInventory(AllocateInventoryRequest) returns (AllocateInventoryResponse);
+    rpc GetBacklogSnapshot(GetBacklogSnapshotRequest) returns (GetBacklogSnapshotResponse);
+    rpc GetPriorityRules(GetPriorityRulesRequest) returns (GetPriorityRulesResponse);
+}
+
+message BacklogOrder { string id = 1; string tenant_id = 2; string order_id = 3; string item_id = 4; int64 quantity = 5; int64 allocated = 6; string priority = 7; string status = 8; string created_at = 9; }
+message Allocation { string id = 1; string tenant_id = 2; string order_id = 3; int64 quantity = 4; string status = 5; string created_at = 6; }
+message BacklogSummary { string item_id = 1; string item_name = 2; int64 total_backlog = 3; int64 total_allocated = 4; int64 remaining = 5; }
+message PriorityRule { string id = 1; string tenant_id = 2; string name = 3; string criteria = 4; int32 priority = 5; string created_at = 6; }
+
+message GetBacklogOrderRequest { string tenant_id = 1; string id = 2; }
+message GetBacklogOrderResponse { BacklogOrder data = 1; }
+message AllocateInventoryRequest { string tenant_id = 1; string item_id = 2; int64 quantity = 3; }
+message AllocateInventoryResponse { repeated Allocation allocations = 1; }
+message GetBacklogSnapshotRequest { string tenant_id = 1; string snapshot_date = 2; }
+message GetBacklogSnapshotResponse { repeated BacklogSummary items = 1; }
+message GetPriorityRulesRequest { string tenant_id = 1; }
+message GetPriorityRulesResponse { repeated PriorityRule rules = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | bm_backlog_orders | — |
+| V002 | bm_priority_rules | V001 |
+| V003 | bm_allocations | V002 |
+| V004 | bm_fair_share_rules | V003 |
+| V005 | bm_backlog_snapshots | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Auto-Prioritization**: Priority scores recalculated daily using active rule set
 2. **Allocation Fairness**: When supply < total backlog, apply fair share rules per item
@@ -245,7 +288,7 @@ CREATE INDEX idx_bm_snapshot_tenant ON bm_backlog_snapshots(tenant_id, snapshot_
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

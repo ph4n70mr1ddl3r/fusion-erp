@@ -319,7 +319,53 @@ GET           /api/v1/inv/reports/aging               Permission: inv.reports.vi
 
 ---
 
-## 4. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.inv.v1;
+
+service InventoryService {
+    rpc GetItem(GetItemRequest) returns (GetItemResponse);
+    rpc GetOnHandQuantity(GetOnHandQuantityRequest) returns (GetOnHandQuantityResponse);
+    rpc RecordMovement(RecordMovementRequest) returns (RecordMovementResponse);
+    rpc GetItemAvailability(GetItemAvailabilityRequest) returns (GetItemAvailabilityResponse);
+}
+
+message Item { string id = 1; string tenant_id = 2; string item_code = 3; string name = 4; string description = 5; string item_type = 6; string uom_code = 7; int64 unit_cost_cents = 8; string status = 9; string created_at = 10; string updated_at = 11; }
+message StockMovement { string id = 1; string tenant_id = 2; string item_id = 3; string warehouse_id = 4; string movement_type = 5; int64 quantity = 6; string reference = 7; string movement_date = 8; string created_at = 9; }
+message WarehouseQuantity { string warehouse_id = 1; string warehouse_name = 2; int64 on_hand = 3; int64 reserved = 4; int64 available = 5; }
+
+message GetItemRequest { string tenant_id = 1; string id = 2; }
+message GetItemResponse { Item data = 1; }
+message GetOnHandQuantityRequest { string tenant_id = 1; string item_id = 2; string warehouse_id = 3; }
+message GetOnHandQuantityResponse { int64 quantity = 1; int64 reserved_quantity = 2; int64 available_quantity = 3; }
+message RecordMovementRequest { string tenant_id = 1; string item_id = 2; string warehouse_id = 3; string movement_type = 4; int64 quantity = 5; }
+message RecordMovementResponse { StockMovement data = 1; }
+message GetItemAvailabilityRequest { string tenant_id = 1; string item_id = 2; }
+message GetItemAvailabilityResponse { repeated WarehouseQuantity warehouses = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | items | — |
+| V002 | item_categories | V001 |
+| V003 | warehouses | V002 |
+| V004 | warehouse_locations | V003 |
+| V005 | on_hand_quantities | V004 |
+| V006 | stock_movements | V005 |
+| V007 | cost_layers | V006 |
+| V008 | physical_counts | V007 |
+| V009 | physical_count_lines | V008 |
+
+---
+
+## 7. Business Rules
 
 ### 4.1 Stock Movement Processing
 1. Create movement record

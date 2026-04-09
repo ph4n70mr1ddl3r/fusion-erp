@@ -275,7 +275,54 @@ GET/PUT       /api/v1/proc/blanket-agreements/{id}      Permission: proc.agreeme
 
 ---
 
-## 4. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.proc.v1;
+
+service ProcurementService {
+    rpc GetRequisition(GetRequisitionRequest) returns (GetRequisitionResponse);
+    rpc CreateRequisition(CreateRequisitionRequest) returns (CreateRequisitionResponse);
+    rpc GetPurchaseOrder(GetPurchaseOrderRequest) returns (GetPurchaseOrderResponse);
+    rpc CreateGoodsReceipt(CreateGoodsReceiptRequest) returns (CreateGoodsReceiptResponse);
+    rpc GetSupplierBalance(GetSupplierBalanceRequest) returns (GetSupplierBalanceResponse);
+}
+
+message Requisition { string id = 1; string tenant_id = 2; string requisition_number = 3; string description = 4; string status = 5; string requester_id = 6; int64 total_cents = 7; string created_at = 8; string updated_at = 9; }
+message PurchaseOrder { string id = 1; string tenant_id = 2; string po_number = 3; string supplier_id = 4; string status = 5; int64 total_cents = 6; string currency_code = 7; string created_at = 8; string updated_at = 9; }
+message GoodsReceipt { string id = 1; string tenant_id = 2; string receipt_number = 3; string po_id = 4; string receipt_date = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+
+message GetRequisitionRequest { string tenant_id = 1; string id = 2; }
+message GetRequisitionResponse { Requisition data = 1; }
+message CreateRequisitionRequest { string tenant_id = 1; string description = 2; string requester_id = 3; }
+message CreateRequisitionResponse { Requisition data = 1; }
+message GetPurchaseOrderRequest { string tenant_id = 1; string id = 2; }
+message GetPurchaseOrderResponse { PurchaseOrder data = 1; }
+message CreateGoodsReceiptRequest { string tenant_id = 1; string po_id = 2; string receipt_date = 3; }
+message CreateGoodsReceiptResponse { GoodsReceipt data = 1; }
+message GetSupplierBalanceRequest { string tenant_id = 1; string supplier_id = 2; }
+message GetSupplierBalanceResponse { int64 outstanding_cents = 1; int64 overdue_cents = 2; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | requisitions | — |
+| V002 | requisition_lines | V001 |
+| V003 | purchase_orders | V002 |
+| V004 | purchase_order_lines | V003 |
+| V005 | goods_receipts | V004 |
+| V006 | goods_receipt_lines | V005 |
+| V007 | blanket_agreements | V006 |
+
+---
+
+## 7. Business Rules
 
 ### 4.1 Requisition to PO Flow
 1. Employee creates requisition → DRAFT

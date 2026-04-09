@@ -279,7 +279,49 @@ GET           /api/v1/pm/reports/revenue-by-project   Permission: pm.reports.vie
 
 ---
 
-## 4. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.pm.v1;
+
+service ProjectManagementService {
+    rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+    rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+    rpc RecordTimeEntry(RecordTimeEntryRequest) returns (RecordTimeEntryResponse);
+    rpc GetProjectStatus(GetProjectStatusRequest) returns (GetProjectStatusResponse);
+}
+
+message Project { string id = 1; string tenant_id = 2; string project_number = 3; string name = 4; string project_type = 5; string status = 6; string start_date = 7; string end_date = 8; int64 budget_cents = 9; string currency_code = 10; string created_at = 11; string updated_at = 12; }
+message ProjectTask { string id = 1; string tenant_id = 2; string project_id = 3; string task_name = 4; string status = 5; string start_date = 6; string end_date = 7; double planned_hours = 8; double actual_hours = 9; string created_at = 10; string updated_at = 11; }
+message TimeEntry { string id = 1; string tenant_id = 2; string project_id = 3; string task_id = 4; string employee_id = 5; double hours = 6; string entry_date = 7; string status = 8; string created_at = 9; }
+
+message GetProjectRequest { string tenant_id = 1; string id = 2; }
+message GetProjectResponse { Project data = 1; }
+message CreateProjectRequest { string tenant_id = 1; string name = 2; string project_type = 3; string start_date = 4; string end_date = 5; }
+message CreateProjectResponse { Project data = 1; }
+message RecordTimeEntryRequest { string tenant_id = 1; string project_id = 2; string task_id = 3; string employee_id = 4; double hours = 5; string entry_date = 6; }
+message RecordTimeEntryResponse { TimeEntry data = 1; }
+message GetProjectStatusRequest { string tenant_id = 1; string id = 2; }
+message GetProjectStatusResponse { string project_id = 1; string status = 2; double percent_complete = 3; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | projects | — |
+| V002 | project_tasks | V001 |
+| V003 | time_entries | V002 |
+| V004 | expense_entries | V003 |
+| V005 | project_billings | V004 |
+
+---
+
+## 7. Business Rules
 
 ### 4.1 Project Costing
 - `actual_cost = SUM(time_entries.cost_amount) + SUM(expense_entries.amount) + overhead`

@@ -276,7 +276,51 @@ GET           /api/v1/mfg/reports/variance-analysis     Permission: mfg.reports.
 
 ---
 
-## 4. Business Rules
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.mfg.v1;
+
+service ManufacturingService {
+    rpc GetBOM(GetBOMRequest) returns (GetBOMResponse);
+    rpc CreateWorkOrder(CreateWorkOrderRequest) returns (CreateWorkOrderResponse);
+    rpc ReportProduction(ReportProductionRequest) returns (ReportProductionResponse);
+    rpc GetWorkOrderStatus(GetWorkOrderStatusRequest) returns (GetWorkOrderStatusResponse);
+}
+
+message BillOfMaterials { string id = 1; string tenant_id = 2; string bom_code = 3; string name = 4; string item_id = 5; int64 quantity = 6; string status = 7; string created_at = 8; string updated_at = 9; }
+message WorkOrder { string id = 1; string tenant_id = 2; string work_order_number = 3; string bom_id = 4; int64 quantity_ordered = 5; int64 quantity_completed = 6; string status = 7; string start_date = 8; string created_at = 9; string updated_at = 10; }
+message ProductionReport { string id = 1; string tenant_id = 2; string work_order_id = 3; int64 quantity_produced = 4; int64 quantity_scrapped = 5; string report_date = 6; string created_at = 7; }
+
+message GetBOMRequest { string tenant_id = 1; string id = 2; }
+message GetBOMResponse { BillOfMaterials data = 1; }
+message CreateWorkOrderRequest { string tenant_id = 1; string bom_id = 2; int64 quantity = 3; string start_date = 4; }
+message CreateWorkOrderResponse { WorkOrder data = 1; }
+message ReportProductionRequest { string tenant_id = 1; string work_order_id = 2; int64 quantity_produced = 3; }
+message ReportProductionResponse { ProductionReport data = 1; }
+message GetWorkOrderStatusRequest { string tenant_id = 1; string id = 2; }
+message GetWorkOrderStatusResponse { WorkOrder data = 1; }
+```
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | bills_of_materials | — |
+| V002 | bom_components | V001 |
+| V003 | routings | V002 |
+| V004 | routing_operations | V003 |
+| V005 | work_orders | V004 |
+| V006 | work_order_materials | V005 |
+| V007 | production_reports | V006 |
+
+---
+
+## 7. Business Rules
 
 ### 4.1 BOM Rules
 - Circular references MUST NOT be allowed (component cannot contain its parent)
