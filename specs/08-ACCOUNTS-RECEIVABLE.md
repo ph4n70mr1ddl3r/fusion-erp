@@ -133,7 +133,7 @@ CREATE TABLE ar_invoice_lines (
 
     description TEXT NOT NULL,
     item_id TEXT,                          -- Optional link to inventory item
-    quantity DECIMAL(18,4) DEFAULT 1,
+    quantity INTEGER DEFAULT 1000,
     unit_of_measure TEXT,
     unit_price_cents INTEGER NOT NULL DEFAULT 0,
     line_amount_cents INTEGER NOT NULL DEFAULT 0,
@@ -335,3 +335,56 @@ Credit: AR control account → receipt.amount_cents
 | `ar.receipt.applied` | Receipt applied to invoice |
 | `ar.credit_memo.created` | Credit memo created |
 | `ar.customer.credit_exceeded` | Credit limit exceeded |
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.ar.v1;
+
+service AccountsReceivableService {
+    rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+    rpc GetInvoice(GetInvoiceRequest) returns (GetInvoiceResponse);
+    rpc CreateInvoice(CreateInvoiceRequest) returns (CreateInvoiceResponse);
+    rpc PostInvoice(PostInvoiceRequest) returns (PostInvoiceResponse);
+    rpc ApplyReceipt(ApplyReceiptRequest) returns (ApplyReceiptResponse);
+    rpc GetCustomerBalance(GetCustomerBalanceRequest) returns (GetCustomerBalanceResponse);
+    rpc GetAging(GetAgingRequest) returns (GetAgingResponse);
+}
+```
+
+---
+
+## 6. Inter-Service Integration
+
+### 6.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| gl-service | `PostJournal` | Post AR invoice/receipt journal entries |
+| tax-service | `CalculateTax` | Calculate tax on invoice lines |
+| cm-service | `RecordReceipt` | Record cash receipt in cash management |
+| workflow-service | `SubmitApproval` | Submit credit memo approvals |
+
+### 6.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| om-service | `CreateInvoice` | Generate AR invoice from sales order |
+| collections-service | `GetInvoice` / `GetAging` | Read invoice data for collections |
+| ic-service | `CreateInvoice` | Create intercompany AR invoice |
+
+---
+
+## 7. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ar_sequences | — |
+| V002 | customers | V001 |
+| V003 | customer_groups | V002 |
+| V004 | ar_invoices | V002 |
+| V005 | ar_invoice_lines | V004 |
+| V006 | ar_receipts | V002 |
+| V007 | ar_receipt_applications | V004, V006 |
+| V008 | ar_credit_memos | V002, V004 |

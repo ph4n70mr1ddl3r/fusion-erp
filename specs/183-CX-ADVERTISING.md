@@ -209,49 +209,49 @@ CREATE INDEX idx_cxa_chan_sync ON cxa_channel_configs(sync_status);
 ### 3.1 Campaigns
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/cx-advertising/v1/campaigns` | Create ad campaign |
-| GET | `/cx-advertising/v1/campaigns` | List campaigns |
-| GET | `/cx-advertising/v1/campaigns/{id}` | Get campaign details |
-| PUT | `/cx-advertising/v1/campaigns/{id}` | Update campaign |
-| POST | `/cx-advertising/v1/campaigns/{id}/launch` | Launch campaign |
-| POST | `/cx-advertising/v1/campaigns/{id}/pause` | Pause campaign |
+| POST | `/api/v1/cx-advertising/campaigns` | Create ad campaign |
+| GET | `/api/v1/cx-advertising/campaigns` | List campaigns |
+| GET | `/api/v1/cx-advertising/campaigns/{id}` | Get campaign details |
+| PUT | `/api/v1/cx-advertising/campaigns/{id}` | Update campaign |
+| POST | `/api/v1/cx-advertising/campaigns/{id}/launch` | Launch campaign |
+| POST | `/api/v1/cx-advertising/campaigns/{id}/pause` | Pause campaign |
 
 ### 3.2 Audiences
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/cx-advertising/v1/audiences` | Create audience |
-| GET | `/cx-advertising/v1/audiences` | List audiences |
-| GET | `/cx-advertising/v1/audiences/{id}` | Get audience details |
-| PUT | `/cx-advertising/v1/audiences/{id}` | Update audience |
-| POST | `/cx-advertising/v1/audiences/{id}/sync` | Sync audience to platforms |
-| POST | `/cx-advertising/v1/audiences/{id}/lookalike` | Generate lookalike |
+| POST | `/api/v1/cx-advertising/audiences` | Create audience |
+| GET | `/api/v1/cx-advertising/audiences` | List audiences |
+| GET | `/api/v1/cx-advertising/audiences/{id}` | Get audience details |
+| PUT | `/api/v1/cx-advertising/audiences/{id}` | Update audience |
+| POST | `/api/v1/cx-advertising/audiences/{id}/sync` | Sync audience to platforms |
+| POST | `/api/v1/cx-advertising/audiences/{id}/lookalike` | Generate lookalike |
 
 ### 3.3 Creatives
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/cx-advertising/v1/creatives` | Upload creative asset |
-| GET | `/cx-advertising/v1/creatives` | List creative assets |
-| GET | `/cx-advertising/v1/creatives/{id}` | Get creative details |
-| PUT | `/cx-advertising/v1/creatives/{id}` | Update creative |
-| POST | `/cx-advertising/v1/creatives/{id}/approve` | Approve creative |
-| POST | `/cx-advertising/v1/creatives/{id}/reject` | Reject creative |
+| POST | `/api/v1/cx-advertising/creatives` | Upload creative asset |
+| GET | `/api/v1/cx-advertising/creatives` | List creative assets |
+| GET | `/api/v1/cx-advertising/creatives/{id}` | Get creative details |
+| PUT | `/api/v1/cx-advertising/creatives/{id}` | Update creative |
+| POST | `/api/v1/cx-advertising/creatives/{id}/approve` | Approve creative |
+| POST | `/api/v1/cx-advertising/creatives/{id}/reject` | Reject creative |
 
 ### 3.4 Performance
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/cx-advertising/v1/campaigns/{id}/performance` | Campaign performance |
-| GET | `/cx-advertising/v1/performance/dashboard` | Advertising dashboard |
-| GET | `/cx-advertising/v1/performance/channel-comparison` | Compare channels |
-| GET | `/cx-advertising/v1/performance/roi` | ROI analysis |
+| GET | `/api/v1/cx-advertising/campaigns/{id}/performance` | Campaign performance |
+| GET | `/api/v1/cx-advertising/performance/dashboard` | Advertising dashboard |
+| GET | `/api/v1/cx-advertising/performance/channel-comparison` | Compare channels |
+| GET | `/api/v1/cx-advertising/performance/roi` | ROI analysis |
 
 ### 3.5 Channel Management
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/cx-advertising/v1/channels` | Configure channel |
-| GET | `/cx-advertising/v1/channels` | List channel configurations |
-| PUT | `/cx-advertising/v1/channels/{id}` | Update configuration |
-| POST | `/cx-advertising/v1/channels/{id}/test` | Test channel connection |
-| POST | `/cx-advertising/v1/channels/{id}/sync` | Trigger full sync |
+| POST | `/api/v1/cx-advertising/channels` | Configure channel |
+| GET | `/api/v1/cx-advertising/channels` | List channel configurations |
+| PUT | `/api/v1/cx-advertising/channels/{id}` | Update configuration |
+| POST | `/api/v1/cx-advertising/channels/{id}/test` | Test channel connection |
+| POST | `/api/v1/cx-advertising/channels/{id}/sync` | Trigger full sync |
 
 ---
 

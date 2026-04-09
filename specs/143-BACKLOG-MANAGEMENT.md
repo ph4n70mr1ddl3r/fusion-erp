@@ -7,7 +7,7 @@ Backlog Management provides order backlog monitoring, prioritization, allocation
 **Bounded Context:** Order Backlog & Allocation Management
 **Service Name:** `backlog-mgmt-service`
 **Database:** `data/backlog_mgmt.db`
-**HTTP Port:** 8161 | **gRPC Port:** 9161
+**HTTP Port:** 8223 | **gRPC Port:** 9223
 
 ---
 

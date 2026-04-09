@@ -7,7 +7,7 @@ Service Center provides a unified agent workspace for omnichannel case managemen
 **Bounded Context:** Agent Workspace & Omnichannel Console
 **Service Name:** `svccenter-service`
 **Database:** `data/svccenter.db`
-**HTTP Port:** 8149 | **gRPC Port:** 9149
+**HTTP Port:** 8209 | **gRPC Port:** 9209
 
 ---
 

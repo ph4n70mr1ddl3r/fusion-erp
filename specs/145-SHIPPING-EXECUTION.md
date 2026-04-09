@@ -7,7 +7,7 @@ Shipping Execution manages outbound shipment planning, execution, confirmation, 
 **Bounded Context:** Outbound Shipping & Fulfillment Execution
 **Service Name:** `shipping-exec-service`
 **Database:** `data/shipping_exec.db`
-**HTTP Port:** 8163 | **gRPC Port:** 9163
+**HTTP Port:** 8225 | **gRPC Port:** 9225
 
 ---
 

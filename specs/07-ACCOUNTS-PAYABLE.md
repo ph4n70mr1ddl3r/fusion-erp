@@ -146,7 +146,7 @@ CREATE TABLE ap_invoice_lines (
 
     -- Line detail
     description TEXT NOT NULL,
-    quantity DECIMAL(18,4) DEFAULT 1,
+    quantity INTEGER DEFAULT 1000,
     unit_of_measure TEXT,
     unit_price_cents INTEGER NOT NULL DEFAULT 0,
     line_amount_cents INTEGER NOT NULL DEFAULT 0,
@@ -178,7 +178,7 @@ CREATE TABLE ap_invoice_lines (
     is_active INTEGER NOT NULL DEFAULT 1,
 
     FOREIGN KEY (invoice_id) REFERENCES ap_invoices(id) ON DELETE RESTRICT,
-    FOREIGN KEY (expense_account_id) REFERENCES gl_accounts(id) ON DELETE RESTRICT,
+    -- expense_account_id is a logical reference to gl_accounts(id), validated via gRPC
     UNIQUE(tenant_id, invoice_id, line_number)
 );
 

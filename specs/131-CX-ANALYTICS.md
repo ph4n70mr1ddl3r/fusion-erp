@@ -7,7 +7,7 @@ CX Analytics provides cross-channel customer experience analytics, combining jou
 **Bounded Context:** Customer Experience Analytics & Insights
 **Service Name:** `cxanalytics-service`
 **Database:** `data/cxanalytics.db`
-**HTTP Port:** 8151 | **gRPC Port:** 9151
+**HTTP Port:** 8211 | **gRPC Port:** 9211
 
 ---
 

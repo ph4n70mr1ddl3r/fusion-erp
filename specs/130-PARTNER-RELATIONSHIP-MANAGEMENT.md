@@ -7,7 +7,7 @@ Partner Relationship Management (PRM) enables organizations to manage their indi
 **Bounded Context:** Channel Partners & Indirect Sales
 **Service Name:** `prm-service`
 **Database:** `data/prm.db`
-**HTTP Port:** 8150 | **gRPC Port:** 9150
+**HTTP Port:** 8210 | **gRPC Port:** 9210
 
 ---
 

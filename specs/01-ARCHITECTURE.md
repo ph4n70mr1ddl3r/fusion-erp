@@ -65,6 +65,7 @@
 | eam-service | `services/eam-service` | `data/eam.db` | 8067 | Enterprise Asset Management |
 | quality-service | `services/quality-service` | `data/quality.db` | 8068 | Quality Management |
 | sus-service | `services/sus-service` | `data/sus.db` | 8069 | Sustainability / ESG |
+| redwood-ux-service | `services/redwood-ux-service` | `data/redwood_ux.db` | 8169 | Redwood UX / Low-Code UI |
 | assistant-service | `services/assistant-service` | `data/assistant.db` | 8070 | Digital Assistant / Conversational AI |
 | iot-service | `services/iot-service` | `data/iot.db` | 8071 | IoT Integration |
 | supplier-service | `services/supplier-service` | `data/supplier.db` | 8072 | Supplier Portal & Sourcing |
@@ -511,6 +512,10 @@ target = "http://localhost:8073"
 [routes.chain]
 prefix = "/api/v1/chain"
 target = "http://localhost:8074"
+
+[routes.redwood-ux]
+prefix = "/api/v1/redwood-ux"
+target = "http://localhost:8169"
 # ... etc
 ```
 

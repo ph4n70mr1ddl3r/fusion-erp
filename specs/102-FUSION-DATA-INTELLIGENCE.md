@@ -68,7 +68,6 @@ CREATE TABLE kpi_definitions (
     visualization_type TEXT NOT NULL DEFAULT 'LINE'
         CHECK(visualization_type IN ('LINE','BAR','GAUGE','TABLE','HEATMAP')),
     owner_id TEXT NOT NULL,
-    is_active INTEGER NOT NULL DEFAULT 1,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),

@@ -244,9 +244,7 @@ CREATE INDEX idx_active_suppliers
 ### 7.3 Covering Indexes
 For frequently accessed column sets, use covering indexes:
 ```sql
-CREATE INDEX idx_gl_balances_covering
-    ON gl_balances(tenant_id, account_id, period_name, balance_type)
-    INCLUDE (beginning_balance_cents, ending_balance_cents);
+CREATE INDEX idx_gl_balances_covering ON gl_balances(tenant_id, account_id, period_name, balance_type, beginning_balance_cents, ending_balance_cents);
 ```
 
 ---

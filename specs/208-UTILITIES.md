@@ -192,44 +192,44 @@ CREATE INDEX idx_ut_rate_dates ON ut_rate_schedules(effective_from, effective_to
 ### 3.1 Service Agreements
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/utilities/v1/agreements` | Create agreement |
-| GET | `/utilities/v1/agreements` | List agreements |
-| GET | `/utilities/v1/agreements/{id}` | Get agreement |
-| PUT | `/utilities/v1/agreements/{id}` | Update agreement |
-| POST | `/utilities/v1/agreements/{id}/transfer` | Transfer service |
+| POST | `/api/v1/utilities/agreements` | Create agreement |
+| GET | `/api/v1/utilities/agreements` | List agreements |
+| GET | `/api/v1/utilities/agreements/{id}` | Get agreement |
+| PUT | `/api/v1/utilities/agreements/{id}` | Update agreement |
+| POST | `/api/v1/utilities/agreements/{id}/transfer` | Transfer service |
 
 ### 3.2 Meters
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/utilities/v1/meters` | Register meter |
-| GET | `/utilities/v1/meters` | List meters |
-| POST | `/utilities/v1/meters/{id}/reading` | Submit reading |
-| GET | `/utilities/v1/meters/{id}/history` | Reading history |
+| POST | `/api/v1/utilities/meters` | Register meter |
+| GET | `/api/v1/utilities/meters` | List meters |
+| POST | `/api/v1/utilities/meters/{id}/reading` | Submit reading |
+| GET | `/api/v1/utilities/meters/{id}/history` | Reading history |
 
 ### 3.3 Billing
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/utilities/v1/bills/generate` | Generate bills |
-| GET | `/utilities/v1/bills` | List bills |
-| GET | `/utilities/v1/bills/{id}` | Get bill |
-| POST | `/utilities/v1/bills/{id}/dispute` | Dispute bill |
+| POST | `/api/v1/utilities/bills/generate` | Generate bills |
+| GET | `/api/v1/utilities/bills` | List bills |
+| GET | `/api/v1/utilities/bills/{id}` | Get bill |
+| POST | `/api/v1/utilities/bills/{id}/dispute` | Dispute bill |
 
 ### 3.4 Outages
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/utilities/v1/outages` | Report outage |
-| GET | `/utilities/v1/outages` | List outages |
-| GET | `/utilities/v1/outages/{id}` | Get outage |
-| POST | `/utilities/v1/outages/{id}/dispatch` | Dispatch crew |
-| POST | `/utilities/v1/outages/{id}/restore` | Mark restored |
+| POST | `/api/v1/utilities/outages` | Report outage |
+| GET | `/api/v1/utilities/outages` | List outages |
+| GET | `/api/v1/utilities/outages/{id}` | Get outage |
+| POST | `/api/v1/utilities/outages/{id}/dispatch` | Dispatch crew |
+| POST | `/api/v1/utilities/outages/{id}/restore` | Mark restored |
 
 ### 3.5 Rates
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/utilities/v1/rates` | Create rate schedule |
-| GET | `/utilities/v1/rates` | List rate schedules |
-| GET | `/utilities/v1/rates/{id}` | Get rate schedule |
-| PUT | `/utilities/v1/rates/{id}` | Update rate schedule |
+| POST | `/api/v1/utilities/rates` | Create rate schedule |
+| GET | `/api/v1/utilities/rates` | List rate schedules |
+| GET | `/api/v1/utilities/rates/{id}` | Get rate schedule |
+| PUT | `/api/v1/utilities/rates/{id}` | Update rate schedule |
 
 ---
 

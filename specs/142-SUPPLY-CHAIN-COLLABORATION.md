@@ -7,7 +7,7 @@ Supply Chain Collaboration enables real-time collaboration between buying organi
 **Bounded Context:** Supply Network Collaboration
 **Service Name:** `sc-collaboration-service`
 **Database:** `data/sc_collaboration.db`
-**HTTP Port:** 8160 | **gRPC Port:** 9160
+**HTTP Port:** 8222 | **gRPC Port:** 9222
 
 ---
 

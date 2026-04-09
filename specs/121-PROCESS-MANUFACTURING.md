@@ -7,7 +7,7 @@ Process Manufacturing manages formula-based production for industries such as ch
 **Bounded Context:** Process Manufacturing & Batch Production
 **Service Name:** `processmfg-service`
 **Database:** `data/processmfg.db`
-**HTTP Port:** 8141 | **gRPC Port:** 9141
+**HTTP Port:** 8201 | **gRPC Port:** 9201
 
 ---
 

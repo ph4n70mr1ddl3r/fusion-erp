@@ -7,7 +7,7 @@ Sales & Operations Planning (S&OP) provides cross-functional consensus planning 
 **Bounded Context:** Cross-Functional Consensus Planning
 **Service Name:** `sop-service`
 **Database:** `data/sop.db`
-**HTTP Port:** 8159 | **gRPC Port:** 9159
+**HTTP Port:** 8221 | **gRPC Port:** 9221
 
 ---
 
@@ -213,45 +213,45 @@ CREATE INDEX idx_sop_meeting_cycle ON sop_meetings(cycle_id, meeting_type);
 ### 3.1 S&OP Cycles
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sop/v1/cycles` | Create S&OP cycle |
-| GET | `/sop/v1/cycles` | List cycles |
-| GET | `/sop/v1/cycles/{id}` | Get cycle details |
-| PUT | `/sop/v1/cycles/{id}` | Update cycle |
-| POST | `/sop/v1/cycles/{id}/advance-phase` | Advance to next phase |
-| POST | `/sop/v1/cycles/{id}/approve` | Executive approval |
+| POST | `/api/v1/sop/cycles` | Create S&OP cycle |
+| GET | `/api/v1/sop/cycles` | List cycles |
+| GET | `/api/v1/sop/cycles/{id}` | Get cycle details |
+| PUT | `/api/v1/sop/cycles/{id}` | Update cycle |
+| POST | `/api/v1/sop/cycles/{id}/advance-phase` | Advance to next phase |
+| POST | `/api/v1/sop/cycles/{id}/approve` | Executive approval |
 
 ### 3.2 Scenarios
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sop/v1/scenarios` | Create scenario |
-| GET | `/sop/v1/scenarios` | List scenarios |
-| GET | `/sop/v1/scenarios/{id}` | Get scenario with plan lines |
-| PUT | `/sop/v1/scenarios/{id}` | Update scenario |
-| POST | `/sop/v1/scenarios/{id}/copy` | Copy scenario |
-| POST | `/sop/v1/scenarios/compare` | Compare scenarios side-by-side |
+| POST | `/api/v1/sop/scenarios` | Create scenario |
+| GET | `/api/v1/sop/scenarios` | List scenarios |
+| GET | `/api/v1/sop/scenarios/{id}` | Get scenario with plan lines |
+| PUT | `/api/v1/sop/scenarios/{id}` | Update scenario |
+| POST | `/api/v1/sop/scenarios/{id}/copy` | Copy scenario |
+| POST | `/api/v1/sop/scenarios/compare` | Compare scenarios side-by-side |
 
 ### 3.3 Plan Lines
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/sop/v1/scenarios/{id}/lines` | Get plan lines |
-| PUT | `/sop/v1/scenarios/{id}/lines` | Update plan lines |
-| POST | `/sop/v1/scenarios/{id}/lines/import` | Import from demand/supply plans |
+| GET | `/api/v1/sop/scenarios/{id}/lines` | Get plan lines |
+| PUT | `/api/v1/sop/scenarios/{id}/lines` | Update plan lines |
+| POST | `/api/v1/sop/scenarios/{id}/lines/import` | Import from demand/supply plans |
 
 ### 3.4 Gap Analysis
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sop/v1/cycles/{id}/gap-analysis` | Run gap analysis |
-| GET | `/sop/v1/cycles/{id}/gap-analysis` | Get gap analysis results |
-| PUT | `/sop/v1/gaps/{id}/resolve` | Resolve gap |
+| POST | `/api/v1/sop/cycles/{id}/gap-analysis` | Run gap analysis |
+| GET | `/api/v1/sop/cycles/{id}/gap-analysis` | Get gap analysis results |
+| PUT | `/api/v1/sop/gaps/{id}/resolve` | Resolve gap |
 
 ### 3.5 Meetings & Actions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sop/v1/meetings` | Schedule S&OP meeting |
-| GET | `/sop/v1/meetings` | List meetings |
-| PUT | `/sop/v1/meetings/{id}` | Update meeting details |
-| POST | `/sop/v1/action-items` | Create action item |
-| PUT | `/sop/v1/action-items/{id}` | Update action item |
+| POST | `/api/v1/sop/meetings` | Schedule S&OP meeting |
+| GET | `/api/v1/sop/meetings` | List meetings |
+| PUT | `/api/v1/sop/meetings/{id}` | Update meeting details |
+| POST | `/api/v1/sop/action-items` | Create action item |
+| PUT | `/api/v1/sop/action-items/{id}` | Update action item |
 
 ---
 

@@ -277,7 +277,7 @@ CREATE TABLE expense_report_lines (
 
     FOREIGN KEY (report_id) REFERENCES expense_reports(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES expense_categories(id) ON DELETE RESTRICT,
-    FOREIGN KEY (receipt_id) REFERENCES expense_receipts(id) ON DELETE SET NULL,
+    -- receipt_id is a logical reference to expense_receipts(id), validated via gRPC
     UNIQUE(tenant_id, report_id, line_number)
 );
 
@@ -374,7 +374,7 @@ CREATE TABLE corporate_cards (
     version INTEGER NOT NULL DEFAULT 1,
     is_active INTEGER NOT NULL DEFAULT 1,
 
-    FOREIGN KEY (employee_id) REFERENCES users(id) ON DELETE RESTRICT,
+    -- employee_id is a logical reference to users(id), validated via gRPC
     UNIQUE(tenant_id, card_number_encrypted)
 );
 

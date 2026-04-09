@@ -7,7 +7,7 @@ Higher Education provides student management capabilities for colleges and unive
 **Bounded Context:** Higher Education & Student Management
 **Service Name:** `highered-service`
 **Database:** `data/highered.db`
-**HTTP Port:** 8156 | **gRPC Port:** 9156
+**HTTP Port:** 8216 | **gRPC Port:** 9216
 
 ---
 
@@ -192,7 +192,7 @@ CREATE TABLE he_students (
     academic_standing TEXT NOT NULL DEFAULT 'GOOD'
         CHECK(academic_standing IN ('GOOD','WARNING','PROBATION','SUSPENDED','DISMISSED')),
     cumulative_gpa REAL NOT NULL DEFAULT 0.0,
-    cumulative_credits REAL NOT NOT NULL DEFAULT 0.0,
+    cumulative_credits REAL NOT NULL DEFAULT 0.0,
     advisor_id TEXT,
     cohort_year TEXT,
 

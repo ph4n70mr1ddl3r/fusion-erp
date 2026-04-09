@@ -25,7 +25,6 @@ CREATE TABLE extensions (
         CHECK(target_application IN ('ERP','SCM','HCM','CX','EPM')),
     target_object TEXT NOT NULL,
     description TEXT,
-    version TEXT NOT NULL DEFAULT '1.0.0',
     status TEXT NOT NULL DEFAULT 'DRAFT'
         CHECK(status IN ('DRAFT','IN_REVIEW','ACTIVE','INACTIVE','DEPRECATED')),
     sandbox_id TEXT,
@@ -165,7 +164,6 @@ CREATE TABLE business_logic_scripts (
         CHECK(language IN ('GROOVY','JAVASCRIPT')),
     error_handling_config TEXT,  -- JSON
     execution_order INTEGER NOT NULL DEFAULT 1,
-    is_active INTEGER NOT NULL DEFAULT 1,
     last_execution_at TEXT,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -194,7 +192,6 @@ CREATE TABLE extension_sandboxes (
     source_sandbox_id TEXT,
     status TEXT NOT NULL DEFAULT 'CREATED'
         CHECK(status IN ('CREATED','IN_DEVELOPMENT','IN_TESTING','APPROVED','PUBLISHED','DISCARDED')),
-    created_by TEXT NOT NULL,
     published_by TEXT,
     published_date TEXT,
 

@@ -89,7 +89,6 @@ CREATE TABLE wellness_activities (
     external_link TEXT,
     start_date TEXT,
     end_date TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),

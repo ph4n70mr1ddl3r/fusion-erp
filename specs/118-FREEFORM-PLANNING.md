@@ -150,7 +150,6 @@ CREATE TABLE scenario_comparisons (
     comparison_dimensions TEXT NOT NULL,  -- JSON
     comparison_type TEXT NOT NULL CHECK(comparison_type IN ('VARIANCE','RATIO','ABSOLUTE','PERCENTAGE')),
     results TEXT,  -- JSON
-    created_at TEXT NOT NULL,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -177,7 +176,6 @@ CREATE TABLE model_rules (
     source_coordinates TEXT,  -- JSON
     parameters TEXT,  -- JSON
     execution_order INTEGER NOT NULL DEFAULT 1,
-    is_active INTEGER NOT NULL DEFAULT 1,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),

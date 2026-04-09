@@ -7,7 +7,7 @@ B2C Service provides high-volume consumer-facing customer support capabilities o
 **Bounded Context:** B2C Customer Service & Consumer Support
 **Service Name:** `b2cservice-service`
 **Database:** `data/b2cservice.db`
-**HTTP Port:** 8146 | **gRPC Port:** 9146
+**HTTP Port:** 8206 | **gRPC Port:** 9206
 
 ---
 

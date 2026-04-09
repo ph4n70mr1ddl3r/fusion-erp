@@ -162,34 +162,34 @@ CREATE TABLE gl_analytics (
 ### 3.1 Guidance Topics
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/guided-learning/v1/topics` | Create topic |
-| GET | `/guided-learning/v1/topics` | List topics |
-| GET | `/guided-learning/v1/topics/{id}` | Get topic with steps |
-| PUT | `/guided-learning/v1/topics/{id}` | Update topic |
-| POST | `/guided-learning/v1/topics/{id}/publish` | Publish topic |
-| DELETE | `/guided-learning/v1/topics/{id}` | Archive topic |
+| POST | `/api/v1/guided-learning/topics` | Create topic |
+| GET | `/api/v1/guided-learning/topics` | List topics |
+| GET | `/api/v1/guided-learning/topics/{id}` | Get topic with steps |
+| PUT | `/api/v1/guided-learning/topics/{id}` | Update topic |
+| POST | `/api/v1/guided-learning/topics/{id}/publish` | Publish topic |
+| DELETE | `/api/v1/guided-learning/topics/{id}` | Archive topic |
 
 ### 3.2 Steps
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/guided-learning/v1/topics/{id}/steps` | Add step |
-| PUT | `/guided-learning/v1/steps/{id}` | Update step |
-| DELETE | `/guided-learning/v1/steps/{id}` | Remove step |
+| POST | `/api/v1/guided-learning/topics/{id}/steps` | Add step |
+| PUT | `/api/v1/guided-learning/steps/{id}` | Update step |
+| DELETE | `/api/v1/guided-learning/steps/{id}` | Remove step |
 
 ### 3.3 Runtime (Client API)
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/guided-learning/v1/guidance` | Get active guidance for current page/user |
-| POST | `/guided-learning/v1/progress` | Record step completion |
-| POST | `/guided-learning/v1/feedback` | Submit guidance feedback |
-| GET | `/guided-learning/v1/user/{userId}/pending` | Pending guidance for user |
+| GET | `/api/v1/guided-learning/guidance` | Get active guidance for current page/user |
+| POST | `/api/v1/guided-learning/progress` | Record step completion |
+| POST | `/api/v1/guided-learning/feedback` | Submit guidance feedback |
+| GET | `/api/v1/guided-learning/user/{userId}/pending` | Pending guidance for user |
 
 ### 3.4 Smart Tips & Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/guided-learning/v1/smart-tips` | Create smart tip |
-| GET | `/guided-learning/v1/smart-tips` | List tips |
-| GET | `/guided-learning/v1/analytics` | Guidance analytics |
+| POST | `/api/v1/guided-learning/smart-tips` | Create smart tip |
+| GET | `/api/v1/guided-learning/smart-tips` | List tips |
+| GET | `/api/v1/guided-learning/analytics` | Guidance analytics |
 
 ---
 

@@ -100,7 +100,7 @@ CREATE TABLE performance_obligations (
     allocated_amount_cents INTEGER NOT NULL DEFAULT 0,
 
     -- Quantities
-    quantity DECIMAL(18,4) DEFAULT 1,
+    quantity INTEGER DEFAULT 1000,
     unit_of_measure TEXT DEFAULT 'EA',
 
     -- Dates

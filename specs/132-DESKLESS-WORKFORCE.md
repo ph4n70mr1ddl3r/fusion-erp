@@ -7,7 +7,7 @@ Deskless Workforce provides mobile-first HR capabilities for frontline and field
 **Bounded Context:** Frontline Workforce & Mobile-First HR
 **Service Name:** `deskless-service`
 **Database:** `data/deskless.db`
-**HTTP Port:** 8152 | **gRPC Port:** 9152
+**HTTP Port:** 8212 | **gRPC Port:** 9212
 
 ---
 

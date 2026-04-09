@@ -7,7 +7,7 @@ Smart Operations provides IoT-enabled operational intelligence for manufacturing
 **Bounded Context:** Smart Operations & Predictive Maintenance
 **Service Name:** `smartops-service`
 **Database:** `data/smartops.db`
-**HTTP Port:** 8143 | **gRPC Port:** 9143
+**HTTP Port:** 8203 | **gRPC Port:** 9203
 
 ---
 

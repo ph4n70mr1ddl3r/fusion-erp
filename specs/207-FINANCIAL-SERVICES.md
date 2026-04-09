@@ -217,45 +217,45 @@ CREATE INDEX idx_fs_treasury_dates ON fs_treasury_operations(value_date);
 ### 3.1 Loans
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/financial-services/v1/loans` | Originate loan |
-| GET | `/financial-services/v1/loans` | List loans |
-| GET | `/financial-services/v1/loans/{id}` | Get loan details |
-| PUT | `/financial-services/v1/loans/{id}` | Update loan |
-| POST | `/financial-services/v1/loans/{id}/disburse` | Disburse loan |
-| GET | `/financial-services/v1/loans/portfolio` | Portfolio summary |
+| POST | `/api/v1/financial-services/loans` | Originate loan |
+| GET | `/api/v1/financial-services/loans` | List loans |
+| GET | `/api/v1/financial-services/loans/{id}` | Get loan details |
+| PUT | `/api/v1/financial-services/loans/{id}` | Update loan |
+| POST | `/api/v1/financial-services/loans/{id}/disburse` | Disburse loan |
+| GET | `/api/v1/financial-services/loans/portfolio` | Portfolio summary |
 
 ### 3.2 KYC/AML
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/financial-services/v1/kyc/screen` | Run screening |
-| GET | `/financial-services/v1/kyc/screenings` | List screenings |
-| POST | `/financial-services/v1/kyc/{id}/clear` | Clear screening |
-| GET | `/financial-services/v1/kyc/due-reviews` | List due reviews |
+| POST | `/api/v1/financial-services/kyc/screen` | Run screening |
+| GET | `/api/v1/financial-services/kyc/screenings` | List screenings |
+| POST | `/api/v1/financial-services/kyc/{id}/clear` | Clear screening |
+| GET | `/api/v1/financial-services/kyc/due-reviews` | List due reviews |
 
 ### 3.3 Insurance
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/financial-services/v1/policies` | Create policy |
-| GET | `/financial-services/v1/policies` | List policies |
-| GET | `/financial-services/v1/policies/{id}` | Get policy |
-| PUT | `/financial-services/v1/policies/{id}` | Update policy |
-| POST | `/financial-services/v1/policies/{id}/renew` | Renew policy |
+| POST | `/api/v1/financial-services/policies` | Create policy |
+| GET | `/api/v1/financial-services/policies` | List policies |
+| GET | `/api/v1/financial-services/policies/{id}` | Get policy |
+| PUT | `/api/v1/financial-services/policies/{id}` | Update policy |
+| POST | `/api/v1/financial-services/policies/{id}/renew` | Renew policy |
 
 ### 3.4 Regulatory Reporting
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/financial-services/v1/regulatory-reports` | Generate report |
-| GET | `/financial-services/v1/regulatory-reports` | List reports |
-| GET | `/financial-services/v1/regulatory-reports/{id}` | Get report |
-| POST | `/financial-services/v1/regulatory-reports/{id}/submit` | Submit to regulator |
+| POST | `/api/v1/financial-services/regulatory-reports` | Generate report |
+| GET | `/api/v1/financial-services/regulatory-reports` | List reports |
+| GET | `/api/v1/financial-services/regulatory-reports/{id}` | Get report |
+| POST | `/api/v1/financial-services/regulatory-reports/{id}/submit` | Submit to regulator |
 
 ### 3.5 Treasury
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/financial-services/v1/treasury/trades` | Execute trade |
-| GET | `/financial-services/v1/treasury/trades` | List trades |
-| GET | `/financial-services/v1/treasury/positions` | Current positions |
-| GET | `/financial-services/v1/treasury/exposure` | FX exposure |
+| POST | `/api/v1/financial-services/treasury/trades` | Execute trade |
+| GET | `/api/v1/financial-services/treasury/trades` | List trades |
+| GET | `/api/v1/financial-services/treasury/positions` | Current positions |
+| GET | `/api/v1/financial-services/treasury/exposure` | FX exposure |
 
 ---
 

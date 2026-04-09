@@ -209,50 +209,50 @@ CREATE INDEX idx_rsys_seg_owner ON rsys_audience_segments(owner_id);
 ### 3.1 Programs
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/responsys/v1/programs` | Create program |
-| GET | `/responsys/v1/programs` | List programs |
-| GET | `/responsys/v1/programs/{id}` | Get program details |
-| PUT | `/responsys/v1/programs/{id}` | Update program |
-| POST | `/responsys/v1/programs/{id}/activate` | Activate program |
-| POST | `/responsys/v1/programs/{id}/pause` | Pause program |
+| POST | `/api/v1/responsys/programs` | Create program |
+| GET | `/api/v1/responsys/programs` | List programs |
+| GET | `/api/v1/responsys/programs/{id}` | Get program details |
+| PUT | `/api/v1/responsys/programs/{id}` | Update program |
+| POST | `/api/v1/responsys/programs/{id}/activate` | Activate program |
+| POST | `/api/v1/responsys/programs/{id}/pause` | Pause program |
 
 ### 3.2 Messages
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/responsys/v1/messages` | Create message |
-| GET | `/responsys/v1/messages` | List messages |
-| GET | `/responsys/v1/messages/{id}` | Get message details |
-| PUT | `/responsys/v1/messages/{id}` | Update message |
-| POST | `/responsys/v1/messages/{id}/send` | Send message |
-| POST | `/responsys/v1/messages/{id}/schedule` | Schedule message |
+| POST | `/api/v1/responsys/messages` | Create message |
+| GET | `/api/v1/responsys/messages` | List messages |
+| GET | `/api/v1/responsys/messages/{id}` | Get message details |
+| PUT | `/api/v1/responsys/messages/{id}` | Update message |
+| POST | `/api/v1/responsys/messages/{id}/send` | Send message |
+| POST | `/api/v1/responsys/messages/{id}/schedule` | Schedule message |
 
 ### 3.3 Customer Profiles
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/responsys/v1/customers` | Create customer profile |
-| GET | `/responsys/v1/customers` | List customer profiles |
-| GET | `/responsys/v1/customers/{id}` | Get customer profile |
-| PUT | `/responsys/v1/customers/{id}` | Update profile |
-| PUT | `/responsys/v1/customers/{id}/preferences` | Update channel preferences |
-| GET | `/responsys/v1/customers/{id}/history` | Get interaction history |
+| POST | `/api/v1/responsys/customers` | Create customer profile |
+| GET | `/api/v1/responsys/customers` | List customer profiles |
+| GET | `/api/v1/responsys/customers/{id}` | Get customer profile |
+| PUT | `/api/v1/responsys/customers/{id}` | Update profile |
+| PUT | `/api/v1/responsys/customers/{id}/preferences` | Update channel preferences |
+| GET | `/api/v1/responsys/customers/{id}/history` | Get interaction history |
 
 ### 3.4 Interactions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/responsys/v1/interactions` | Record interaction |
-| GET | `/responsys/v1/interactions` | List interactions |
-| GET | `/responsys/v1/messages/{id}/interactions` | Message interaction summary |
-| GET | `/responsys/v1/customers/{id}/interactions` | Customer interaction timeline |
+| POST | `/api/v1/responsys/interactions` | Record interaction |
+| GET | `/api/v1/responsys/interactions` | List interactions |
+| GET | `/api/v1/responsys/messages/{id}/interactions` | Message interaction summary |
+| GET | `/api/v1/responsys/customers/{id}/interactions` | Customer interaction timeline |
 
 ### 3.5 Segmentation
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/responsys/v1/segments` | Create segment |
-| GET | `/responsys/v1/segments` | List segments |
-| GET | `/responsys/v1/segments/{id}` | Get segment details |
-| PUT | `/responsys/v1/segments/{id}` | Update segment |
-| POST | `/responsys/v1/segments/{id}/refresh` | Refresh segment membership |
-| POST | `/responsys/v1/segments/{id}/lookalike` | Generate lookalike segment |
+| POST | `/api/v1/responsys/segments` | Create segment |
+| GET | `/api/v1/responsys/segments` | List segments |
+| GET | `/api/v1/responsys/segments/{id}` | Get segment details |
+| PUT | `/api/v1/responsys/segments/{id}` | Update segment |
+| POST | `/api/v1/responsys/segments/{id}/refresh` | Refresh segment membership |
+| POST | `/api/v1/responsys/segments/{id}/lookalike` | Generate lookalike segment |
 
 ---
 

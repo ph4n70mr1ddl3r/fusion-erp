@@ -22,7 +22,6 @@ CREATE TABLE drm_hierarchies (
     description TEXT,
     hierarchy_type TEXT NOT NULL
         CHECK(hierarchy_type IN ('ORGANIZATIONAL','ACCOUNT','COST_CENTER','GEOGRAPHY','PRODUCT','CUSTOM')),
-    version TEXT NOT NULL DEFAULT '1.0',
     properties TEXT,                                  -- JSON: hierarchy-level properties
     status TEXT NOT NULL DEFAULT 'DRAFT'
         CHECK(status IN ('DRAFT','ACTIVE','LOCKED','ARCHIVED')),

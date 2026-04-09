@@ -7,7 +7,7 @@ Intelligent Advisor (formerly Oracle Policy Automation) provides rule-based poli
 **Bounded Context:** Policy Automation & Rule-Based Decisioning
 **Service Name:** `advisor-service`
 **Database:** `data/advisor.db`
-**HTTP Port:** 8147 | **gRPC Port:** 9147
+**HTTP Port:** 8207 | **gRPC Port:** 9207
 
 ---
 

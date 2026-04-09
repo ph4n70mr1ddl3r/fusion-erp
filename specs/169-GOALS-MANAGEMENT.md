@@ -167,40 +167,40 @@ CREATE TABLE gl_goal_library (
 ### 3.1 Goal Plans
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/goals/v1/plans` | Create goal plan |
-| GET | `/goals/v1/plans` | List plans |
-| GET | `/goals/v1/plans/{id}` | Get plan details |
-| PUT | `/goals/v1/plans/{id}` | Update plan |
-| POST | `/goals/v1/plans/{id}/activate` | Activate plan |
-| POST | `/goals/v1/plans/{id}/close` | Close plan |
+| POST | `/api/v1/goals/plans` | Create goal plan |
+| GET | `/api/v1/goals/plans` | List plans |
+| GET | `/api/v1/goals/plans/{id}` | Get plan details |
+| PUT | `/api/v1/goals/plans/{id}` | Update plan |
+| POST | `/api/v1/goals/plans/{id}/activate` | Activate plan |
+| POST | `/api/v1/goals/plans/{id}/close` | Close plan |
 
 ### 3.2 Goals
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/goals/v1/goals` | Create goal |
-| GET | `/goals/v1/goals` | List goals |
-| GET | `/goals/v1/goals/{id}` | Get goal with metrics |
-| PUT | `/goals/v1/goals/{id}` | Update goal |
-| POST | `/goals/v1/goals/{id}/cascade` | Cascade goal to reports |
-| POST | `/goals/v1/goals/{id}/align` | Align to parent goal |
-| DELETE | `/goals/v1/goals/{id}` | Cancel goal |
-| GET | `/goals/v1/goals/{id}/tree` | Get cascaded goal tree |
+| POST | `/api/v1/goals/goals` | Create goal |
+| GET | `/api/v1/goals/goals` | List goals |
+| GET | `/api/v1/goals/goals/{id}` | Get goal with metrics |
+| PUT | `/api/v1/goals/goals/{id}` | Update goal |
+| POST | `/api/v1/goals/goals/{id}/cascade` | Cascade goal to reports |
+| POST | `/api/v1/goals/goals/{id}/align` | Align to parent goal |
+| DELETE | `/api/v1/goals/goals/{id}` | Cancel goal |
+| GET | `/api/v1/goals/goals/{id}/tree` | Get cascaded goal tree |
 
 ### 3.3 Metrics & Progress
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/goals/v1/goals/{id}/metrics` | Add metric |
-| PUT | `/goals/v1/metrics/{id}` | Update metric |
-| POST | `/goals/v1/goals/{id}/update` | Submit progress update |
-| GET | `/goals/v1/goals/{id}/progress` | Get progress history |
+| POST | `/api/v1/goals/goals/{id}/metrics` | Add metric |
+| PUT | `/api/v1/goals/metrics/{id}` | Update metric |
+| POST | `/api/v1/goals/goals/{id}/update` | Submit progress update |
+| GET | `/api/v1/goals/goals/{id}/progress` | Get progress history |
 
 ### 3.4 Library & Alignment
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/goals/v1/library` | List goal templates |
-| POST | `/goals/v1/library` | Add to library |
-| GET | `/goals/v1/alignment-map` | Organization alignment visualization |
-| GET | `/goals/v1/dashboard` | Goals dashboard |
+| GET | `/api/v1/goals/library` | List goal templates |
+| POST | `/api/v1/goals/library` | Add to library |
+| GET | `/api/v1/goals/alignment-map` | Organization alignment visualization |
+| GET | `/api/v1/goals/dashboard` | Goals dashboard |
 
 ---
 

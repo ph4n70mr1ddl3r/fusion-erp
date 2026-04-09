@@ -167,37 +167,37 @@ CREATE TABLE wp_scenarios (
 ### 3.1 Prediction Models
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/workforce-predictions/v1/models` | Create prediction model |
-| GET | `/workforce-predictions/v1/models` | List models |
-| GET | `/workforce-predictions/v1/models/{id}` | Get model details |
-| POST | `/workforce-predictions/v1/models/{id}/train` | Train model |
-| PUT | `/workforce-predictions/v1/models/{id}` | Update model |
+| POST | `/api/v1/workforce-predictions/models` | Create prediction model |
+| GET | `/api/v1/workforce-predictions/models` | List models |
+| GET | `/api/v1/workforce-predictions/models/{id}` | Get model details |
+| POST | `/api/v1/workforce-predictions/models/{id}/train` | Train model |
+| PUT | `/api/v1/workforce-predictions/models/{id}` | Update model |
 
 ### 3.2 Predictions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/workforce-predictions/v1/runs` | Execute prediction run |
-| GET | `/workforce-predictions/v1/runs` | List runs |
-| GET | `/workforce-predictions/v1/runs/{id}` | Get run results |
-| GET | `/workforce-predictions/v1/runs/{id}/individuals` | Individual predictions |
-| GET | `/workforce-predictions/v1/runs/{id}/aggregated` | Aggregated predictions |
-| GET | `/workforce-predictions/v1/person/{personId}/predictions` | Person's predictions |
+| POST | `/api/v1/workforce-predictions/runs` | Execute prediction run |
+| GET | `/api/v1/workforce-predictions/runs` | List runs |
+| GET | `/api/v1/workforce-predictions/runs/{id}` | Get run results |
+| GET | `/api/v1/workforce-predictions/runs/{id}/individuals` | Individual predictions |
+| GET | `/api/v1/workforce-predictions/runs/{id}/aggregated` | Aggregated predictions |
+| GET | `/api/v1/workforce-predictions/person/{personId}/predictions` | Person's predictions |
 
 ### 3.3 Scenarios
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/workforce-predictions/v1/scenarios` | Create scenario |
-| GET | `/workforce-predictions/v1/scenarios` | List scenarios |
-| POST | `/workforce-predictions/v1/scenarios/{id}/run` | Run scenario predictions |
-| GET | `/workforce-predictions/v1/scenarios/{id}/results` | Get scenario results |
+| POST | `/api/v1/workforce-predictions/scenarios` | Create scenario |
+| GET | `/api/v1/workforce-predictions/scenarios` | List scenarios |
+| POST | `/api/v1/workforce-predictions/scenarios/{id}/run` | Run scenario predictions |
+| GET | `/api/v1/workforce-predictions/scenarios/{id}/results` | Get scenario results |
 
 ### 3.4 Insights
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/workforce-predictions/v1/insights/attrition-risk` | Attrition risk dashboard |
-| GET | `/workforce-predictions/v1/insights/flight-risk` | Flight risk report |
-| GET | `/workforce-predictions/v1/insights/skill-gaps` | Predicted skill gaps |
-| GET | `/workforce-predictions/v1/insights/promotion-pipeline` | Promotion readiness |
+| GET | `/api/v1/workforce-predictions/insights/attrition-risk` | Attrition risk dashboard |
+| GET | `/api/v1/workforce-predictions/insights/flight-risk` | Flight risk report |
+| GET | `/api/v1/workforce-predictions/insights/skill-gaps` | Predicted skill gaps |
+| GET | `/api/v1/workforce-predictions/insights/promotion-pipeline` | Promotion readiness |
 
 ---
 

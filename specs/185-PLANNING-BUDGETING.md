@@ -222,54 +222,54 @@ CREATE INDEX idx_pb_va_period ON pb_variance_analysis(period DESC);
 ### 3.1 Plan Cycles
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/planning-budgeting/v1/cycles` | Create plan cycle |
-| GET | `/planning-budgeting/v1/cycles` | List plan cycles |
-| GET | `/planning-budgeting/v1/cycles/{id}` | Get cycle details |
-| PUT | `/planning-budgeting/v1/cycles/{id}` | Update cycle |
-| POST | `/planning-budgeting/v1/cycles/{id}/open` | Open cycle for input |
-| POST | `/planning-budgeting/v1/cycles/{id}/approve` | Approve cycle |
-| POST | `/planning-budgeting/v1/cycles/{id}/close` | Close cycle |
+| POST | `/api/v1/planning-budgeting/cycles` | Create plan cycle |
+| GET | `/api/v1/planning-budgeting/cycles` | List plan cycles |
+| GET | `/api/v1/planning-budgeting/cycles/{id}` | Get cycle details |
+| PUT | `/api/v1/planning-budgeting/cycles/{id}` | Update cycle |
+| POST | `/api/v1/planning-budgeting/cycles/{id}/open` | Open cycle for input |
+| POST | `/api/v1/planning-budgeting/cycles/{id}/approve` | Approve cycle |
+| POST | `/api/v1/planning-budgeting/cycles/{id}/close` | Close cycle |
 
 ### 3.2 Budgets
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/planning-budgeting/v1/budgets` | Create budget version |
-| GET | `/planning-budgeting/v1/budgets` | List budget versions |
-| GET | `/planning-budgeting/v1/budgets/{id}` | Get budget details |
-| PUT | `/planning-budgeting/v1/budgets/{id}` | Update budget |
-| POST | `/planning-budgeting/v1/budgets/bulk` | Bulk budget entry |
-| POST | `/planning-budgeting/v1/budgets/{id}/submit` | Submit for approval |
-| POST | `/planning-budgeting/v1/budgets/{id}/lock` | Lock budget version |
-| GET | `/planning-budgeting/v1/budgets/rollup` | Get rolled-up budget |
+| POST | `/api/v1/planning-budgeting/budgets` | Create budget version |
+| GET | `/api/v1/planning-budgeting/budgets` | List budget versions |
+| GET | `/api/v1/planning-budgeting/budgets/{id}` | Get budget details |
+| PUT | `/api/v1/planning-budgeting/budgets/{id}` | Update budget |
+| POST | `/api/v1/planning-budgeting/budgets/bulk` | Bulk budget entry |
+| POST | `/api/v1/planning-budgeting/budgets/{id}/submit` | Submit for approval |
+| POST | `/api/v1/planning-budgeting/budgets/{id}/lock` | Lock budget version |
+| GET | `/api/v1/planning-budgeting/budgets/rollup` | Get rolled-up budget |
 
 ### 3.3 Forecasts
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/planning-budgeting/v1/forecasts/models` | Create forecast model |
-| GET | `/planning-budgeting/v1/forecasts/models` | List models |
-| GET | `/planning-budgeting/v1/forecasts/models/{id}` | Get model details |
-| PUT | `/planning-budgeting/v1/forecasts/models/{id}` | Update model |
-| POST | `/planning-budgeting/v1/forecasts/models/{id}/run` | Run forecast |
-| GET | `/planning-budgeting/v1/forecasts/models/{id}/accuracy` | Get accuracy metrics |
+| POST | `/api/v1/planning-budgeting/forecasts/models` | Create forecast model |
+| GET | `/api/v1/planning-budgeting/forecasts/models` | List models |
+| GET | `/api/v1/planning-budgeting/forecasts/models/{id}` | Get model details |
+| PUT | `/api/v1/planning-budgeting/forecasts/models/{id}` | Update model |
+| POST | `/api/v1/planning-budgeting/forecasts/models/{id}/run` | Run forecast |
+| GET | `/api/v1/planning-budgeting/forecasts/models/{id}/accuracy` | Get accuracy metrics |
 
 ### 3.4 Assumptions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/planning-budgeting/v1/assumptions` | Create assumption |
-| GET | `/planning-budgeting/v1/assumptions` | List assumptions |
-| GET | `/planning-budgeting/v1/assumptions/{id}` | Get assumption details |
-| PUT | `/planning-budgeting/v1/assumptions/{id}` | Update assumption |
-| POST | `/planning-budgeting/v1/assumptions/{id}/approve` | Approve assumption |
-| GET | `/planning-budgeting/v1/assumptions/dimensions` | List assumption dimensions |
+| POST | `/api/v1/planning-budgeting/assumptions` | Create assumption |
+| GET | `/api/v1/planning-budgeting/assumptions` | List assumptions |
+| GET | `/api/v1/planning-budgeting/assumptions/{id}` | Get assumption details |
+| PUT | `/api/v1/planning-budgeting/assumptions/{id}` | Update assumption |
+| POST | `/api/v1/planning-budgeting/assumptions/{id}/approve` | Approve assumption |
+| GET | `/api/v1/planning-budgeting/assumptions/dimensions` | List assumption dimensions |
 
 ### 3.5 Variance Analysis
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/planning-budgeting/v1/variance` | List variance analysis |
-| GET | `/planning-budgeting/v1/variance/{id}` | Get variance detail |
-| POST | `/planning-budgeting/v1/variance/{id}/explain` | Submit variance explanation |
-| GET | `/planning-budgeting/v1/variance/summary` | Variance summary report |
-| GET | `/planning-budgeting/v1/variance/trends` | Variance trend analysis |
+| GET | `/api/v1/planning-budgeting/variance` | List variance analysis |
+| GET | `/api/v1/planning-budgeting/variance/{id}` | Get variance detail |
+| POST | `/api/v1/planning-budgeting/variance/{id}/explain` | Submit variance explanation |
+| GET | `/api/v1/planning-budgeting/variance/summary` | Variance summary report |
+| GET | `/api/v1/planning-budgeting/variance/trends` | Variance trend analysis |
 
 ---
 

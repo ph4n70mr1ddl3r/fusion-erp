@@ -167,36 +167,36 @@ CREATE INDEX idx_se_analytics_seq ON se_analytics(sequence_id, period DESC);
 ### 3.1 Sequences
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sales-engagement/v1/sequences` | Create sequence |
-| GET | `/sales-engagement/v1/sequences` | List sequences |
-| GET | `/sales-engagement/v1/sequences/{id}` | Get sequence with steps |
-| PUT | `/sales-engagement/v1/sequences/{id}` | Update sequence |
-| POST | `/sales-engagement/v1/sequences/{id}/activate` | Activate sequence |
+| POST | `/api/v1/sales-engagement/sequences` | Create sequence |
+| GET | `/api/v1/sales-engagement/sequences` | List sequences |
+| GET | `/api/v1/sales-engagement/sequences/{id}` | Get sequence with steps |
+| PUT | `/api/v1/sales-engagement/sequences/{id}` | Update sequence |
+| POST | `/api/v1/sales-engagement/sequences/{id}/activate` | Activate sequence |
 
 ### 3.2 Sequence Steps
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sales-engagement/v1/sequences/{id}/steps` | Add step |
-| PUT | `/sales-engagement/v1/steps/{id}` | Update step |
-| DELETE | `/sales-engagement/v1/steps/{id}` | Remove step |
+| POST | `/api/v1/sales-engagement/sequences/{id}/steps` | Add step |
+| PUT | `/api/v1/sales-engagement/steps/{id}` | Update step |
+| DELETE | `/api/v1/sales-engagement/steps/{id}` | Remove step |
 
 ### 3.3 Enrollments
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sales-engagement/v1/enroll` | Enroll contacts |
-| POST | `/sales-engagement/v1/enroll/bulk` | Bulk enroll |
-| GET | `/sales-engagement/v1/enrollments` | List enrollments |
-| POST | `/sales-engagement/v1/enrollments/{id}/pause` | Pause enrollment |
-| POST | `/sales-engagement/v1/enrollments/{id}/resume` | Resume enrollment |
-| POST | `/sales-engagement/v1/enrollments/{id}/opt-out` | Process opt-out |
+| POST | `/api/v1/sales-engagement/enroll` | Enroll contacts |
+| POST | `/api/v1/sales-engagement/enroll/bulk` | Bulk enroll |
+| GET | `/api/v1/sales-engagement/enrollments` | List enrollments |
+| POST | `/api/v1/sales-engagement/enrollments/{id}/pause` | Pause enrollment |
+| POST | `/api/v1/sales-engagement/enrollments/{id}/resume` | Resume enrollment |
+| POST | `/api/v1/sales-engagement/enrollments/{id}/opt-out` | Process opt-out |
 
 ### 3.4 Engagement & Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/sales-engagement/v1/events` | Track engagement event |
-| GET | `/sales-engagement/v1/sequences/{id}/analytics` | Sequence analytics |
-| GET | `/sales-engagement/v1/analytics/team` | Team performance |
-| GET | `/sales-engagement/v1/contacts/{id}/timeline` | Contact engagement timeline |
+| POST | `/api/v1/sales-engagement/events` | Track engagement event |
+| GET | `/api/v1/sales-engagement/sequences/{id}/analytics` | Sequence analytics |
+| GET | `/api/v1/sales-engagement/analytics/team` | Team performance |
+| GET | `/api/v1/sales-engagement/contacts/{id}/timeline` | Contact engagement timeline |
 
 ---
 

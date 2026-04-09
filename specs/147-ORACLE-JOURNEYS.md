@@ -195,50 +195,50 @@ CREATE INDEX idx_j_analytics_tenant ON j_journey_analytics(tenant_id, journey_ty
 ### 3.1 Journey Templates
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/journeys/v1/templates` | Create journey template |
-| GET | `/journeys/v1/templates` | List templates |
-| GET | `/journeys/v1/templates/{id}` | Get template details |
-| PUT | `/journeys/v1/templates/{id}` | Update template |
-| POST | `/journeys/v1/templates/{id}/publish` | Publish template |
-| POST | `/journeys/v1/templates/{id}/clone` | Clone template |
-| DELETE | `/journeys/v1/templates/{id}` | Archive template |
+| POST | `/api/v1/journeys/templates` | Create journey template |
+| GET | `/api/v1/journeys/templates` | List templates |
+| GET | `/api/v1/journeys/templates/{id}` | Get template details |
+| PUT | `/api/v1/journeys/templates/{id}` | Update template |
+| POST | `/api/v1/journeys/templates/{id}/publish` | Publish template |
+| POST | `/api/v1/journeys/templates/{id}/clone` | Clone template |
+| DELETE | `/api/v1/journeys/templates/{id}` | Archive template |
 
 ### 3.2 Journey Steps
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/journeys/v1/templates/{id}/steps` | Add step to template |
-| GET | `/journeys/v1/templates/{id}/steps` | List steps |
-| PUT | `/journeys/v1/steps/{id}` | Update step |
-| DELETE | `/journeys/v1/steps/{id}` | Remove step |
-| POST | `/journeys/v1/templates/{id}/steps/reorder` | Reorder steps |
+| POST | `/api/v1/journeys/templates/{id}/steps` | Add step to template |
+| GET | `/api/v1/journeys/templates/{id}/steps` | List steps |
+| PUT | `/api/v1/journeys/steps/{id}` | Update step |
+| DELETE | `/api/v1/journeys/steps/{id}` | Remove step |
+| POST | `/api/v1/journeys/templates/{id}/steps/reorder` | Reorder steps |
 
 ### 3.3 Journey Instances
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/journeys/v1/instances` | Assign journey to person |
-| POST | `/journeys/v1/instances/auto-assign` | Auto-assign based on event |
-| GET | `/journeys/v1/instances` | List instances |
-| GET | `/journeys/v1/instances/{id}` | Get instance details with steps |
-| PUT | `/journeys/v1/instances/{id}` | Update instance |
-| POST | `/journeys/v1/instances/{id}/pause` | Pause journey |
-| POST | `/journeys/v1/instances/{id}/resume` | Resume journey |
-| POST | `/journeys/v1/instances/{id}/cancel` | Cancel journey |
+| POST | `/api/v1/journeys/instances` | Assign journey to person |
+| POST | `/api/v1/journeys/instances/auto-assign` | Auto-assign based on event |
+| GET | `/api/v1/journeys/instances` | List instances |
+| GET | `/api/v1/journeys/instances/{id}` | Get instance details with steps |
+| PUT | `/api/v1/journeys/instances/{id}` | Update instance |
+| POST | `/api/v1/journeys/instances/{id}/pause` | Pause journey |
+| POST | `/api/v1/journeys/instances/{id}/resume` | Resume journey |
+| POST | `/api/v1/journeys/instances/{id}/cancel` | Cancel journey |
 
 ### 3.4 Step Execution
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/journeys/v1/instances/{id}/steps` | Get step statuses |
-| POST | `/journeys/v1/step-instances/{id}/start` | Start step |
-| POST | `/journeys/v1/step-instances/{id}/complete` | Complete step |
-| POST | `/journeys/v1/step-instances/{id}/skip` | Skip step |
-| PUT | `/journeys/v1/step-instances/{id}/form` | Submit form data |
+| GET | `/api/v1/journeys/instances/{id}/steps` | Get step statuses |
+| POST | `/api/v1/journeys/step-instances/{id}/start` | Start step |
+| POST | `/api/v1/journeys/step-instances/{id}/complete` | Complete step |
+| POST | `/api/v1/journeys/step-instances/{id}/skip` | Skip step |
+| PUT | `/api/v1/journeys/step-instances/{id}/form` | Submit form data |
 
 ### 3.5 Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/journeys/v1/analytics/summary` | Journey analytics summary |
-| GET | `/journeys/v1/analytics/template/{id}` | Template-specific analytics |
-| GET | `/journeys/v1/analytics/person/{personId}` | Person's journey history |
+| GET | `/api/v1/journeys/analytics/summary` | Journey analytics summary |
+| GET | `/api/v1/journeys/analytics/template/{id}` | Template-specific analytics |
+| GET | `/api/v1/journeys/analytics/person/{personId}` | Person's journey history |
 
 ---
 

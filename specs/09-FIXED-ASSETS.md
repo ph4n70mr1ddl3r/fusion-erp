@@ -245,3 +245,47 @@ GET           /api/v1/fa/reports/net-book-value    Permission: fa.reports.view
 | `fa.depreciation.calculated` | Depreciation run complete |
 | `fa.asset.disposed` | Asset disposed |
 | `fa.asset.transferred` | Asset location/department changed |
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.fa.v1;
+
+service FixedAssetsService {
+    rpc GetAsset(GetAssetRequest) returns (GetAssetResponse);
+    rpc CreateAsset(CreateAssetRequest) returns (CreateAssetResponse);
+    rpc CalculateDepreciation(CalculateDepreciationRequest) returns (CalculateDepreciationResponse);
+    rpc GetAssetNetBookValue(GetAssetNetBookValueRequest) returns (GetAssetNetBookValueResponse);
+    rpc GetDepreciationSchedule(GetDepreciationScheduleRequest) returns (GetDepreciationScheduleResponse);
+}
+```
+
+---
+
+## 6. Inter-Service Integration
+
+### 6.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| gl-service | `PostJournal` | Post depreciation, disposal, revaluation journal entries |
+| ap-service | `GetInvoiceLine` | Retrieve asset source invoice details |
+
+### 6.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| gl-service | `GetAssetValue` | Query asset values for financial reporting |
+| expense-service | `GetAssetByCategory` | Query assets for expense capitalization |
+
+---
+
+## 7. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | asset_categories | — |
+| V002 | assets | V001 |
+| V003 | asset_transactions | V002 |
+| V004 | depreciation_entries | V002 |

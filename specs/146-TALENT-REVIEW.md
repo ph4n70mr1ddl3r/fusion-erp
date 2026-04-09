@@ -222,48 +222,48 @@ CREATE INDEX idx_tr_action_person ON tr_action_plans(tenant_id, person_id);
 ### 3.1 Review Models
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/talent-review/v1/models` | Create review model |
-| GET | `/talent-review/v1/models` | List models |
-| GET | `/talent-review/v1/models/{id}` | Get model details |
-| PUT | `/talent-review/v1/models/{id}` | Update model |
+| POST | `/api/v1/talent-review/models` | Create review model |
+| GET | `/api/v1/talent-review/models` | List models |
+| GET | `/api/v1/talent-review/models/{id}` | Get model details |
+| PUT | `/api/v1/talent-review/models/{id}` | Update model |
 
 ### 3.2 Review Sessions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/talent-review/v1/sessions` | Create review session |
-| GET | `/talent-review/v1/sessions` | List sessions |
-| GET | `/talent-review/v1/sessions/{id}` | Get session details |
-| PUT | `/talent-review/v1/sessions/{id}` | Update session |
-| POST | `/talent-review/v1/sessions/{id}/start` | Start review process |
-| POST | `/talent-review/v1/sessions/{id}/calibrate` | Start calibration |
-| POST | `/talent-review/v1/sessions/{id}/complete` | Complete session |
+| POST | `/api/v1/talent-review/sessions` | Create review session |
+| GET | `/api/v1/talent-review/sessions` | List sessions |
+| GET | `/api/v1/talent-review/sessions/{id}` | Get session details |
+| PUT | `/api/v1/talent-review/sessions/{id}` | Update session |
+| POST | `/api/v1/talent-review/sessions/{id}/start` | Start review process |
+| POST | `/api/v1/talent-review/sessions/{id}/calibrate` | Start calibration |
+| POST | `/api/v1/talent-review/sessions/{id}/complete` | Complete session |
 
 ### 3.3 Assessments
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/talent-review/v1/assessments` | Submit assessment |
-| GET | `/talent-review/v1/assessments` | List assessments |
-| GET | `/talent-review/v1/assessments/{id}` | Get assessment details |
-| PUT | `/talent-review/v1/assessments/{id}` | Update assessment |
-| GET | `/talent-review/v1/sessions/{id}/matrix` | Get 9-box matrix view |
-| GET | `/talent-review/v1/sessions/{id}/distribution` | Get rating distribution |
+| POST | `/api/v1/talent-review/assessments` | Submit assessment |
+| GET | `/api/v1/talent-review/assessments` | List assessments |
+| GET | `/api/v1/talent-review/assessments/{id}` | Get assessment details |
+| PUT | `/api/v1/talent-review/assessments/{id}` | Update assessment |
+| GET | `/api/v1/talent-review/sessions/{id}/matrix` | Get 9-box matrix view |
+| GET | `/api/v1/talent-review/sessions/{id}/distribution` | Get rating distribution |
 
 ### 3.4 Calibration
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/talent-review/v1/calibration-notes` | Add calibration note |
-| GET | `/talent-review/v1/sessions/{id}/calibration-notes` | List notes |
-| POST | `/talent-review/v1/assessments/{id}/adjust` | Adjust rating during calibration |
+| POST | `/api/v1/talent-review/calibration-notes` | Add calibration note |
+| GET | `/api/v1/talent-review/sessions/{id}/calibration-notes` | List notes |
+| POST | `/api/v1/talent-review/assessments/{id}/adjust` | Adjust rating during calibration |
 
 ### 3.5 Talent Pools & Actions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/talent-review/v1/pools` | Create talent pool |
-| GET | `/talent-review/v1/pools` | List pools |
-| POST | `/talent-review/v1/pools/{id}/members` | Add member to pool |
-| POST | `/talent-review/v1/action-plans` | Create action plan |
-| GET | `/talent-review/v1/action-plans` | List action plans |
-| PUT | `/talent-review/v1/action-plans/{id}` | Update action plan |
+| POST | `/api/v1/talent-review/pools` | Create talent pool |
+| GET | `/api/v1/talent-review/pools` | List pools |
+| POST | `/api/v1/talent-review/pools/{id}/members` | Add member to pool |
+| POST | `/api/v1/talent-review/action-plans` | Create action plan |
+| GET | `/api/v1/talent-review/action-plans` | List action plans |
+| PUT | `/api/v1/talent-review/action-plans/{id}` | Update action plan |
 
 ---
 

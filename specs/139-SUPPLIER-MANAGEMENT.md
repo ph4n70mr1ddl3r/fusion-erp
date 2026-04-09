@@ -7,7 +7,7 @@ Supplier Management provides comprehensive supplier lifecycle management includi
 **Bounded Context:** Supplier Lifecycle & Performance Management
 **Service Name:** `supplier-mgmt-service`
 **Database:** `data/supplier_mgmt.db`
-**HTTP Port:** 8157 | **gRPC Port:** 9157
+**HTTP Port:** 8219 | **gRPC Port:** 9219
 
 ---
 
@@ -244,56 +244,56 @@ CREATE INDEX idx_sm_segment_tenant ON sm_supplier_segments(tenant_id, segment);
 ### 3.1 Qualification Programs
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/supplier-mgmt/v1/programs` | Create qualification program |
-| GET | `/supplier-mgmt/v1/programs` | List programs (filterable) |
-| GET | `/supplier-mgmt/v1/programs/{id}` | Get program details |
-| PUT | `/supplier-mgmt/v1/programs/{id}` | Update program |
-| DELETE | `/supplier-mgmt/v1/programs/{id}` | Deactivate program |
-| POST | `/supplier-mgmt/v1/programs/{id}/activate` | Activate program |
+| POST | `/api/v1/supplier-mgmt/programs` | Create qualification program |
+| GET | `/api/v1/supplier-mgmt/programs` | List programs (filterable) |
+| GET | `/api/v1/supplier-mgmt/programs/{id}` | Get program details |
+| PUT | `/api/v1/supplier-mgmt/programs/{id}` | Update program |
+| DELETE | `/api/v1/supplier-mgmt/programs/{id}` | Deactivate program |
+| POST | `/api/v1/supplier-mgmt/programs/{id}/activate` | Activate program |
 
 ### 3.2 Supplier Assessments
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/supplier-mgmt/v1/assessments` | Initiate supplier assessment |
-| GET | `/supplier-mgmt/v1/assessments` | List assessments |
-| GET | `/supplier-mgmt/v1/assessments/{id}` | Get assessment details |
-| PUT | `/supplier-mgmt/v1/assessments/{id}/responses` | Submit assessment responses |
-| POST | `/supplier-mgmt/v1/assessments/{id}/submit` | Submit for review |
-| POST | `/supplier-mgmt/v1/assessments/{id}/review` | Review and decide |
-| POST | `/supplier-mgmt/v1/assessments/{id}/reopen` | Reopen assessment |
+| POST | `/api/v1/supplier-mgmt/assessments` | Initiate supplier assessment |
+| GET | `/api/v1/supplier-mgmt/assessments` | List assessments |
+| GET | `/api/v1/supplier-mgmt/assessments/{id}` | Get assessment details |
+| PUT | `/api/v1/supplier-mgmt/assessments/{id}/responses` | Submit assessment responses |
+| POST | `/api/v1/supplier-mgmt/assessments/{id}/submit` | Submit for review |
+| POST | `/api/v1/supplier-mgmt/assessments/{id}/review` | Review and decide |
+| POST | `/api/v1/supplier-mgmt/assessments/{id}/reopen` | Reopen assessment |
 
 ### 3.3 Performance Scorecards
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/supplier-mgmt/v1/scorecards` | List scorecards |
-| GET | `/supplier-mgmt/v1/scorecards/{supplierId}` | Get supplier scorecard |
-| POST | `/supplier-mgmt/v1/scorecards/calculate` | Trigger scorecard calculation |
-| GET | `/supplier-mgmt/v1/scorecards/compare` | Compare supplier scorecards |
+| GET | `/api/v1/supplier-mgmt/scorecards` | List scorecards |
+| GET | `/api/v1/supplier-mgmt/scorecards/{supplierId}` | Get supplier scorecard |
+| POST | `/api/v1/supplier-mgmt/scorecards/calculate` | Trigger scorecard calculation |
+| GET | `/api/v1/supplier-mgmt/scorecards/compare` | Compare supplier scorecards |
 
 ### 3.4 Risk Management
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/supplier-mgmt/v1/risks` | Create risk assessment |
-| GET | `/supplier-mgmt/v1/risks` | List risks (filterable) |
-| GET | `/supplier-mgmt/v1/risks/{id}` | Get risk details |
-| PUT | `/supplier-mgmt/v1/risks/{id}` | Update risk |
-| POST | `/supplier-mgmt/v1/risks/bulk-assess` | Trigger bulk risk assessment |
-| GET | `/supplier-mgmt/v1/risks/dashboard` | Risk dashboard data |
+| POST | `/api/v1/supplier-mgmt/risks` | Create risk assessment |
+| GET | `/api/v1/supplier-mgmt/risks` | List risks (filterable) |
+| GET | `/api/v1/supplier-mgmt/risks/{id}` | Get risk details |
+| PUT | `/api/v1/supplier-mgmt/risks/{id}` | Update risk |
+| POST | `/api/v1/supplier-mgmt/risks/bulk-assess` | Trigger bulk risk assessment |
+| GET | `/api/v1/supplier-mgmt/risks/dashboard` | Risk dashboard data |
 
 ### 3.5 Corrective Actions
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/supplier-mgmt/v1/corrective-actions` | Create corrective action |
-| GET | `/supplier-mgmt/v1/corrective-actions` | List corrective actions |
-| PUT | `/supplier-mgmt/v1/corrective-actions/{id}` | Update corrective action |
-| POST | `/supplier-mgmt/v1/corrective-actions/{id}/verify` | Verify completion |
+| POST | `/api/v1/supplier-mgmt/corrective-actions` | Create corrective action |
+| GET | `/api/v1/supplier-mgmt/corrective-actions` | List corrective actions |
+| PUT | `/api/v1/supplier-mgmt/corrective-actions/{id}` | Update corrective action |
+| POST | `/api/v1/supplier-mgmt/corrective-actions/{id}/verify` | Verify completion |
 
 ### 3.6 Segmentation
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/supplier-mgmt/v1/segments` | List segment assignments |
-| PUT | `/supplier-mgmt/v1/segments/{supplierId}` | Update supplier segment |
-| POST | `/supplier-mgmt/v1/segments/auto-classify` | Auto-classify suppliers |
+| GET | `/api/v1/supplier-mgmt/segments` | List segment assignments |
+| PUT | `/api/v1/supplier-mgmt/segments/{supplierId}` | Update supplier segment |
+| POST | `/api/v1/supplier-mgmt/segments/auto-classify` | Auto-classify suppliers |
 
 ---
 

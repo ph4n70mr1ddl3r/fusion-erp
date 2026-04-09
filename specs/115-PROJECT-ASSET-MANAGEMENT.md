@@ -122,7 +122,6 @@ CREATE TABLE capitalization_rules (
     auto_capitalize INTEGER NOT NULL DEFAULT 0,
     effective_from TEXT NOT NULL,
     effective_to TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),

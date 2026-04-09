@@ -26,7 +26,6 @@ CREATE TABLE workforce_scenarios (
     description TEXT,
     assumptions TEXT,  -- JSON: scenario assumptions
     status TEXT NOT NULL DEFAULT 'DRAFT' CHECK(status IN ('DRAFT','RUNNING','COMPLETED','APPROVED','ARCHIVED')),
-    created_by TEXT NOT NULL,
     approved_by TEXT,
     approved_at TEXT,
 

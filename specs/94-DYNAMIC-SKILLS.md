@@ -25,8 +25,6 @@ CREATE TABLE skills (
     parent_skill_id TEXT,
     proficiency_levels TEXT,  -- JSON array defining proficiency level descriptors
     industry_standard_id TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1,
-
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     created_by TEXT NOT NULL,

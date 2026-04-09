@@ -7,7 +7,7 @@ AI Agents Suite provides a collection of pre-built, cross-application AI agents 
 **Bounded Context:** Cross-Application AI Agents & Autonomous Workflows
 **Service Name:** `aiagents-service`
 **Database:** `data/aiagents.db`
-**HTTP Port:** 8154 | **gRPC Port:** 9154
+**HTTP Port:** 8214 | **gRPC Port:** 9214
 
 ---
 

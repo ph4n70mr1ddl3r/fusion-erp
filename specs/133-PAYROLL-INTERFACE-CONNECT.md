@@ -7,7 +7,7 @@ Payroll Interface & Connect provides third-party payroll integration capabilitie
 **Bounded Context:** Third-Party Payroll Integration & Data Exchange
 **Service Name:** `payrollint-service`
 **Database:** `data/payrollint.db`
-**HTTP Port:** 8153 | **gRPC Port:** 9153
+**HTTP Port:** 8213 | **gRPC Port:** 9213
 
 ---
 

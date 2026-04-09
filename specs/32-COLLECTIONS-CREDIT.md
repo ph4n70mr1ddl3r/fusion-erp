@@ -343,7 +343,7 @@ CREATE TABLE write_off_requests (
     customer_id TEXT NOT NULL,
     invoice_id TEXT,
     write_off_amount_cents INTEGER NOT NULL,
-    currency_code NOT NULL DEFAULT 'USD',
+    currency_code TEXT NOT NULL DEFAULT 'USD',
     reason TEXT NOT NULL,
     aging_days INTEGER NOT NULL,
     collection_activities_count INTEGER NOT NULL DEFAULT 0,

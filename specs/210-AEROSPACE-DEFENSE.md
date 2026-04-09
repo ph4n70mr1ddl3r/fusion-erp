@@ -193,42 +193,42 @@ CREATE INDEX idx_ad_cdrl_status ON ad_cdrl_deliverables(tenant_id, status);
 ### 3.1 Contracts
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/aerospace-defense/v1/contracts` | Register contract |
-| GET | `/aerospace-defense/v1/contracts` | List contracts |
-| GET | `/aerospace-defense/v1/contracts/{id}` | Get contract |
-| PUT | `/aerospace-defense/v1/contracts/{id}` | Update contract |
+| POST | `/api/v1/aerospace-defense/contracts` | Register contract |
+| GET | `/api/v1/aerospace-defense/contracts` | List contracts |
+| GET | `/api/v1/aerospace-defense/contracts/{id}` | Get contract |
+| PUT | `/api/v1/aerospace-defense/contracts/{id}` | Update contract |
 
 ### 3.2 EVM
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/aerospace-defense/v1/evm` | Record EVM data |
-| GET | `/aerospace-defense/v1/evm/{contractId}` | EVM dashboard |
-| GET | `/aerospace-defense/v1/evm/{contractId}/trend` | EVM trends |
-| POST | `/aerospace-defense/v1/evm/analyze` | Variance analysis |
+| POST | `/api/v1/aerospace-defense/evm` | Record EVM data |
+| GET | `/api/v1/aerospace-defense/evm/{contractId}` | EVM dashboard |
+| GET | `/api/v1/aerospace-defense/evm/{contractId}/trend` | EVM trends |
+| POST | `/api/v1/aerospace-defense/evm/analyze` | Variance analysis |
 
 ### 3.3 ITAR
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/aerospace-defense/v1/itar` | Register ITAR item |
-| GET | `/aerospace-defense/v1/itar` | List ITAR items |
-| POST | `/aerospace-defense/v1/itar/{id}/access-check` | Check foreign access |
-| GET | `/aerospace-defense/v1/itar/compliance` | Compliance report |
+| POST | `/api/v1/aerospace-defense/itar` | Register ITAR item |
+| GET | `/api/v1/aerospace-defense/itar` | List ITAR items |
+| POST | `/api/v1/aerospace-defense/itar/{id}/access-check` | Check foreign access |
+| GET | `/api/v1/aerospace-defense/itar/compliance` | Compliance report |
 
 ### 3.4 Clearances
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/aerospace-defense/v1/clearances` | Record clearance |
-| GET | `/aerospace-defense/v1/clearances` | List clearances |
-| GET | `/aerospace-defense/v1/clearances/{personId}` | Person clearances |
-| GET | `/aerospace-defense/v1/clearances/reinvestigations` | Due reinvestigations |
+| POST | `/api/v1/aerospace-defense/clearances` | Record clearance |
+| GET | `/api/v1/aerospace-defense/clearances` | List clearances |
+| GET | `/api/v1/aerospace-defense/clearances/{personId}` | Person clearances |
+| GET | `/api/v1/aerospace-defense/clearances/reinvestigations` | Due reinvestigations |
 
 ### 3.5 CDRL
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/aerospace-defense/v1/cdrl` | Create deliverable |
-| GET | `/aerospace-defense/v1/cdrl` | List deliverables |
-| POST | `/aerospace-defense/v1/cdrl/{id}/submit` | Submit deliverable |
-| GET | `/aerospace-defense/v1/cdrl/overdue` | Overdue deliverables |
+| POST | `/api/v1/aerospace-defense/cdrl` | Create deliverable |
+| GET | `/api/v1/aerospace-defense/cdrl` | List deliverables |
+| POST | `/api/v1/aerospace-defense/cdrl/{id}/submit` | Submit deliverable |
+| GET | `/api/v1/aerospace-defense/cdrl/overdue` | Overdue deliverables |
 
 ---
 

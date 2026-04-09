@@ -193,41 +193,41 @@ CREATE INDEX idx_me_audience_platform ON me_audience_analytics(platform, period 
 ### 3.1 Content Rights
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/media/v1/rights` | Register content rights |
-| GET | `/media/v1/rights` | List rights |
-| GET | `/media/v1/rights/{id}` | Get rights |
-| GET | `/media/v1/rights/availability` | Check rights availability |
+| POST | `/api/v1/media/rights` | Register content rights |
+| GET | `/api/v1/media/rights` | List rights |
+| GET | `/api/v1/media/rights/{id}` | Get rights |
+| GET | `/api/v1/media/rights/availability` | Check rights availability |
 
 ### 3.2 Royalties
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/media/v1/royalties/calculate` | Calculate royalties |
-| GET | `/media/v1/royalties` | List royalties |
-| POST | `/media/v1/royalties/{id}/approve` | Approve royalty |
-| GET | `/media/v1/royalties/statements` | Royalty statements |
+| POST | `/api/v1/media/royalties/calculate` | Calculate royalties |
+| GET | `/api/v1/media/royalties` | List royalties |
+| POST | `/api/v1/media/royalties/{id}/approve` | Approve royalty |
+| GET | `/api/v1/media/royalties/statements` | Royalty statements |
 
 ### 3.3 Advertising
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/media/v1/ad-inventory` | List ad inventory |
-| POST | `/media/v1/ad-inventory/{id}/reserve` | Reserve inventory |
-| POST | `/media/v1/ad-inventory/{id}/sell` | Sell inventory |
-| GET | `/media/v1/ad-inventory/yield` | Yield report |
+| GET | `/api/v1/media/ad-inventory` | List ad inventory |
+| POST | `/api/v1/media/ad-inventory/{id}/reserve` | Reserve inventory |
+| POST | `/api/v1/media/ad-inventory/{id}/sell` | Sell inventory |
+| GET | `/api/v1/media/ad-inventory/yield` | Yield report |
 
 ### 3.4 Production Budgets
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/media/v1/productions` | Create production |
-| GET | `/media/v1/productions` | List productions |
-| GET | `/media/v1/productions/{id}` | Get production |
-| POST | `/media/v1/productions/{id}/cost-report` | Submit cost report |
+| POST | `/api/v1/media/productions` | Create production |
+| GET | `/api/v1/media/productions` | List productions |
+| GET | `/api/v1/media/productions/{id}` | Get production |
+| POST | `/api/v1/media/productions/{id}/cost-report` | Submit cost report |
 
 ### 3.5 Audience Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/media/v1/audience` | Audience dashboard |
-| GET | `/media/v1/audience/{contentId}` | Content performance |
-| GET | `/media/v1/audience/trends` | Audience trends |
+| GET | `/api/v1/media/audience` | Audience dashboard |
+| GET | `/api/v1/media/audience/{contentId}` | Content performance |
+| GET | `/api/v1/media/audience/trends` | Audience trends |
 
 ---
 

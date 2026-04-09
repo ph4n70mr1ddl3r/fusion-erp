@@ -7,7 +7,7 @@ Communications provides industry-specific capabilities for telecommunications an
 **Bounded Context:** Telecommunications & Media Industry
 **Service Name:** `comms-service`
 **Database:** `data/comms.db`
-**HTTP Port:** 8158 | **gRPC Port:** 9158
+**HTTP Port:** 8218 | **gRPC Port:** 9218
 
 ---
 

@@ -7,7 +7,7 @@ Production Scheduling provides advanced shop floor scheduling capabilities, opti
 **Bounded Context:** Production Scheduling & Shop Floor Optimization
 **Service Name:** `scheduling-service` (Note: distinct from workforce scheduling service `scheduling-service` in spec 73 — this uses `prodsched-service`)
 **Database:** `data/prodsched.db`
-**HTTP Port:** 8142 | **gRPC Port:** 9142
+**HTTP Port:** 8202 | **gRPC Port:** 9202
 
 ---
 

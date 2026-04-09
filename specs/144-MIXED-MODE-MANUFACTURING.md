@@ -7,7 +7,7 @@ Mixed-Mode Manufacturing supports organizations that use a combination of discre
 **Bounded Context:** Hybrid Manufacturing Planning & Execution
 **Service Name:** `mixed-mode-mfg-service`
 **Database:** `data/mixed_mode_mfg.db`
-**HTTP Port:** 8162 | **gRPC Port:** 9162
+**HTTP Port:** 8224 | **gRPC Port:** 9224
 
 ---
 

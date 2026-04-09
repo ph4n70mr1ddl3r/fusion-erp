@@ -199,43 +199,43 @@ CREATE INDEX idx_mdf_roi_program ON mdf_roi_analysis(program_id, period DESC);
 ### 3.1 Programs
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/mdf/v1/programs` | Create MDF program |
-| GET | `/mdf/v1/programs` | List programs |
-| GET | `/mdf/v1/programs/{id}` | Get program details |
-| PUT | `/mdf/v1/programs/{id}` | Update program |
-| POST | `/mdf/v1/programs/{id}/activate` | Activate program |
+| POST | `/api/v1/mdf/programs` | Create MDF program |
+| GET | `/api/v1/mdf/programs` | List programs |
+| GET | `/api/v1/mdf/programs/{id}` | Get program details |
+| PUT | `/api/v1/mdf/programs/{id}` | Update program |
+| POST | `/api/v1/mdf/programs/{id}/activate` | Activate program |
 
 ### 3.2 Allocations
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/mdf/v1/allocations` | Allocate funds to partner |
-| GET | `/mdf/v1/allocations` | List allocations |
-| PUT | `/mdf/v1/allocations/{id}` | Update allocation |
+| POST | `/api/v1/mdf/allocations` | Allocate funds to partner |
+| GET | `/api/v1/mdf/allocations` | List allocations |
+| PUT | `/api/v1/mdf/allocations/{id}` | Update allocation |
 
 ### 3.3 Requests
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/mdf/v1/requests` | Submit fund request |
-| GET | `/mdf/v1/requests` | List requests |
-| POST | `/mdf/v1/requests/{id}/approve` | Approve request |
-| POST | `/mdf/v1/requests/{id}/reject` | Reject request |
+| POST | `/api/v1/mdf/requests` | Submit fund request |
+| GET | `/api/v1/mdf/requests` | List requests |
+| POST | `/api/v1/mdf/requests/{id}/approve` | Approve request |
+| POST | `/api/v1/mdf/requests/{id}/reject` | Reject request |
 
 ### 3.4 Claims
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/mdf/v1/claims` | Submit claim |
-| GET | `/mdf/v1/claims` | List claims |
-| GET | `/mdf/v1/claims/{id}` | Get claim details |
-| POST | `/mdf/v1/claims/{id}/approve` | Approve claim |
-| POST | `/mdf/v1/claims/{id}/reject` | Reject claim |
-| POST | `/mdf/v1/claims/{id}/pay` | Process payment |
+| POST | `/api/v1/mdf/claims` | Submit claim |
+| GET | `/api/v1/mdf/claims` | List claims |
+| GET | `/api/v1/mdf/claims/{id}` | Get claim details |
+| POST | `/api/v1/mdf/claims/{id}/approve` | Approve claim |
+| POST | `/api/v1/mdf/claims/{id}/reject` | Reject claim |
+| POST | `/api/v1/mdf/claims/{id}/pay` | Process payment |
 
 ### 3.5 Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/mdf/v1/dashboard` | MDF dashboard |
-| GET | `/mdf/v1/roi` | ROI analysis |
-| GET | `/mdf/v1/utilization` | Fund utilization |
+| GET | `/api/v1/mdf/dashboard` | MDF dashboard |
+| GET | `/api/v1/mdf/roi` | ROI analysis |
+| GET | `/api/v1/mdf/utilization` | Fund utilization |
 
 ---
 

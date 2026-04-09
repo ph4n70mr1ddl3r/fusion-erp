@@ -7,7 +7,7 @@ Self-Service Procurement enables employees across the organization to browse cat
 **Bounded Context:** Self-Service Procurement & Employee Buying
 **Service Name:** `selfproc-service`
 **Database:** `data/selfproc.db`
-**HTTP Port:** 8140 | **gRPC Port:** 9140
+**HTTP Port:** 8200 | **gRPC Port:** 9200
 
 ---
 

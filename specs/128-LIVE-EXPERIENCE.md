@@ -7,7 +7,7 @@ Live Experience provides real-time customer engagement capabilities including co
 **Bounded Context:** Real-Time Customer Engagement & Visual Support
 **Service Name:** `liveexp-service`
 **Database:** `data/liveexp.db`
-**HTTP Port:** 8148 | **gRPC Port:** 9148
+**HTTP Port:** 8208 | **gRPC Port:** 9208
 
 ---
 

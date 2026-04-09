@@ -187,37 +187,37 @@ CREATE INDEX idx_tp_analytics_period ON tp_analytics(tenant_id, period DESC);
 ### 3.1 Templates
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/touchpoints/v1/templates` | Create template |
-| GET | `/touchpoints/v1/templates` | List templates |
-| PUT | `/touchpoints/v1/templates/{id}` | Update template |
+| POST | `/api/v1/touchpoints/templates` | Create template |
+| GET | `/api/v1/touchpoints/templates` | List templates |
+| PUT | `/api/v1/touchpoints/templates/{id}` | Update template |
 
 ### 3.2 Check-ins
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/touchpoints/v1/checkins` | Schedule check-in |
-| GET | `/touchpoints/v1/checkins` | List check-ins |
-| GET | `/touchpoints/v1/checkins/{id}` | Get check-in details |
-| PUT | `/touchpoints/v1/checkins/{id}` | Update check-in |
-| POST | `/touchpoints/v1/checkins/{id}/start` | Start check-in |
-| POST | `/touchpoints/v1/checkins/{id}/complete` | Complete check-in |
-| POST | `/touchpoints/v1/checkins/{id}/cancel` | Cancel check-in |
+| POST | `/api/v1/touchpoints/checkins` | Schedule check-in |
+| GET | `/api/v1/touchpoints/checkins` | List check-ins |
+| GET | `/api/v1/touchpoints/checkins/{id}` | Get check-in details |
+| PUT | `/api/v1/touchpoints/checkins/{id}` | Update check-in |
+| POST | `/api/v1/touchpoints/checkins/{id}/start` | Start check-in |
+| POST | `/api/v1/touchpoints/checkins/{id}/complete` | Complete check-in |
+| POST | `/api/v1/touchpoints/checkins/{id}/cancel` | Cancel check-in |
 
 ### 3.3 Agenda & Feedback
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/touchpoints/v1/checkins/{id}/agenda` | Add agenda item |
-| PUT | `/touchpoints/v1/agenda/{id}` | Update agenda item |
-| POST | `/touchpoints/v1/feedback` | Submit feedback |
-| GET | `/touchpoints/v1/feedback` | List feedback |
-| POST | `/touchpoints/v1/feedback/{id}/acknowledge` | Acknowledge feedback |
+| POST | `/api/v1/touchpoints/checkins/{id}/agenda` | Add agenda item |
+| PUT | `/api/v1/touchpoints/agenda/{id}` | Update agenda item |
+| POST | `/api/v1/touchpoints/feedback` | Submit feedback |
+| GET | `/api/v1/touchpoints/feedback` | List feedback |
+| POST | `/api/v1/touchpoints/feedback/{id}/acknowledge` | Acknowledge feedback |
 
 ### 3.4 Action Items & Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/touchpoints/v1/actions` | Create action item |
-| PUT | `/touchpoints/v1/actions/{id}` | Update action item |
-| GET | `/touchpoints/v1/analytics` | Touchpoint analytics |
-| GET | `/touchpoints/v1/dashboard` | Manager dashboard |
+| POST | `/api/v1/touchpoints/actions` | Create action item |
+| PUT | `/api/v1/touchpoints/actions/{id}` | Update action item |
+| GET | `/api/v1/touchpoints/analytics` | Touchpoint analytics |
+| GET | `/api/v1/touchpoints/dashboard` | Manager dashboard |
 
 ---
 

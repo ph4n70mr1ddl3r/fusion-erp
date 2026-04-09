@@ -22,7 +22,6 @@ CREATE TABLE control_policies (
     policy_type TEXT NOT NULL CHECK(policy_type IN ('SOD','ACCESS_CERTIFICATION','CHANGE_MONITOR','CONFIGURATION_GOVERNANCE','DATA_PRIVACY')),
     description TEXT,
     severity TEXT NOT NULL DEFAULT 'WARNING' CHECK(severity IN ('INFO','WARNING','CRITICAL')),
-    is_active INTEGER NOT NULL DEFAULT 1,
     effective_from TEXT NOT NULL,
     effective_to TEXT,
     evaluation_frequency TEXT NOT NULL DEFAULT 'DAILY' CHECK(evaluation_frequency IN ('REAL_TIME','DAILY','WEEKLY','MONTHLY')),

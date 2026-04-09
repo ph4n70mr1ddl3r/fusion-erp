@@ -182,40 +182,40 @@ CREATE INDEX idx_ps_pa_practice ON ps_practice_analytics(practice_area, period D
 ### 3.1 Engagements
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/professional-services/v1/engagements` | Create engagement |
-| GET | `/professional-services/v1/engagements` | List engagements |
-| GET | `/professional-services/v1/engagements/{id}` | Get engagement |
-| PUT | `/professional-services/v1/engagements/{id}` | Update engagement |
-| GET | `/professional-services/v1/engagements/{id}/profitability` | Profitability analysis |
+| POST | `/api/v1/professional-services/engagements` | Create engagement |
+| GET | `/api/v1/professional-services/engagements` | List engagements |
+| GET | `/api/v1/professional-services/engagements/{id}` | Get engagement |
+| PUT | `/api/v1/professional-services/engagements/{id}` | Update engagement |
+| GET | `/api/v1/professional-services/engagements/{id}/profitability` | Profitability analysis |
 
 ### 3.2 Time & Expense
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/professional-services/v1/time-entries` | Submit time entry |
-| POST | `/professional-services/v1/expenses` | Submit expense |
-| GET | `/professional-services/v1/time-entries` | List entries |
-| POST | `/professional-services/v1/time-entries/{id}/approve` | Approve entry |
+| POST | `/api/v1/professional-services/time-entries` | Submit time entry |
+| POST | `/api/v1/professional-services/expenses` | Submit expense |
+| GET | `/api/v1/professional-services/time-entries` | List entries |
+| POST | `/api/v1/professional-services/time-entries/{id}/approve` | Approve entry |
 
 ### 3.3 Utilization
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/professional-services/v1/utilization` | Utilization dashboard |
-| GET | `/professional-services/v1/utilization/{resourceId}` | Resource utilization |
-| GET | `/professional-services/v1/utilization/team` | Team utilization |
+| GET | `/api/v1/professional-services/utilization` | Utilization dashboard |
+| GET | `/api/v1/professional-services/utilization/{resourceId}` | Resource utilization |
+| GET | `/api/v1/professional-services/utilization/team` | Team utilization |
 
 ### 3.4 WIP Management
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/professional-services/v1/wip` | WIP summary |
-| GET | `/professional-services/v1/wip/{engagementId}` | Engagement WIP |
-| POST | `/professional-services/v1/wip/invoice` | Generate invoice from WIP |
+| GET | `/api/v1/professional-services/wip` | WIP summary |
+| GET | `/api/v1/professional-services/wip/{engagementId}` | Engagement WIP |
+| POST | `/api/v1/professional-services/wip/invoice` | Generate invoice from WIP |
 
 ### 3.5 Practice Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/professional-services/v1/analytics/dashboard` | Practice dashboard |
-| GET | `/professional-services/v1/analytics/pipeline` | Pipeline analysis |
-| GET | `/professional-services/v1/analytics/margins` | Margin trends |
+| GET | `/api/v1/professional-services/analytics/dashboard` | Practice dashboard |
+| GET | `/api/v1/professional-services/analytics/pipeline` | Pipeline analysis |
+| GET | `/api/v1/professional-services/analytics/margins` | Margin trends |
 
 ---
 

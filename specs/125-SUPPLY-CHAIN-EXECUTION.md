@@ -7,7 +7,7 @@ Supply Chain Execution provides end-to-end logistics orchestration, managing the
 **Bounded Context:** Supply Chain Execution & Logistics Orchestration
 **Service Name:** `scexec-service`
 **Database:** `data/scexec.db`
-**HTTP Port:** 8145 | **gRPC Port:** 9145
+**HTTP Port:** 8205 | **gRPC Port:** 9205
 
 ---
 

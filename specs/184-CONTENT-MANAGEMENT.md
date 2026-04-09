@@ -199,54 +199,54 @@ CREATE INDEX idx_cm_ct_status ON cm_content_translations(tenant_id, translation_
 ### 3.1 Content Items
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/content-management/v1/items` | Create content item |
-| GET | `/content-management/v1/items` | List content items |
-| GET | `/content-management/v1/items/{id}` | Get content item details |
-| PUT | `/content-management/v1/items/{id}` | Update content item |
-| DELETE | `/content-management/v1/items/{id}` | Delete content item |
-| POST | `/content-management/v1/items/{id}/publish` | Publish content |
-| POST | `/content-management/v1/items/{id}/archive` | Archive content |
-| GET | `/content-management/v1/items/search` | Search content |
+| POST | `/api/v1/content-management/items` | Create content item |
+| GET | `/api/v1/content-management/items` | List content items |
+| GET | `/api/v1/content-management/items/{id}` | Get content item details |
+| PUT | `/api/v1/content-management/items/{id}` | Update content item |
+| DELETE | `/api/v1/content-management/items/{id}` | Delete content item |
+| POST | `/api/v1/content-management/items/{id}/publish` | Publish content |
+| POST | `/api/v1/content-management/items/{id}/archive` | Archive content |
+| GET | `/api/v1/content-management/items/search` | Search content |
 
 ### 3.2 Folders
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/content-management/v1/folders` | Create folder |
-| GET | `/content-management/v1/folders` | List folders |
-| GET | `/content-management/v1/folders/{id}` | Get folder details |
-| PUT | `/content-management/v1/folders/{id}` | Update folder |
-| DELETE | `/content-management/v1/folders/{id}` | Delete folder |
-| PUT | `/content-management/v1/folders/{id}/permissions` | Update permissions |
-| GET | `/content-management/v1/folders/{id}/contents` | List folder contents |
+| POST | `/api/v1/content-management/folders` | Create folder |
+| GET | `/api/v1/content-management/folders` | List folders |
+| GET | `/api/v1/content-management/folders/{id}` | Get folder details |
+| PUT | `/api/v1/content-management/folders/{id}` | Update folder |
+| DELETE | `/api/v1/content-management/folders/{id}` | Delete folder |
+| PUT | `/api/v1/content-management/folders/{id}/permissions` | Update permissions |
+| GET | `/api/v1/content-management/folders/{id}/contents` | List folder contents |
 
 ### 3.3 Versioning
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/content-management/v1/items/{id}/versions` | Create new version |
-| GET | `/content-management/v1/items/{id}/versions` | List versions |
-| GET | `/content-management/v1/versions/{id}` | Get version details |
-| POST | `/content-management/v1/versions/{id}/restore` | Restore version |
-| GET | `/content-management/v1/versions/compare` | Compare two versions |
+| POST | `/api/v1/content-management/items/{id}/versions` | Create new version |
+| GET | `/api/v1/content-management/items/{id}/versions` | List versions |
+| GET | `/api/v1/content-management/versions/{id}` | Get version details |
+| POST | `/api/v1/content-management/versions/{id}/restore` | Restore version |
+| GET | `/api/v1/content-management/versions/compare` | Compare two versions |
 
 ### 3.4 Workflows
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/content-management/v1/workflows` | Create approval workflow |
-| GET | `/content-management/v1/workflows` | List workflows |
-| GET | `/content-management/v1/workflows/{id}` | Get workflow details |
-| POST | `/content-management/v1/workflows/{id}/approve` | Approve current stage |
-| POST | `/content-management/v1/workflows/{id}/reject` | Reject workflow |
-| GET | `/content-management/v1/workflows/pending` | List pending approvals |
+| POST | `/api/v1/content-management/workflows` | Create approval workflow |
+| GET | `/api/v1/content-management/workflows` | List workflows |
+| GET | `/api/v1/content-management/workflows/{id}` | Get workflow details |
+| POST | `/api/v1/content-management/workflows/{id}/approve` | Approve current stage |
+| POST | `/api/v1/content-management/workflows/{id}/reject` | Reject workflow |
+| GET | `/api/v1/content-management/workflows/pending` | List pending approvals |
 
 ### 3.5 Translations
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/content-management/v1/translations` | Create translation request |
-| GET | `/content-management/v1/translations` | List translations |
-| GET | `/content-management/v1/translations/{id}` | Get translation details |
-| PUT | `/content-management/v1/translations/{id}` | Update translation |
-| POST | `/content-management/v1/translations/{id}/complete` | Complete translation |
-| GET | `/content-management/v1/items/{id}/translations` | Get all translations for item |
+| POST | `/api/v1/content-management/translations` | Create translation request |
+| GET | `/api/v1/content-management/translations` | List translations |
+| GET | `/api/v1/content-management/translations/{id}` | Get translation details |
+| PUT | `/api/v1/content-management/translations/{id}` | Update translation |
+| POST | `/api/v1/content-management/translations/{id}/complete` | Complete translation |
+| GET | `/api/v1/content-management/items/{id}/translations` | Get all translations for item |
 
 ---
 

@@ -112,7 +112,6 @@ CREATE TABLE theme_configurations (
     logo_reference TEXT,
     favicon_reference TEXT,
     custom_css TEXT,
-    is_active INTEGER NOT NULL DEFAULT 0,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -139,7 +138,6 @@ CREATE TABLE conditional_rules (
     condition_expression TEXT NOT NULL,  -- JSON: boolean condition tree
     action_config TEXT NOT NULL,         -- JSON: action to take when true
     priority INTEGER NOT NULL DEFAULT 0,
-    is_active INTEGER NOT NULL DEFAULT 1,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -198,7 +196,6 @@ CREATE TABLE design_sandboxes (
     project_id TEXT NOT NULL,
     sandbox_name TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'CREATED' CHECK(status IN ('CREATED','TESTING','PUBLISHED','DISCARDED')),
-    created_by TEXT NOT NULL,
     published_by TEXT,
     published_date TEXT,
 
@@ -331,7 +328,7 @@ service ExperienceDesignStudioService {
 
     // Components
     rpc CreateComponent(CreateComponentRequest) returns (CreateComponentResponse);
-    rpc GetComponentGetComponentRequest) returns (GetComponentResponse);
+    rpc GetComponent(GetComponentRequest) returns (GetComponentResponse);
     rpc ListComponents(ListComponentsRequest) returns (ListComponentsResponse);
     rpc RenderComponentPreview(RenderComponentPreviewRequest) returns (RenderComponentPreviewResponse);
 

@@ -102,7 +102,8 @@ POST /api/v1/auth/refresh                  # Refresh token
       {
         "field": "lines",
         "issue": "Total debits (10000) do not equal total credits (9500)",
-        "value": null
+        "value": null,
+        "suggestion": "Adjust line amounts so total debits equal total credits"
       }
     ],
     "request_id": "req-...",
@@ -121,12 +122,14 @@ POST /api/v1/auth/refresh                  # Refresh token
       {
         "field": "account_code",
         "issue": "Account code must match pattern: \\d{4}-\\d{3}-\\d{4}",
-        "value": "100"
+        "value": "100",
+        "suggestion": "Use format like 1000-010-0000"
       },
       {
         "field": "journal_date",
         "issue": "Date must be in ISO 8601 format (YYYY-MM-DD)",
-        "value": "01/15/2024"
+        "value": "01/15/2024",
+        "suggestion": "Use format like 2024-01-15"
       }
     ],
     "request_id": "req-...",

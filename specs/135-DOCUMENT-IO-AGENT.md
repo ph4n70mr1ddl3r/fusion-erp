@@ -7,7 +7,7 @@ Document IO Agent provides AI-powered document capture, processing, generation, 
 **Bounded Context:** AI Document Processing & Intelligent Capture
 **Service Name:** `docio-service`
 **Database:** `data/docio.db`
-**HTTP Port:** 8155 | **gRPC Port:** 9155
+**HTTP Port:** 8215 | **gRPC Port:** 9215
 
 ---
 

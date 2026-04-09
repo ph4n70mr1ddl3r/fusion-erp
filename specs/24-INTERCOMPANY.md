@@ -195,7 +195,7 @@ CREATE TABLE intercompany_transaction_lines (
     description TEXT NOT NULL,
     line_type TEXT NOT NULL DEFAULT 'ITEM'
         CHECK(line_type IN ('ITEM','SERVICE','FREIGHT','TAX','CHARGE','ALLOCATION')),
-    quantity DECIMAL(18,4) DEFAULT 1,
+    quantity INTEGER DEFAULT 1000,
     unit_of_measure TEXT,
     unit_price_cents INTEGER NOT NULL DEFAULT 0,
     line_amount_cents INTEGER NOT NULL DEFAULT 0,

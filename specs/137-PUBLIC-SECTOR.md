@@ -7,7 +7,7 @@ Public Sector extends the Fusion ERP platform for government agencies and public
 **Bounded Context:** Government & Public Sector Operations
 **Service Name:** `publicsector-service`
 **Database:** `data/publicsector.db`
-**HTTP Port:** 8157 | **gRPC Port:** 9157
+**HTTP Port:** 8217 | **gRPC Port:** 9217
 
 ---
 

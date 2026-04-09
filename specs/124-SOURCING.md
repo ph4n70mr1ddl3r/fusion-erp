@@ -7,7 +7,7 @@ Sourcing manages the strategic procurement process of soliciting, evaluating, an
 **Bounded Context:** Strategic Sourcing & Supplier Selection
 **Service Name:** `sourcing-service`
 **Database:** `data/sourcing.db`
-**HTTP Port:** 8144 | **gRPC Port:** 9144
+**HTTP Port:** 8204 | **gRPC Port:** 9204
 
 ---
 

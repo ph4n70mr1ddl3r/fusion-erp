@@ -120,7 +120,6 @@ CREATE TABLE intent_definitions (
     required_entities TEXT,             -- JSON: required entity types
     fulfillment_type TEXT NOT NULL CHECK(fulfillment_type IN ('TEXT_RESPONSE','API_CALL','WORKFLOW','TRANSFER')),
     parent_intent_id TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1,
     avg_resolution_time_seconds INTEGER,
     success_rate DECIMAL(5,2),
 
@@ -183,7 +182,6 @@ CREATE TABLE escalation_rules (
     priority_boost INTEGER,
     sla_minutes INTEGER,
     notification_config TEXT,           -- JSON: notification settings
-    is_active INTEGER NOT NULL DEFAULT 1,
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),

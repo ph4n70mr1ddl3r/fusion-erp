@@ -229,7 +229,7 @@ TLS_KEY_PATH=/app/config/tls/key.pem
 ```yaml
 # In docker-compose.yml, per service
 healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+  test: ["CMD", "wget", "--spider", "-q", "http://localhost:8010/health"]
   interval: 30s
   timeout: 10s
   retries: 3
@@ -239,7 +239,7 @@ healthcheck:
 ### 5.2 Readiness Check
 ```yaml
 healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8010/ready"]
+  test: ["CMD", "wget", "--spider", "-q", "http://localhost:8010/ready"]
   interval: 30s
   timeout: 10s
   retries: 3

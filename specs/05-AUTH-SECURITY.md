@@ -19,6 +19,8 @@ Content-Type: application/json
 }
 ```
 
+> **Note:** On successful login, the refresh token is returned both in the JSON response body AND set as an HTTP-only `Set-Cookie` header (`refresh_token`). Subsequent token refreshes (section 1.3) use the cookie automatically, so clients do not need to manage the refresh token in application code.
+
 **Success Response (200):**
 ```json
 {

@@ -7,7 +7,7 @@ Demand Management provides statistical demand forecasting, demand sensing, causa
 **Bounded Context:** Demand Forecasting & Sensing
 **Service Name:** `demand-mgmt-service`
 **Database:** `data/demand_mgmt.db`
-**HTTP Port:** 8158 | **gRPC Port:** 9158
+**HTTP Port:** 8220 | **gRPC Port:** 9220
 
 ---
 
@@ -235,55 +235,55 @@ CREATE INDEX idx_dm_accuracy_model ON dm_forecast_accuracy(tenant_id, model_id, 
 ### 3.1 Forecast Models
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/demand-mgmt/v1/models` | Create forecast model |
-| GET | `/demand-mgmt/v1/models` | List models |
-| GET | `/demand-mgmt/v1/models/{id}` | Get model details |
-| PUT | `/demand-mgmt/v1/models/{id}` | Update model |
-| POST | `/demand-mgmt/v1/models/{id}/train` | Train model on historical data |
-| DELETE | `/demand-mgmt/v1/models/{id}` | Deactivate model |
+| POST | `/api/v1/demand/models` | Create forecast model |
+| GET | `/api/v1/demand/models` | List models |
+| GET | `/api/v1/demand/models/{id}` | Get model details |
+| PUT | `/api/v1/demand/models/{id}` | Update model |
+| POST | `/api/v1/demand/models/{id}/train` | Train model on historical data |
+| DELETE | `/api/v1/demand/models/{id}` | Deactivate model |
 
 ### 3.2 Forecast Runs
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/demand-mgmt/v1/runs` | Execute forecast run |
-| GET | `/demand-mgmt/v1/runs` | List runs |
-| GET | `/demand-mgmt/v1/runs/{id}` | Get run details with results |
-| GET | `/demand-mgmt/v1/runs/{id}/values` | Get forecast values |
-| POST | `/demand-mgmt/v1/runs/{id}/cancel` | Cancel running forecast |
-| POST | `/demand-mgmt/v1/runs/compare` | Compare multiple runs |
+| POST | `/api/v1/demand/runs` | Execute forecast run |
+| GET | `/api/v1/demand/runs` | List runs |
+| GET | `/api/v1/demand/runs/{id}` | Get run details with results |
+| GET | `/api/v1/demand/runs/{id}/values` | Get forecast values |
+| POST | `/api/v1/demand/runs/{id}/cancel` | Cancel running forecast |
+| POST | `/api/v1/demand/runs/compare` | Compare multiple runs |
 
 ### 3.3 Causal Factors
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/demand-mgmt/v1/causal-factors` | Create causal factor |
-| GET | `/demand-mgmt/v1/causal-factors` | List causal factors |
-| PUT | `/demand-mgmt/v1/causal-factors/{id}` | Update factor |
-| POST | `/demand-mgmt/v1/causal-factors/apply` | Apply factors to forecast |
+| POST | `/api/v1/demand/causal-factors` | Create causal factor |
+| GET | `/api/v1/demand/causal-factors` | List causal factors |
+| PUT | `/api/v1/demand/causal-factors/{id}` | Update factor |
+| POST | `/api/v1/demand/causal-factors/apply` | Apply factors to forecast |
 
 ### 3.4 Demand Sensing
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/demand-mgmt/v1/signals` | Ingest demand signal |
-| POST | `/demand-mgmt/v1/signals/bulk` | Bulk ingest signals |
-| GET | `/demand-mgmt/v1/signals` | Query signals |
-| POST | `/demand-mgmt/v1/sensing/analyze` | Run demand sensing analysis |
+| POST | `/api/v1/demand/signals` | Ingest demand signal |
+| POST | `/api/v1/demand/signals/bulk` | Bulk ingest signals |
+| GET | `/api/v1/demand/signals` | Query signals |
+| POST | `/api/v1/demand/sensing/analyze` | Run demand sensing analysis |
 
 ### 3.5 Consensus Planning
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/demand-mgmt/v1/consensus-plans` | Create consensus plan |
-| GET | `/demand-mgmt/v1/consensus-plans` | List plans |
-| PUT | `/demand-mgmt/v1/consensus-plans/{id}/adjust` | Submit adjustments |
-| POST | `/demand-mgmt/v1/consensus-plans/{id}/approve` | Approve plan |
-| POST | `/demand-mgmt/v1/consensus-plans/{id}/publish` | Publish to SCP |
+| POST | `/api/v1/demand/consensus-plans` | Create consensus plan |
+| GET | `/api/v1/demand/consensus-plans` | List plans |
+| PUT | `/api/v1/demand/consensus-plans/{id}/adjust` | Submit adjustments |
+| POST | `/api/v1/demand/consensus-plans/{id}/approve` | Approve plan |
+| POST | `/api/v1/demand/consensus-plans/{id}/publish` | Publish to SCP |
 
 ### 3.6 Accuracy & Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/demand-mgmt/v1/accuracy` | Get forecast accuracy metrics |
-| GET | `/demand-mgmt/v1/accuracy/by-model` | Compare model accuracy |
-| GET | `/demand-mgmt/v1/accuracy/by-item` | Item-level accuracy |
-| GET | `/demand-mgmt/v1/accuracy/trend` | Accuracy trend over time |
+| GET | `/api/v1/demand/accuracy` | Get forecast accuracy metrics |
+| GET | `/api/v1/demand/accuracy/by-model` | Compare model accuracy |
+| GET | `/api/v1/demand/accuracy/by-item` | Item-level accuracy |
+| GET | `/api/v1/demand/accuracy/trend` | Accuracy trend over time |
 
 ---
 

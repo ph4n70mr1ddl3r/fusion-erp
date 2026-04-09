@@ -44,11 +44,15 @@ This spec defines how services communicate with each other, the event bus archit
 ## 3. Event Bus Architecture
 
 ### 3.1 Event Bus Implementation
-Use an embedded event dispatcher within the gateway-service or a standalone event-router process.
+Services communicate events across process boundaries using an **outbox-polling pattern** with a central event-relay. Since `tokio::broadcast` only works within a single process, cross-process delivery uses gRPC.
 
 **Architecture:**
 ```
-Publisher Service → Event Store (SQLite table) → tokio::broadcast → Subscriber Services
+Publisher Service → outbox_events table (local DB)
+                       ↓ (polled by event-relay thread)
+                 event-relay (central or per-service)
+                       ↓ (delivers via gRPC)
+                 Subscriber Service → inbox_events table
 ```
 
 ### 3.2 Event Store Table (per publisher service)
@@ -93,11 +97,12 @@ CREATE TABLE inbox_events (
 ```
 
 ### 3.4 Event Delivery Flow
-1. **Publish:** Service writes event to outbox_events table within same transaction as business data
-2. **Dispatch:** Background task polls outbox, publishes to tokio::broadcast channel
-3. **Receive:** Subscriber service receives event, writes to inbox_events
-4. **Process:** Subscriber processes event idempotently (check event_id uniqueness)
-5. **Complete:** Mark inbox event as COMPLETED
+1. **Publish:** Service writes event to its local `outbox_events` table within the same database transaction as the business data change
+2. **Poll:** A central event-relay process (or a relay thread within each publisher service) periodically polls each service's `outbox_events` table for PENDING events
+3. **Deliver:** The relay delivers events to subscriber services by calling their gRPC `ProcessEvent` endpoint
+4. **Receive:** Subscriber service receives the event via gRPC, writes it to its `inbox_events` table
+5. **Process:** Subscriber processes the event idempotently (checks `event_id` uniqueness before applying)
+6. **Complete:** Subscriber marks the inbox event as COMPLETED; relay marks the outbox event as PUBLISHED
 
 ### 3.5 Event Schema
 ```json

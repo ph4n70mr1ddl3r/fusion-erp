@@ -210,42 +210,42 @@ CREATE INDEX idx_ce_rfi_due ON ce_submittals_rfis(due_date);
 ### 3.1 Projects
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/construction/v1/projects` | Create project |
-| GET | `/construction/v1/projects` | List projects |
-| GET | `/construction/v1/projects/{id}` | Get project |
-| PUT | `/construction/v1/projects/{id}` | Update project |
-| GET | `/construction/v1/projects/{id}/dashboard` | Project dashboard |
+| POST | `/api/v1/construction/projects` | Create project |
+| GET | `/api/v1/construction/projects` | List projects |
+| GET | `/api/v1/construction/projects/{id}` | Get project |
+| PUT | `/api/v1/construction/projects/{id}` | Update project |
+| GET | `/api/v1/construction/projects/{id}/dashboard` | Project dashboard |
 
 ### 3.2 Progress Claims
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/construction/v1/claims` | Create progress claim |
-| GET | `/construction/v1/claims` | List claims |
-| GET | `/construction/v1/claims/{id}` | Get claim |
-| POST | `/construction/v1/claims/{id}/certify` | Certify claim |
+| POST | `/api/v1/construction/claims` | Create progress claim |
+| GET | `/api/v1/construction/claims` | List claims |
+| GET | `/api/v1/construction/claims/{id}` | Get claim |
+| POST | `/api/v1/construction/claims/{id}/certify` | Certify claim |
 
 ### 3.3 Change Orders
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/construction/v1/change-orders` | Create change order |
-| GET | `/construction/v1/change-orders` | List change orders |
-| GET | `/construction/v1/change-orders/{id}` | Get change order |
-| POST | `/construction/v1/change-orders/{id}/approve` | Approve change order |
+| POST | `/api/v1/construction/change-orders` | Create change order |
+| GET | `/api/v1/construction/change-orders` | List change orders |
+| GET | `/api/v1/construction/change-orders/{id}` | Get change order |
+| POST | `/api/v1/construction/change-orders/{id}/approve` | Approve change order |
 
 ### 3.4 Daily Logs
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/construction/v1/daily-logs` | Submit daily log |
-| GET | `/construction/v1/daily-logs` | List daily logs |
-| GET | `/construction/v1/daily-logs/{id}` | Get log details |
+| POST | `/api/v1/construction/daily-logs` | Submit daily log |
+| GET | `/api/v1/construction/daily-logs` | List daily logs |
+| GET | `/api/v1/construction/daily-logs/{id}` | Get log details |
 
 ### 3.5 Submittals & RFIs
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/construction/v1/rfis` | Create RFI/submittal |
-| GET | `/construction/v1/rfis` | List RFIs |
-| GET | `/construction/v1/rfis/{id}` | Get RFI |
-| POST | `/construction/v1/rfis/{id}/respond` | Respond to RFI |
+| POST | `/api/v1/construction/rfis` | Create RFI/submittal |
+| GET | `/api/v1/construction/rfis` | List RFIs |
+| GET | `/api/v1/construction/rfis/{id}` | Get RFI |
+| POST | `/api/v1/construction/rfis/{id}/respond` | Respond to RFI |
 
 ---
 

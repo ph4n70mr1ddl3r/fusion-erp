@@ -176,40 +176,40 @@ CREATE INDEX idx_gr_mentor_mentor ON gr_mentorships(mentor_id, status);
 ### 3.1 Growth Profiles
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/grow/v1/profiles/{personId}` | Get growth profile |
-| PUT | `/grow/v1/profiles/{personId}` | Update aspirations |
-| POST | `/grow/v1/profiles/{personId}/analyze` | Run AI skill gap analysis |
+| GET | `/api/v1/grow/profiles/{personId}` | Get growth profile |
+| PUT | `/api/v1/grow/profiles/{personId}` | Update aspirations |
+| POST | `/api/v1/grow/profiles/{personId}/analyze` | Run AI skill gap analysis |
 
 ### 3.2 Growth Plans
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/grow/v1/plans` | Create growth plan |
-| GET | `/grow/v1/plans` | List plans |
-| GET | `/grow/v1/plans/{id}` | Get plan with activities |
-| PUT | `/grow/v1/plans/{id}` | Update plan |
-| POST | `/grow/v1/plans/{id}/add-activity` | Add activity |
-| PUT | `/grow/v1/activities/{id}` | Update activity |
+| POST | `/api/v1/grow/plans` | Create growth plan |
+| GET | `/api/v1/grow/plans` | List plans |
+| GET | `/api/v1/grow/plans/{id}` | Get plan with activities |
+| PUT | `/api/v1/grow/plans/{id}` | Update plan |
+| POST | `/api/v1/grow/plans/{id}/add-activity` | Add activity |
+| PUT | `/api/v1/grow/activities/{id}` | Update activity |
 
 ### 3.3 AI Recommendations
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/grow/v1/recommendations/{personId}` | Get AI recommendations |
-| POST | `/grow/v1/recommendations/{id}/accept` | Accept recommendation |
-| POST | `/grow/v1/recommendations/{id}/dismiss` | Dismiss recommendation |
-| POST | `/grow/v1/recommendations/refresh` | Refresh AI analysis |
+| GET | `/api/v1/grow/recommendations/{personId}` | Get AI recommendations |
+| POST | `/api/v1/grow/recommendations/{id}/accept` | Accept recommendation |
+| POST | `/api/v1/grow/recommendations/{id}/dismiss` | Dismiss recommendation |
+| POST | `/api/v1/grow/recommendations/refresh` | Refresh AI analysis |
 
 ### 3.4 Mentorship
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/grow/v1/mentorship/suggestions` | AI mentor suggestions |
-| POST | `/grow/v1/mentorship` | Request mentor |
-| PUT | `/grow/v1/mentorship/{id}` | Update mentorship |
+| GET | `/api/v1/grow/mentorship/suggestions` | AI mentor suggestions |
+| POST | `/api/v1/grow/mentorship` | Request mentor |
+| PUT | `/api/v1/grow/mentorship/{id}` | Update mentorship |
 
 ### 3.5 Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/grow/v1/dashboard` | Growth dashboard |
-| GET | `/grow/v1/skills-trend` | Skill development trends |
+| GET | `/api/v1/grow/dashboard` | Growth dashboard |
+| GET | `/api/v1/grow/skills-trend` | Skill development trends |
 
 ---
 

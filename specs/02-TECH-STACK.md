@@ -3,7 +3,7 @@
 ## 1. Language & Runtime
 
 ### 1.1 Rust Configuration
-- **Edition:** 2024
+- **Edition:** 2021
 - **Minimum Supported Rust Version (MSRV):** 1.82.0
 - **Compilation Profile:** Release with optimizations for production
 - **Linting:** cargo clippy with `-D warnings` (deny warnings)
@@ -546,7 +546,7 @@ just run gateway-service &
 [package]
 name = "gl-service"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 fusion-core = { path = "../../crates/fusion-core" }

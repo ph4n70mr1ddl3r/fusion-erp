@@ -194,52 +194,52 @@ CREATE INDEX idx_elo_eng_time ON elo_campaign_engagement(timestamp DESC);
 ### 3.1 Campaigns
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/eloqua/v1/campaigns` | Create campaign |
-| GET | `/eloqua/v1/campaigns` | List campaigns |
-| GET | `/eloqua/v1/campaigns/{id}` | Get campaign details |
-| PUT | `/eloqua/v1/campaigns/{id}` | Update campaign |
-| POST | `/eloqua/v1/campaigns/{id}/launch` | Launch campaign |
-| POST | `/eloqua/v1/campaigns/{id}/pause` | Pause campaign |
-| POST | `/eloqua/v1/campaigns/{id}/complete` | Complete campaign |
+| POST | `/api/v1/eloqua/campaigns` | Create campaign |
+| GET | `/api/v1/eloqua/campaigns` | List campaigns |
+| GET | `/api/v1/eloqua/campaigns/{id}` | Get campaign details |
+| PUT | `/api/v1/eloqua/campaigns/{id}` | Update campaign |
+| POST | `/api/v1/eloqua/campaigns/{id}/launch` | Launch campaign |
+| POST | `/api/v1/eloqua/campaigns/{id}/pause` | Pause campaign |
+| POST | `/api/v1/eloqua/campaigns/{id}/complete` | Complete campaign |
 
 ### 3.2 Email Templates
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/eloqua/v1/email-templates` | Create email template |
-| GET | `/eloqua/v1/email-templates` | List templates |
-| GET | `/eloqua/v1/email-templates/{id}` | Get template details |
-| PUT | `/eloqua/v1/email-templates/{id}` | Update template |
-| POST | `/eloqua/v1/email-templates/{id}/approve` | Approve template |
-| POST | `/eloqua/v1/email-templates/{id}/preview` | Preview rendered template |
+| POST | `/api/v1/eloqua/email-templates` | Create email template |
+| GET | `/api/v1/eloqua/email-templates` | List templates |
+| GET | `/api/v1/eloqua/email-templates/{id}` | Get template details |
+| PUT | `/api/v1/eloqua/email-templates/{id}` | Update template |
+| POST | `/api/v1/eloqua/email-templates/{id}/approve` | Approve template |
+| POST | `/api/v1/eloqua/email-templates/{id}/preview` | Preview rendered template |
 
 ### 3.3 Lead Scoring
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/eloqua/v1/lead-scoring/models` | Create scoring model |
-| GET | `/eloqua/v1/lead-scoring/models` | List scoring models |
-| GET | `/eloqua/v1/lead-scoring/models/{id}` | Get model details |
-| PUT | `/eloqua/v1/lead-scoring/models/{id}` | Update model |
-| GET | `/eloqua/v1/lead-scoring/contacts/{id}/score` | Get contact lead score |
-| POST | `/eloqua/v1/lead-scoring/recalculate` | Recalculate all scores |
+| POST | `/api/v1/eloqua/lead-scoring/models` | Create scoring model |
+| GET | `/api/v1/eloqua/lead-scoring/models` | List scoring models |
+| GET | `/api/v1/eloqua/lead-scoring/models/{id}` | Get model details |
+| PUT | `/api/v1/eloqua/lead-scoring/models/{id}` | Update model |
+| GET | `/api/v1/eloqua/lead-scoring/contacts/{id}/score` | Get contact lead score |
+| POST | `/api/v1/eloqua/lead-scoring/recalculate` | Recalculate all scores |
 
 ### 3.4 Contact Lists
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/eloqua/v1/contact-lists` | Create contact list |
-| GET | `/eloqua/v1/contact-lists` | List contact lists |
-| GET | `/eloqua/v1/contact-lists/{id}` | Get list details |
-| PUT | `/eloqua/v1/contact-lists/{id}` | Update list |
-| POST | `/eloqua/v1/contact-lists/{id}/refresh` | Refresh dynamic list |
-| POST | `/eloqua/v1/contact-lists/{id}/add-contacts` | Add contacts to static list |
+| POST | `/api/v1/eloqua/contact-lists` | Create contact list |
+| GET | `/api/v1/eloqua/contact-lists` | List contact lists |
+| GET | `/api/v1/eloqua/contact-lists/{id}` | Get list details |
+| PUT | `/api/v1/eloqua/contact-lists/{id}` | Update list |
+| POST | `/api/v1/eloqua/contact-lists/{id}/refresh` | Refresh dynamic list |
+| POST | `/api/v1/eloqua/contact-lists/{id}/add-contacts` | Add contacts to static list |
 
 ### 3.5 Engagement Analytics
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/eloqua/v1/campaigns/{id}/analytics` | Campaign performance |
-| GET | `/eloqua/v1/contacts/{id}/engagement` | Contact engagement timeline |
-| GET | `/eloqua/v1/analytics/dashboard` | Marketing dashboard |
-| GET | `/eloqua/v1/analytics/email-performance` | Email performance report |
-| GET | `/eloqua/v1/analytics/roi` | Campaign ROI report |
+| GET | `/api/v1/eloqua/campaigns/{id}/analytics` | Campaign performance |
+| GET | `/api/v1/eloqua/contacts/{id}/engagement` | Contact engagement timeline |
+| GET | `/api/v1/eloqua/analytics/dashboard` | Marketing dashboard |
+| GET | `/api/v1/eloqua/analytics/email-performance` | Email performance report |
+| GET | `/api/v1/eloqua/analytics/roi` | Campaign ROI report |
 
 ---
 

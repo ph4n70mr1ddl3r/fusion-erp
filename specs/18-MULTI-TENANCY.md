@@ -46,6 +46,8 @@ CREATE TABLE tenants (
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     created_by TEXT NOT NULL,
     updated_by TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    is_active INTEGER NOT NULL DEFAULT 1,
 
     UNIQUE(tenant_code)
 );
@@ -65,6 +67,10 @@ CREATE TABLE tenant_config (
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    created_by TEXT NOT NULL,
+    updated_by TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    is_active INTEGER NOT NULL DEFAULT 1,
 
     UNIQUE(tenant_id, config_key)
 );

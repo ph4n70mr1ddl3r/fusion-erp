@@ -231,3 +231,48 @@ Outflow: Debit destination account, Credit Cash account
 | `cm.transaction.reconciled` | Transaction matched with bank statement |
 | `cm.statement.reconciled` | Bank statement fully reconciled |
 | `cm.balance.updated` | Bank account balance changed |
+
+---
+
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.cm.v1;
+
+service CashManagementService {
+    rpc GetBankAccount(GetBankAccountRequest) returns (GetBankAccountResponse);
+    rpc RecordTransaction(RecordTransactionRequest) returns (RecordTransactionResponse);
+    rpc GetCashPosition(GetCashPositionRequest) returns (GetCashPositionResponse);
+    rpc GetReconciliationStatus(GetReconciliationStatusRequest) returns (GetReconciliationStatusResponse);
+}
+```
+
+---
+
+## 6. Inter-Service Integration
+
+### 6.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| gl-service | `PostJournal` | Post cash transaction journal entries |
+
+### 6.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| ap-service | `RecordTransaction` | Record AP payment as cash outflow |
+| ar-service | `RecordTransaction` | Record AR receipt as cash inflow |
+| report-service | `GetCashPosition` | Query cash position for dashboards |
+
+---
+
+## 7. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | bank_accounts | — |
+| V002 | cash_transactions | V001 |
+| V003 | bank_statements | V001 |
+| V004 | bank_statement_lines | V003 |
+| V005 | reconciliation_matches | V002, V004 |
+| V006 | cash_forecasts | V001 |
