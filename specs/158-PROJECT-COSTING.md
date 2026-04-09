@@ -454,47 +454,6 @@ message CostTrendPoint {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.project_costing.v1;
-
-service ProjectCostingService {
-    rpc GetCostBudget(GetCostBudgetRequest) returns (GetCostBudgetResponse);
-    rpc RecordCostTransaction(RecordCostTransactionRequest) returns (RecordCostTransactionResponse);
-    rpc GetProjectCosts(GetProjectCostsRequest) returns (GetProjectCostsResponse);
-    rpc CapitalizeCosts(CapitalizeCostsRequest) returns (CapitalizeCostsResponse);
-}
-
-message CostBudget { string id = 1; string tenant_id = 2; string project_id = 3; int64 budget_cents = 4; int64 committed_cents = 5; int64 spent_cents = 6; string currency_code = 7; string period = 8; string created_at = 9; string updated_at = 10; }
-message CostTransaction { string id = 1; string tenant_id = 2; string project_id = 3; string transaction_type = 4; int64 amount_cents = 5; string currency_code = 6; string description = 7; string transaction_date = 8; string created_at = 9; }
-
-message GetCostBudgetRequest { string tenant_id = 1; string id = 2; }
-message GetCostBudgetResponse { CostBudget data = 1; }
-message RecordCostTransactionRequest { string tenant_id = 1; string project_id = 2; string transaction_type = 3; int64 amount_cents = 4; string description = 5; }
-message RecordCostTransactionResponse { CostTransaction data = 1; }
-message GetProjectCostsRequest { string tenant_id = 1; string project_id = 2; string date_from = 3; string date_to = 4; }
-message GetProjectCostsResponse { repeated CostTransaction items = 1; int64 total_cents = 2; }
-message CapitalizeCostsRequest { string tenant_id = 1; string project_id = 2; string period = 3; }
-message CapitalizeCostsResponse { string event_id = 1; int64 capitalized_cents = 2; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | pc_cost_budgets | — |
-| V002 | pc_cost_transactions | V001 |
-| V003 | pc_burden_schedules | V002 |
-| V004 | pc_capitalization_rules | V003 |
-| V005 | pc_capitalization_events | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Budget Control**: Configurable budget tolerance; hard block or warning on overrun

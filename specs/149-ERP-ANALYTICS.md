@@ -262,36 +262,196 @@ CREATE TABLE ea_custom_reports (
 syntax = "proto3";
 package fusion.erp_analytics.v1;
 
-service ERPAnalyticsService {
-    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
-    rpc GetFinancialMetrics(GetFinancialMetricsRequest) returns (GetFinancialMetricsResponse);
-    rpc GetSpendAnalysis(GetSpendAnalysisRequest) returns (GetSpendAnalysisResponse);
-    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+service ErpAnalyticsService {
+    // Dashboard management
+    rpc CreateDashboard(CreateDashboardRequest) returns (Dashboard);
+    rpc GetDashboard(GetDashboardRequest) returns (Dashboard);
+    rpc ListDashboards(ListDashboardsRequest) returns (DashboardList);
+
+    // Financial metrics
+    rpc GetFinancialMetrics(GetFinancialMetricsRequest) returns (FinancialMetricsList);
+    rpc GetSpendAnalysis(GetSpendAnalysisRequest) returns (SpendAnalysisList);
+
+    // KPI operations
+    rpc GetKpiTrend(GetKpiTrendRequest) returns (KpiTrendResponse);
+    rpc RefreshKpis(RefreshKpisRequest) returns (RefreshKpisResponse);
+
+    // Report execution
+    rpc ExecuteReport(ExecuteReportRequest) returns (ReportExecutionResult);
 }
 
-message Dashboard { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string dashboard_type = 5; string config = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message FinancialMetric { string id = 1; string tenant_id = 2; string metric_date = 3; string metric_type = 4; double metric_value = 5; string currency_code = 6; string created_at = 7; }
-message SpendEntry { string id = 1; string tenant_id = 2; string category = 3; int64 amount_cents = 4; string currency_code = 5; string period = 6; string created_at = 7; }
+// Entity messages
+message Dashboard {
+    string id = 1;
+    string tenant_id = 2;
+    string dashboard_code = 3;
+    string dashboard_name = 4;
+    string dashboard_type = 5;
+    string description = 6;
+    string category = 7;
+    string widgets = 8;
+    string filters = 9;
+    string access_roles = 10;
+    bool is_default = 11;
+    string status = 12;
+    int32 version = 13;
+}
 
-message GetDashboardRequest { string tenant_id = 1; string id = 2; }
-message GetDashboardResponse { Dashboard data = 1; }
-message GetFinancialMetricsRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; }
-message GetFinancialMetricsResponse { repeated FinancialMetric items = 1; }
-message GetSpendAnalysisRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; string category = 4; }
-message GetSpendAnalysisResponse { repeated SpendEntry items = 1; double total_cents = 2; }
-message GenerateReportRequest { string tenant_id = 1; string report_type = 2; string date_from = 3; string date_to = 4; }
-message GenerateReportResponse { string report_id = 1; string report_url = 2; }
+message FinancialMetrics {
+    string id = 1;
+    string tenant_id = 2;
+    string period = 3;
+    string legal_entity_id = 4;
+    string department_id = 5;
+    string cost_center_id = 6;
+    int64 total_revenue_cents = 7;
+    int64 total_expense_cents = 8;
+    int64 gross_profit_cents = 9;
+    int64 net_income_cents = 10;
+    int64 ebitda_cents = 11;
+    double operating_margin_pct = 12;
+    double revenue_growth_pct = 13;
+    double expense_growth_pct = 14;
+    int64 ap_balance_cents = 15;
+    int64 ar_balance_cents = 16;
+    int64 cash_balance_cents = 17;
+    double dso_days = 18;
+    double dpo_days = 19;
+    double cash_conversion_cycle_days = 20;
+    double budget_variance_pct = 21;
+    int32 journal_entry_count = 22;
+    int32 invoice_count = 23;
+    int32 po_count = 24;
+    int32 project_count = 25;
+}
+
+message SpendAnalysisEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string period = 3;
+    string spend_category = 4;
+    string supplier_id = 5;
+    string department_id = 6;
+    string cost_center_id = 7;
+    int64 total_spend_cents = 8;
+    int32 invoice_count = 9;
+    int32 po_count = 10;
+    int64 po_backed_spend_cents = 11;
+    int64 non_po_spend_cents = 12;
+    int64 contract_spend_cents = 13;
+    int64 maverick_spend_cents = 14;
+    double maverick_spend_pct = 15;
+    double po_coverage_pct = 16;
+    double avg_payment_terms_days = 17;
+    double contract_compliance_pct = 18;
+    int32 supplier_count = 19;
+}
+
+// Request/Response messages
+message CreateDashboardRequest {
+    string tenant_id = 1;
+    string dashboard_code = 2;
+    string dashboard_name = 3;
+    string dashboard_type = 4;
+    string description = 5;
+    string category = 6;
+    string widgets = 7;
+    string access_roles = 8;
+}
+
+message GetDashboardRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListDashboardsRequest {
+    string tenant_id = 1;
+    string dashboard_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message DashboardList {
+    repeated Dashboard dashboards = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message GetFinancialMetricsRequest {
+    string tenant_id = 1;
+    string period = 2;
+    string legal_entity_id = 3;
+    string department_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message FinancialMetricsList {
+    repeated FinancialMetrics metrics = 1;
+    string next_page_token = 2;
+}
+
+message GetSpendAnalysisRequest {
+    string tenant_id = 1;
+    string period = 2;
+    string spend_category = 3;
+    string supplier_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message SpendAnalysisList {
+    repeated SpendAnalysisEntry entries = 1;
+    string next_page_token = 2;
+}
+
+message GetKpiTrendRequest {
+    string kpi_id = 1;
+    string tenant_id = 2;
+    string from_date = 3;
+    string to_date = 4;
+}
+
+message KpiTrendResponse {
+    string kpi_id = 1;
+    repeated double values = 2;
+    repeated string dates = 3;
+}
+
+message RefreshKpisRequest {
+    string tenant_id = 1;
+    repeated string kpi_ids = 2;
+}
+
+message RefreshKpisResponse {
+    int32 refreshed_count = 1;
+}
+
+message ExecuteReportRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string filters = 3;
+    string output_format = 4;
+}
+
+message ReportExecutionResult {
+    string execution_id = 1;
+    int32 row_count = 2;
+    string output_path = 3;
+    string status = 4;
+}
 ```
 
 ## 6. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
-| V001 | ea_dashboards | — |
-| V002 | ea_kpi_definitions | V001 |
-| V003 | ea_financial_metrics | V002 |
-| V004 | ea_spend_analysis | V003 |
-| V005 | ea_custom_reports | V004 |
+| V001 | ea_dashboards | -- |
+| V002 | ea_kpi_definitions | -- |
+| V003 | ea_financial_metrics | -- |
+| V004 | ea_spend_analysis | -- |
+| V005 | ea_custom_reports | -- |
 
 ---
 

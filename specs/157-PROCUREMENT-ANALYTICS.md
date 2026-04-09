@@ -463,49 +463,6 @@ message DashboardData {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.proc_analytics.v1;
-
-service ProcurementAnalyticsService {
-    rpc GetSpendAnalysis(GetSpendAnalysisRequest) returns (GetSpendAnalysisResponse);
-    rpc GetSupplierAnalytics(GetSupplierAnalyticsRequest) returns (GetSupplierAnalyticsResponse);
-    rpc GetContractUtilization(GetContractUtilizationRequest) returns (GetContractUtilizationResponse);
-    rpc GetSavingsTracking(GetSavingsTrackingRequest) returns (GetSavingsTrackingResponse);
-}
-
-message SpendItem { string id = 1; string tenant_id = 2; string category = 3; string supplier_id = 4; int64 amount_cents = 5; string currency_code = 6; string period = 7; string created_at = 8; }
-message SupplierAnalytics { string id = 1; string tenant_id = 2; string supplier_id = 3; int64 total_spend_cents = 4; double on_time_delivery_rate = 5; double quality_score = 6; string period = 7; string created_at = 8; }
-message ContractUtil { string id = 1; string tenant_id = 2; string contract_id = 3; int64 committed_cents = 4; int64 spent_cents = 5; double utilization_percent = 6; string period = 7; string created_at = 8; }
-message SavingsEntry { string id = 1; string tenant_id = 2; string category = 3; int64 savings_cents = 4; string period = 5; string created_at = 6; }
-
-message GetSpendAnalysisRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; string category = 4; }
-message GetSpendAnalysisResponse { repeated SpendItem items = 1; int64 total_cents = 2; }
-message GetSupplierAnalyticsRequest { string tenant_id = 1; string supplier_id = 2; }
-message GetSupplierAnalyticsResponse { SupplierAnalytics data = 1; }
-message GetContractUtilizationRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; }
-message GetContractUtilizationResponse { repeated ContractUtil items = 1; }
-message GetSavingsTrackingRequest { string tenant_id = 1; string period = 2; }
-message GetSavingsTrackingResponse { repeated SavingsEntry items = 1; int64 total_savings_cents = 2; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | pa_spend_analysis | — |
-| V002 | pa_supplier_analytics | V001 |
-| V003 | pa_po_metrics | V002 |
-| V004 | pa_contract_utilization | V003 |
-| V005 | pa_savings_tracking | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Spend Classification**: AI-powered spend auto-classification using invoice descriptions

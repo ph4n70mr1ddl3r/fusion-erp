@@ -400,47 +400,6 @@ message ValidationResult {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.smartview.v1;
-
-service SmartViewService {
-    rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse);
-    rpc ExecuteQuery(ExecuteQueryRequest) returns (ExecuteQueryResponse);
-    rpc SubmitData(SubmitDataRequest) returns (SubmitDataResponse);
-    rpc GetActivity(GetActivityRequest) returns (GetActivityResponse);
-}
-
-message Connection { string id = 1; string tenant_id = 2; string name = 3; string connection_type = 4; string config = 5; string status = 6; string created_at = 7; string updated_at = 8; }
-message SessionActivity { string id = 1; string tenant_id = 2; string user_id = 3; string action = 4; string details = 5; string created_at = 6; }
-
-message GetConnectionRequest { string tenant_id = 1; string id = 2; }
-message GetConnectionResponse { Connection data = 1; }
-message ExecuteQueryRequest { string tenant_id = 1; string query_id = 2; string parameters = 3; }
-message ExecuteQueryResponse { string result_data = 1; int32 row_count = 2; }
-message SubmitDataRequest { string tenant_id = 1; string connection_id = 2; string data = 3; }
-message SubmitDataResponse { string submission_id = 1; string status = 2; }
-message GetActivityRequest { string tenant_id = 1; string user_id = 2; string date_from = 3; string date_to = 4; }
-message GetActivityResponse { repeated SessionActivity items = 1; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | sv_connections | — |
-| V002 | sv_saved_queries | V001 |
-| V003 | sv_document_links | V002 |
-| V004 | sv_data_submissions | V003 |
-| V005 | sv_session_activity | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Authentication**: All connections authenticated via OAuth2; tokens refreshed automatically

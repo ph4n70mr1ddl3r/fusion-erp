@@ -260,36 +260,197 @@ CREATE TABLE ru_accessibility_audits (
 syntax = "proto3";
 package fusion.redwood_ux.v1;
 
-service RedwoodUXService {
-    rpc GetTheme(GetThemeRequest) returns (GetThemeResponse);
-    rpc GetComponent(GetComponentRequest) returns (GetComponentResponse);
-    rpc RenderPage(RenderPageRequest) returns (RenderPageResponse);
-    rpc RunAccessibilityAudit(RunAccessibilityAuditRequest) returns (RunAccessibilityAuditResponse);
+service RedwoodUxService {
+    // Design tokens
+    rpc CreateToken(CreateTokenRequest) returns (DesignToken);
+    rpc GetToken(GetTokenRequest) returns (DesignToken);
+    rpc ListTokens(ListTokensRequest) returns (TokenList);
+    rpc ExportTokens(ExportTokensRequest) returns (ExportTokensResponse);
+
+    // Themes
+    rpc CreateTheme(CreateThemeRequest) returns (Theme);
+    rpc ActivateTheme(ActivateThemeRequest) returns (Theme);
+
+    // Components
+    rpc RegisterComponent(RegisterComponentRequest) returns (Component);
+    rpc GetComponent(GetComponentRequest) returns (Component);
+
+    // Accessibility
+    rpc RunAudit(RunAuditRequest) returns (AccessibilityAudit);
 }
 
-message Theme { string id = 1; string tenant_id = 2; string theme_name = 3; string description = 4; string tokens = 5; string status = 6; string created_at = 7; string updated_at = 8; }
-message Component { string id = 1; string tenant_id = 2; string component_name = 3; string category = 4; string props_schema = 5; string template = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message AccessibilityIssue { string severity = 1; string rule_id = 2; string description = 3; string element = 4; string suggestion = 5; }
+// Entity messages
+message DesignToken {
+    string id = 1;
+    string tenant_id = 2;
+    string token_name = 3;
+    string token_category = 4;
+    string token_value = 5;
+    string value_type = 6;
+    string description = 7;
+    bool deprecated = 8;
+    string deprecation_message = 9;
+    string scope = 10;
+    int32 version = 11;
+}
 
-message GetThemeRequest { string tenant_id = 1; string id = 2; }
-message GetThemeResponse { Theme data = 1; }
-message GetComponentRequest { string tenant_id = 1; string id = 2; }
-message GetComponentResponse { Component data = 1; }
-message RenderPageRequest { string tenant_id = 1; string template_id = 2; string context = 3; }
-message RenderPageResponse { string html = 1; string css = 2; }
-message RunAccessibilityAuditRequest { string tenant_id = 1; string page_url = 2; }
-message RunAccessibilityAuditResponse { repeated AccessibilityIssue issues = 1; int32 score = 2; }
+message Theme {
+    string id = 1;
+    string tenant_id = 2;
+    string theme_code = 3;
+    string theme_name = 4;
+    string theme_mode = 5;
+    string base_theme_id = 6;
+    string color_scheme = 7;
+    string typography = 8;
+    string spacing_scale = 9;
+    string border_radius = 10;
+    string shadow_tokens = 11;
+    string motion_tokens = 12;
+    string icon_set = 13;
+    string logo_url = 14;
+    string favicon_url = 15;
+    string custom_css = 16;
+    bool rtl_support = 17;
+    string density = 18;
+    string status = 19;
+    int32 version = 20;
+}
+
+message Component {
+    string id = 1;
+    string tenant_id = 2;
+    string component_code = 3;
+    string component_name = 4;
+    string component_type = 5;
+    string category = 6;
+    string description = 7;
+    string props_schema = 8;
+    string events_schema = 9;
+    string slots_schema = 10;
+    string default_props = 11;
+    string accessibility_notes = 12;
+    string design_spec_url = 13;
+    string figma_url = 14;
+    string storybook_url = 15;
+    string status = 16;
+    string version_number = 17;
+    string dependencies = 18;
+    string tags = 19;
+}
+
+message AccessibilityAudit {
+    string id = 1;
+    string tenant_id = 2;
+    string audit_scope = 3;
+    string scope_type = 4;
+    string scope_id = 5;
+    string audit_date = 6;
+    string auditor = 7;
+    string compliance_level = 8;
+    int32 total_checks = 9;
+    int32 passed_checks = 10;
+    int32 failed_checks = 11;
+    int32 warnings = 12;
+    string issues = 13;
+    string remediation_notes = 14;
+    string status = 15;
+}
+
+// Request/Response messages
+message CreateTokenRequest {
+    string tenant_id = 1;
+    string token_name = 2;
+    string token_category = 3;
+    string token_value = 4;
+    string value_type = 5;
+    string description = 6;
+    string scope = 7;
+}
+
+message GetTokenRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListTokensRequest {
+    string tenant_id = 1;
+    string token_category = 2;
+    bool deprecated = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message TokenList {
+    repeated DesignToken tokens = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message ExportTokensRequest {
+    string tenant_id = 1;
+    string export_format = 2;
+    repeated string token_categories = 3;
+}
+
+message ExportTokensResponse {
+    string content = 1;
+    string format = 2;
+    int32 token_count = 3;
+}
+
+message CreateThemeRequest {
+    string tenant_id = 1;
+    string theme_code = 2;
+    string theme_name = 3;
+    string theme_mode = 4;
+    string base_theme_id = 5;
+    string color_scheme = 6;
+    string typography = 7;
+    string spacing_scale = 8;
+    string border_radius = 9;
+    string density = 10;
+}
+
+message ActivateThemeRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message RegisterComponentRequest {
+    string tenant_id = 1;
+    string component_code = 2;
+    string component_name = 3;
+    string component_type = 4;
+    string category = 5;
+    string description = 6;
+    string props_schema = 7;
+    string events_schema = 8;
+    string slots_schema = 9;
+}
+
+message GetComponentRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message RunAuditRequest {
+    string tenant_id = 1;
+    string scope_type = 2;
+    string scope_id = 3;
+    string auditor = 4;
+}
 ```
 
 ## 6. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
-| V001 | ru_design_tokens | — |
+| V001 | ru_design_tokens | -- |
 | V002 | ru_themes | V001 |
-| V003 | ru_components | V002 |
-| V004 | ru_page_templates | V003 |
-| V005 | ru_accessibility_audits | V004 |
+| V003 | ru_components | -- |
+| V004 | ru_page_templates | V002, V003 |
+| V005 | ru_accessibility_audits | V003, V004 |
 
 ---
 

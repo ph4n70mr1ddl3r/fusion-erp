@@ -246,37 +246,161 @@ CREATE INDEX idx_dm_filing_package ON dm_filing_submissions(package_id);
 
 ```protobuf
 syntax = "proto3";
-package fusion.disclosure.v1;
+package fusion.disclosure_mgmt.v1;
 
-service DisclosureService {
-    rpc GetPackage(GetPackageRequest) returns (GetPackageResponse);
-    rpc CreatePackage(CreatePackageRequest) returns (CreatePackageResponse);
-    rpc GenerateXBRL(GenerateXBRLRequest) returns (GenerateXBRLResponse);
-    rpc SubmitFiling(SubmitFilingRequest) returns (SubmitFilingResponse);
+service DisclosureManagementService {
+    // Package lifecycle
+    rpc CreatePackage(CreatePackageRequest) returns (DisclosurePackage);
+    rpc GetPackage(GetPackageRequest) returns (DisclosurePackage);
+    rpc ListPackages(ListPackagesRequest) returns (PackageList);
+    rpc SubmitPackage(SubmitPackageRequest) returns (DisclosurePackage);
+
+    // Section content
+    rpc UpdateSection(UpdateSectionRequest) returns (DisclosureSection);
+    rpc SubmitSectionReview(SubmitSectionReviewRequest) returns (DisclosureSection);
+
+    // XBRL tagging
+    rpc ApplyXbrlTag(ApplyXbrlTagRequest) returns (DisclosureSection);
+
+    // Filing
+    rpc GenerateFiling(GenerateFilingRequest) returns (FilingSubmission);
 }
 
-message DisclosurePackage { string id = 1; string tenant_id = 2; string name = 3; string period = 4; string package_type = 5; string status = 6; string created_at = 7; string updated_at = 8; }
-message DisclosureSection { string id = 1; string tenant_id = 2; string package_id = 3; string section_name = 4; string content = 5; string status = 6; string created_at = 7; string updated_at = 8; }
+// Entity messages
+message DisclosurePackage {
+    string id = 1;
+    string tenant_id = 2;
+    string package_number = 3;
+    string package_name = 4;
+    string disclosure_type = 5;
+    string fiscal_period = 6;
+    string filing_deadline = 7;
+    string status = 8;
+    string lead_author_id = 9;
+    string reviewers = 10;
+    string approver_id = 11;
+    string regulatory_body = 12;
+    string filing_format = 13;
+    bool contains_xbrl = 14;
+    bool confidential = 15;
+    int32 version_number = 16;
+}
 
-message GetPackageRequest { string tenant_id = 1; string id = 2; }
-message GetPackageResponse { DisclosurePackage data = 1; }
-message CreatePackageRequest { string tenant_id = 1; string name = 2; string period = 3; string package_type = 4; }
-message CreatePackageResponse { DisclosurePackage data = 1; }
-message GenerateXBRLRequest { string tenant_id = 1; string package_id = 2; }
-message GenerateXBRLResponse { string xbrl_content = 1; string filing_url = 2; }
-message SubmitFilingRequest { string tenant_id = 1; string package_id = 2; string filing_type = 3; }
-message SubmitFilingResponse { string submission_id = 1; string status = 2; }
+message DisclosureSection {
+    string id = 1;
+    string tenant_id = 2;
+    string package_id = 3;
+    string section_number = 4;
+    string section_title = 5;
+    string section_type = 6;
+    string content = 7;
+    string data_links = 8;
+    string xbrl_tags = 9;
+    string assigned_author_id = 10;
+    string review_status = 11;
+    string reviewer_id = 12;
+    string review_comments = 13;
+    string last_reviewed_at = 14;
+    int32 word_count = 15;
+    bool has_changes_since_review = 16;
+    int32 version = 17;
+}
+
+message FilingSubmission {
+    string id = 1;
+    string tenant_id = 2;
+    string package_id = 3;
+    string submission_number = 4;
+    string filing_type = 5;
+    string regulatory_body = 6;
+    string filing_format = 7;
+    string generated_document_path = 8;
+    string xbrl_instance_path = 9;
+    string filing_status = 10;
+    string submission_timestamp = 11;
+    string acceptance_timestamp = 12;
+    string confirmation_number = 13;
+    string rejection_reason = 14;
+    string filed_by = 15;
+}
+
+// Request/Response messages
+message CreatePackageRequest {
+    string tenant_id = 1;
+    string package_name = 2;
+    string disclosure_type = 3;
+    string fiscal_period = 4;
+    string filing_deadline = 5;
+    string lead_author_id = 6;
+    string reviewers = 7;
+    string approver_id = 8;
+    string regulatory_body = 9;
+    string filing_format = 10;
+}
+
+message GetPackageRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListPackagesRequest {
+    string tenant_id = 1;
+    string disclosure_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message PackageList {
+    repeated DisclosurePackage packages = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message SubmitPackageRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message UpdateSectionRequest {
+    string section_id = 1;
+    string tenant_id = 2;
+    string content = 3;
+    string data_links = 4;
+}
+
+message SubmitSectionReviewRequest {
+    string section_id = 1;
+    string tenant_id = 2;
+    string decision = 3;
+    string review_comments = 4;
+}
+
+message ApplyXbrlTagRequest {
+    string section_id = 1;
+    string tenant_id = 2;
+    string taxonomy = 3;
+    string element_name = 4;
+    string content_mapping = 5;
+}
+
+message GenerateFilingRequest {
+    string package_id = 1;
+    string tenant_id = 2;
+    string filing_format = 3;
+    string regulatory_body = 4;
+}
 ```
 
 ## 6. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
-| V001 | dm_disclosure_packages | — |
+| V001 | dm_disclosure_packages | -- |
 | V002 | dm_disclosure_sections | V001 |
-| V003 | dm_xbrl_mappings | V002 |
-| V004 | dm_review_audit | V003 |
-| V005 | dm_filing_submissions | V004 |
+| V003 | dm_xbrl_mappings | -- |
+| V004 | dm_review_audit | V001, V002 |
+| V005 | dm_filing_submissions | V001 |
 
 ---
 

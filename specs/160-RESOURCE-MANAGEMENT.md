@@ -488,49 +488,6 @@ message AllocationConflict {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.resource_mgmt.v1;
-
-service ResourceManagementService {
-    rpc GetResourceProfile(GetResourceProfileRequest) returns (GetResourceProfileResponse);
-    rpc CreateResourceRequest(CreateResourceRequestRequest) returns (CreateResourceRequestResponse);
-    rpc AllocateResource(AllocateResourceRequest) returns (AllocateResourceResponse);
-    rpc GetCapacityForecast(GetCapacityForecastRequest) returns (GetCapacityForecastResponse);
-}
-
-message ResourceProfile { string id = 1; string tenant_id = 2; string employee_id = 3; string name = 4; string role = 5; string skills = 6; double availability_percent = 7; string department = 8; string created_at = 9; string updated_at = 10; }
-message ResourceRequest { string id = 1; string tenant_id = 2; string project_id = 3; string role = 4; string start_date = 5; string end_date = 6; double allocation_percent = 7; string status = 8; string created_at = 9; string updated_at = 10; }
-message Allocation { string id = 1; string tenant_id = 2; string request_id = 3; string resource_id = 4; double allocation_percent = 5; string start_date = 6; string end_date = 7; string status = 8; string created_at = 9; }
-message CapacityEntry { string resource_id = 1; string name = 2; double allocated_percent = 3; double available_percent = 4; string week = 5; }
-
-message GetResourceProfileRequest { string tenant_id = 1; string id = 2; }
-message GetResourceProfileResponse { ResourceProfile data = 1; }
-message CreateResourceRequestRequest { string tenant_id = 1; string project_id = 2; string role = 3; string start_date = 4; string end_date = 5; }
-message CreateResourceRequestResponse { ResourceRequest data = 1; }
-message AllocateResourceRequest { string tenant_id = 1; string request_id = 2; string resource_id = 3; double allocation_percent = 4; }
-message AllocateResourceResponse { Allocation data = 1; }
-message GetCapacityForecastRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; }
-message GetCapacityForecastResponse { repeated CapacityEntry items = 1; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | rm_resource_profiles | — |
-| V002 | rm_resource_requests | V001 |
-| V003 | rm_allocations | V002 |
-| V004 | rm_capacity_forecasts | V003 |
-| V005 | rm_skill_gaps | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Over-Allocation Detection**: Alert when allocation exceeds 100% in any period

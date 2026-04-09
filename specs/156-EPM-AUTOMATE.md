@@ -416,47 +416,6 @@ message ExecutionList {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.epm_automate.v1;
-
-service EPMAutomateService {
-    rpc GetScript(GetScriptRequest) returns (GetScriptResponse);
-    rpc ExecuteScript(ExecuteScriptRequest) returns (ExecuteScriptResponse);
-    rpc ScheduleJob(ScheduleJobRequest) returns (ScheduleJobResponse);
-    rpc GetExecutionStatus(GetExecutionStatusRequest) returns (GetExecutionStatusResponse);
-}
-
-message Script { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string script_type = 5; string content = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message JobExecution { string id = 1; string tenant_id = 2; string script_id = 3; string status = 4; string output = 5; string started_at = 6; string completed_at = 7; string created_at = 8; }
-
-message GetScriptRequest { string tenant_id = 1; string id = 2; }
-message GetScriptResponse { Script data = 1; }
-message ExecuteScriptRequest { string tenant_id = 1; string script_id = 2; string parameters = 3; }
-message ExecuteScriptResponse { string execution_id = 1; string status = 2; }
-message ScheduleJobRequest { string tenant_id = 1; string script_id = 2; string schedule_cron = 3; }
-message ScheduleJobResponse { string job_id = 1; }
-message GetExecutionStatusRequest { string tenant_id = 1; string execution_id = 2; }
-message GetExecutionStatusResponse { string execution_id = 1; string status = 2; string output = 3; string completed_at = 4; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | ea_scripts | — |
-| V002 | ea_scheduled_jobs | V001 |
-| V003 | ea_job_executions | V002 |
-| V004 | ea_operations | V003 |
-| V005 | ea_audit_log | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Script Validation**: Scripts validated for syntax and parameter references before saving

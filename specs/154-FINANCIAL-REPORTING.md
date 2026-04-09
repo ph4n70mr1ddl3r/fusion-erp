@@ -436,47 +436,6 @@ message JournalDetail {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.financial_reporting.v1;
-
-service FinancialReportingService {
-    rpc GetReport(GetReportRequest) returns (GetReportResponse);
-    rpc ExecuteReport(ExecuteReportRequest) returns (ExecuteReportResponse);
-    rpc GetReportBook(GetReportBookRequest) returns (GetReportBookResponse);
-    rpc GetExecutionStatus(GetExecutionStatusRequest) returns (GetExecutionStatusResponse);
-}
-
-message FinancialReport { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string report_type = 5; string grid_config = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message ReportBook { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string report_ids = 5; string status = 6; string created_at = 7; string updated_at = 8; }
-
-message GetReportRequest { string tenant_id = 1; string id = 2; }
-message GetReportResponse { FinancialReport data = 1; }
-message ExecuteReportRequest { string tenant_id = 1; string report_id = 2; string period = 3; }
-message ExecuteReportResponse { string execution_id = 1; string status = 2; string output_url = 3; }
-message GetReportBookRequest { string tenant_id = 1; string id = 2; }
-message GetReportBookResponse { ReportBook data = 1; }
-message GetExecutionStatusRequest { string tenant_id = 1; string execution_id = 2; }
-message GetExecutionStatusResponse { string execution_id = 1; string status = 2; string output_url = 3; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | fr_report_definitions | — |
-| V002 | fr_grid_rows | V001 |
-| V003 | fr_grid_columns | V002 |
-| V004 | fr_report_books | V003 |
-| V005 | fr_report_executions | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Account Mapping**: Row account ranges validated against GL chart of accounts

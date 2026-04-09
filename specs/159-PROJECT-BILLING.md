@@ -456,49 +456,6 @@ message ApproveInvoiceRequest {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.project_billing.v1;
-
-service ProjectBillingService {
-    rpc GetBillingContract(GetBillingContractRequest) returns (GetBillingContractResponse);
-    rpc CreateBillingEvent(CreateBillingEventRequest) returns (CreateBillingEventResponse);
-    rpc GenerateInvoice(GenerateInvoiceRequest) returns (GenerateInvoiceResponse);
-    rpc GetInvoice(GetInvoiceRequest) returns (GetInvoiceResponse);
-}
-
-message BillingContract { string id = 1; string tenant_id = 2; string project_id = 3; string billing_type = 4; int64 contract_value_cents = 5; string currency_code = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message BillingEvent { string id = 1; string tenant_id = 2; string project_id = 3; string event_type = 4; int64 amount_cents = 5; string currency_code = 6; string event_date = 7; string status = 8; string created_at = 9; }
-message ProjectInvoice { string id = 1; string tenant_id = 2; string project_id = 3; string invoice_number = 4; int64 total_cents = 5; string currency_code = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message InvoiceLine { string id = 1; string tenant_id = 2; string invoice_id = 3; int32 line_number = 4; string description = 5; int64 amount_cents = 6; string created_at = 7; }
-
-message GetBillingContractRequest { string tenant_id = 1; string id = 2; }
-message GetBillingContractResponse { BillingContract data = 1; }
-message CreateBillingEventRequest { string tenant_id = 1; string project_id = 2; string event_type = 3; int64 amount_cents = 4; string description = 5; }
-message CreateBillingEventResponse { BillingEvent data = 1; }
-message GenerateInvoiceRequest { string tenant_id = 1; string project_id = 2; string period = 3; }
-message GenerateInvoiceResponse { ProjectInvoice data = 1; }
-message GetInvoiceRequest { string tenant_id = 1; string id = 2; }
-message GetInvoiceResponse { ProjectInvoice data = 1; repeated InvoiceLine lines = 2; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | pb_billing_contracts | — |
-| V002 | pb_bill_rates | V001 |
-| V003 | pb_billing_events | V002 |
-| V004 | pb_project_invoices | V003 |
-| V005 | pb_invoice_lines | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Billable Costs**: Only costs marked billable on eligible tasks generate billing events

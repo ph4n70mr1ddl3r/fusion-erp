@@ -229,38 +229,180 @@ CREATE INDEX idx_sd_history_task ON sd_collection_history(task_id, timestamp DES
 
 ```protobuf
 syntax = "proto3";
-package fusion.supplemental.v1;
+package fusion.supplemental_data.v1;
 
 service SupplementalDataService {
-    rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
-    rpc CreateCollectionTask(CreateCollectionTaskRequest) returns (CreateCollectionTaskResponse);
-    rpc SubmitData(SubmitDataRequest) returns (SubmitDataResponse);
-    rpc GetSubmittedData(GetSubmittedDataRequest) returns (GetSubmittedDataResponse);
+    // Template management
+    rpc CreateTemplate(CreateTemplateRequest) returns (CollectionTemplate);
+    rpc GetTemplate(GetTemplateRequest) returns (CollectionTemplate);
+    rpc ListTemplates(ListTemplatesRequest) returns (TemplateList);
+
+    // Task lifecycle
+    rpc CreateTask(CreateTaskRequest) returns (CollectionTask);
+    rpc SubmitTask(SubmitTaskRequest) returns (CollectionTask);
+    rpc ApproveTask(ApproveTaskRequest) returns (CollectionTask);
+
+    // Data operations
+    rpc SaveData(SaveDataRequest) returns (SubmittedData);
+    rpc ValidateData(ValidateDataRequest) returns (ValidationResult);
+
+    // Integration
+    rpc SyncToTarget(SyncToTargetRequest) returns (SyncResult);
 }
 
-message Template { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string fields = 5; string status = 6; string created_at = 7; string updated_at = 8; }
-message CollectionTask { string id = 1; string tenant_id = 2; string template_id = 3; string assignee_id = 4; string due_date = 5; string status = 6; string created_at = 7; string updated_at = 8; }
-message SubmittedEntry { string id = 1; string tenant_id = 2; string task_id = 3; string data = 4; string status = 5; string created_at = 6; }
+// Entity messages
+message CollectionTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string template_code = 3;
+    string template_name = 4;
+    string description = 5;
+    string template_type = 6;
+    string period_type = 7;
+    string columns = 8;
+    string rows_source = 9;
+    string rows_config = 10;
+    string default_values = 11;
+    string validation_rules = 12;
+    bool approval_required = 13;
+    bool allow_attachments = 14;
+    string submission_deadline = 15;
+    string status = 16;
+    int32 version = 17;
+}
 
-message GetTemplateRequest { string tenant_id = 1; string id = 2; }
-message GetTemplateResponse { Template data = 1; }
-message CreateCollectionTaskRequest { string tenant_id = 1; string template_id = 2; string assignee_id = 3; string due_date = 4; }
-message CreateCollectionTaskResponse { CollectionTask data = 1; }
-message SubmitDataRequest { string tenant_id = 1; string task_id = 2; string data = 3; }
-message SubmitDataResponse { string submission_id = 1; string status = 2; }
-message GetSubmittedDataRequest { string tenant_id = 1; string task_id = 2; }
-message GetSubmittedDataResponse { repeated SubmittedEntry items = 1; }
+message CollectionTask {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string task_name = 4;
+    string period = 5;
+    string assigned_to = 6;
+    string assigned_org = 7;
+    string status = 8;
+    string submitted_at = 9;
+    string reviewed_at = 10;
+    string reviewed_by = 11;
+    string review_comments = 12;
+    string due_date = 13;
+    double completion_pct = 14;
+    int32 total_rows = 15;
+    int32 filled_rows = 16;
+    int32 validation_errors = 17;
+    string priority = 18;
+    int32 version = 19;
+}
+
+message SubmittedData {
+    string id = 1;
+    string tenant_id = 2;
+    string task_id = 3;
+    string row_key = 4;
+    string row_label = 5;
+    string data_values = 6;
+    string original_values = 7;
+    string validation_status = 8;
+    string validation_errors = 9;
+    string comments = 10;
+    string attachments = 11;
+}
+
+// Request/Response messages
+message CreateTemplateRequest {
+    string tenant_id = 1;
+    string template_code = 2;
+    string template_name = 3;
+    string template_type = 4;
+    string period_type = 5;
+    string columns = 6;
+    string rows_source = 7;
+    string validation_rules = 8;
+}
+
+message GetTemplateRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListTemplatesRequest {
+    string tenant_id = 1;
+    string template_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message TemplateList {
+    repeated CollectionTemplate templates = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message CreateTaskRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string task_name = 3;
+    string period = 4;
+    string assigned_to = 5;
+    string due_date = 6;
+    string priority = 7;
+}
+
+message SubmitTaskRequest {
+    string task_id = 1;
+    string tenant_id = 2;
+}
+
+message ApproveTaskRequest {
+    string task_id = 1;
+    string tenant_id = 2;
+    string review_comments = 3;
+}
+
+message SaveDataRequest {
+    string tenant_id = 1;
+    string task_id = 2;
+    string row_key = 3;
+    string row_label = 4;
+    string data_values = 5;
+}
+
+message ValidateDataRequest {
+    string tenant_id = 1;
+    string task_id = 2;
+}
+
+message ValidationResult {
+    int32 total_rows = 1;
+    int32 valid_rows = 2;
+    int32 invalid_rows = 3;
+    int32 warning_rows = 4;
+    repeated string errors = 5;
+}
+
+message SyncToTargetRequest {
+    string tenant_id = 1;
+    string task_id = 2;
+    string target_system = 3;
+}
+
+message SyncResult {
+    bool success = 1;
+    int32 records_synced = 2;
+    string target_system = 3;
+    string target_ref = 4;
+}
 ```
 
 ## 6. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
-| V001 | sd_templates | — |
+| V001 | sd_templates | -- |
 | V002 | sd_collection_tasks | V001 |
 | V003 | sd_submitted_data | V002 |
-| V004 | sd_integration_mappings | V003 |
-| V005 | sd_collection_history | V004 |
+| V004 | sd_integration_mappings | V001 |
+| V005 | sd_collection_history | V002 |
 
 ---
 

@@ -250,34 +250,179 @@ CREATE TABLE bp_burst_config (
 syntax = "proto3";
 package fusion.bi_publisher.v1;
 
-service BIPublisherService {
-    rpc GetReportDefinition(GetReportDefinitionRequest) returns (GetReportDefinitionResponse);
-    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
-    rpc ScheduleReport(ScheduleReportRequest) returns (ScheduleReportResponse);
-    rpc GetJobStatus(GetJobStatusRequest) returns (GetJobStatusResponse);
+service BiPublisherService {
+    // Report definitions
+    rpc CreateReport(CreateReportRequest) returns (ReportDefinition);
+    rpc GetReport(GetReportRequest) returns (ReportDefinition);
+    rpc ListReports(ListReportsRequest) returns (ReportList);
+
+    // Template management
+    rpc UploadTemplate(UploadTemplateRequest) returns (ReportTemplate);
+
+    // Report execution
+    rpc RunReport(RunReportRequest) returns (ReportJob);
+    rpc GetJobStatus(GetJobStatusRequest) returns (ReportJob);
+
+    // Scheduling
+    rpc CreateSchedule(CreateScheduleRequest) returns (ReportSchedule);
 }
 
-message ReportDefinition { string id = 1; string tenant_id = 2; string report_code = 3; string name = 4; string description = 5; string data_source = 6; string output_format = 7; string status = 8; string created_at = 9; string updated_at = 10; }
-message ReportJob { string id = 1; string tenant_id = 2; string report_id = 3; string status = 4; string output_format = 5; string output_url = 6; string started_at = 7; string completed_at = 8; string created_at = 9; }
+// Entity messages
+message ReportDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string report_code = 3;
+    string report_name = 4;
+    string description = 5;
+    string report_category = 6;
+    string data_source_config = 7;
+    string default_template_id = 8;
+    string default_output_format = 9;
+    string parameters = 10;
+    int32 cache_duration_minutes = 11;
+    int32 max_runtime_seconds = 12;
+    int32 row_limit = 13;
+    bool requires_parameters = 14;
+    bool multi_language = 15;
+    string status = 16;
+    int32 version = 17;
+}
 
-message GetReportDefinitionRequest { string tenant_id = 1; string id = 2; }
-message GetReportDefinitionResponse { ReportDefinition data = 1; }
-message GenerateReportRequest { string tenant_id = 1; string report_id = 2; string output_format = 3; string parameters = 4; }
-message GenerateReportResponse { string job_id = 1; string output_url = 2; }
-message ScheduleReportRequest { string tenant_id = 1; string report_id = 2; string schedule_cron = 3; string recipients = 4; }
-message ScheduleReportResponse { string schedule_id = 1; }
-message GetJobStatusRequest { string tenant_id = 1; string job_id = 2; }
-message GetJobStatusResponse { string job_id = 1; string status = 2; string output_url = 3; }
+message ReportTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    string template_name = 4;
+    string template_type = 5;
+    string storage_path = 6;
+    int64 file_size_bytes = 7;
+    string layout_config = 8;
+    string data_mapping = 9;
+    string conditional_formatting = 10;
+    string header_template = 11;
+    string footer_template = 12;
+    bool is_default = 13;
+    string language_code = 14;
+    int32 version_number = 15;
+}
+
+message ReportJob {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    string template_id = 4;
+    string job_number = 5;
+    string job_type = 6;
+    string status = 7;
+    string parameters = 8;
+    string output_format = 9;
+    string output_file_path = 10;
+    int64 output_file_size_bytes = 11;
+    string output_mime_type = 12;
+    int32 row_count = 13;
+    int32 page_count = 14;
+    string started_at = 15;
+    string completed_at = 16;
+    int32 execution_time_ms = 17;
+    string error_message = 18;
+    string locale = 19;
+    string timezone = 20;
+}
+
+message ReportSchedule {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    string schedule_name = 4;
+    string cron_expression = 5;
+    string timezone = 6;
+    string template_id = 7;
+    string output_format = 8;
+    string parameters = 9;
+    string distribution_method = 10;
+    string distribution_config = 11;
+    string burst_config = 12;
+    int32 retain_output_days = 13;
+    string status = 14;
+    string last_run_at = 15;
+    string next_run_at = 16;
+    int32 run_count = 17;
+}
+
+// Request/Response messages
+message CreateReportRequest {
+    string tenant_id = 1;
+    string report_code = 2;
+    string report_name = 3;
+    string report_category = 4;
+    string data_source_config = 5;
+    string default_output_format = 6;
+    string parameters = 7;
+}
+
+message GetReportRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListReportsRequest {
+    string tenant_id = 1;
+    string report_category = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ReportList {
+    repeated ReportDefinition reports = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message UploadTemplateRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string template_name = 3;
+    string template_type = 4;
+    string storage_path = 5;
+    int64 file_size_bytes = 6;
+    string data_mapping = 7;
+}
+
+message RunReportRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string template_id = 3;
+    string parameters = 4;
+    string output_format = 5;
+    string locale = 6;
+}
+
+message GetJobStatusRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message CreateScheduleRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string schedule_name = 3;
+    string cron_expression = 4;
+    string timezone = 5;
+    string output_format = 6;
+    string distribution_method = 7;
+    string distribution_config = 8;
+}
 ```
 
 ## 6. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
-| V001 | bp_report_definitions | — |
+| V001 | bp_report_definitions | -- |
 | V002 | bp_report_templates | V001 |
-| V003 | bp_report_jobs | V002 |
-| V004 | bp_report_schedules | V003 |
+| V003 | bp_report_jobs | V001 |
+| V004 | bp_report_schedules | V001 |
 | V005 | bp_burst_config | V004 |
 
 ---
