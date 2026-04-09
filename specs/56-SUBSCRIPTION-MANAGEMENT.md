@@ -492,6 +492,262 @@ service SubscriptionService {
     rpc GetSubscriptionAnalytics(GetSubscriptionAnalyticsRequest) returns (GetSubscriptionAnalyticsResponse);
     rpc GetCustomerSubscriptions(GetCustomerSubscriptionsRequest) returns (GetCustomerSubscriptionsResponse);
 }
+
+// Entity messages
+message SubscriptionProduct {
+    string id = 1;
+    string tenant_id = 2;
+    string product_code = 3;
+    string name = 4;
+    string description = 5;
+    string product_type = 6;
+    string billing_cycle = 7;
+    int32 custom_cycle_days = 8;
+    int32 trial_period_days = 9;
+    int64 setup_fee_cents = 10;
+    int32 is_metered = 11;
+    string metered_unit = 12;
+    string status = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message SubscriptionTier {
+    string id = 1;
+    string tenant_id = 2;
+    string product_id = 3;
+    string tier_name = 4;
+    string tier_code = 5;
+    string description = 6;
+    int64 price_cents = 7;
+    int64 setup_fee_cents = 8;
+    int64 included_units = 9;
+    int64 overage_price_cents = 10;
+    string features = 11;
+    int32 sort_order = 12;
+    int32 is_default = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message Subscription {
+    string id = 1;
+    string tenant_id = 2;
+    string subscription_number = 3;
+    string customer_id = 4;
+    string product_id = 5;
+    string tier_id = 6;
+    string status = 7;
+    string start_date = 8;
+    string end_date = 9;
+    string trial_start_date = 10;
+    string trial_end_date = 11;
+    string current_period_start = 12;
+    string current_period_end = 13;
+    string billing_cycle = 14;
+    int32 billing_day_of_month = 15;
+    string currency_code = 16;
+    int64 base_price_cents = 17;
+    double discount_percent = 18;
+    int64 total_price_cents = 19;
+    int32 auto_renew = 20;
+    string renewal_tier_id = 21;
+    string cancellation_reason = 22;
+    string cancelled_at = 23;
+    string cancelled_by = 24;
+    string payment_method_id = 25;
+    string notes = 26;
+    string created_at = 27;
+    string updated_at = 28;
+}
+
+message SubscriptionUsage {
+    string id = 1;
+    string tenant_id = 2;
+    string subscription_id = 3;
+    string usage_date = 4;
+    double quantity = 5;
+    string unit_of_measure = 6;
+    string source_system = 7;
+    string source_record_id = 8;
+    int64 rated_amount_cents = 9;
+    int32 is_invoiced = 10;
+    string invoice_id = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message SubscriptionAmendment {
+    string id = 1;
+    string tenant_id = 2;
+    string amendment_number = 3;
+    string subscription_id = 4;
+    string amendment_type = 5;
+    string status = 6;
+    string effective_date = 7;
+    string previous_tier_id = 8;
+    string new_tier_id = 9;
+    int64 previous_price_cents = 10;
+    int64 new_price_cents = 11;
+    int64 proration_amount_cents = 12;
+    string reason = 13;
+    string approved_by = 14;
+    string approved_at = 15;
+    string completed_at = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message SubscriptionBillingRun {
+    string id = 1;
+    string tenant_id = 2;
+    string billing_run_number = 3;
+    string run_type = 4;
+    string status = 5;
+    string billing_period_start = 6;
+    string billing_period_end = 7;
+    int32 total_subscriptions = 8;
+    int32 processed_subscriptions = 9;
+    int64 total_amount_cents = 10;
+    int32 error_count = 11;
+    string started_at = 12;
+    string completed_at = 13;
+    string error_message = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message SubscriptionPayment {
+    string id = 1;
+    string tenant_id = 2;
+    string subscription_id = 3;
+    string billing_run_id = 4;
+    string payment_number = 5;
+    int64 amount_cents = 6;
+    string currency_code = 7;
+    string payment_method = 8;
+    string payment_ref = 9;
+    string status = 10;
+    string due_date = 11;
+    string paid_date = 12;
+    string failure_reason = 13;
+    int32 retry_count = 14;
+    string next_retry_date = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Request/Response messages
+message CreateSubscriptionRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string product_id = 3;
+    string tier_id = 4;
+    string start_date = 5;
+    string end_date = 6;
+    string billing_cycle = 7;
+    int32 billing_day_of_month = 8;
+    string currency_code = 9;
+    int64 base_price_cents = 10;
+    double discount_percent = 11;
+    int32 auto_renew = 12;
+    string payment_method_id = 13;
+    string notes = 14;
+}
+
+message CreateSubscriptionResponse {
+    Subscription data = 1;
+}
+
+message GetSubscriptionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSubscriptionResponse {
+    Subscription data = 1;
+}
+
+message CancelSubscriptionRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string cancellation_reason = 3;
+    string effective_date = 4;
+}
+
+message CancelSubscriptionResponse {
+    Subscription data = 1;
+}
+
+message AmendSubscriptionRequest {
+    string tenant_id = 1;
+    string subscription_id = 2;
+    string amendment_type = 3;
+    string effective_date = 4;
+    string new_tier_id = 5;
+    int64 new_price_cents = 6;
+    string reason = 7;
+}
+
+message AmendSubscriptionResponse {
+    SubscriptionAmendment data = 1;
+}
+
+message RecordUsageRequest {
+    string tenant_id = 1;
+    string subscription_id = 2;
+    string usage_date = 3;
+    double quantity = 4;
+    string unit_of_measure = 5;
+    string source_system = 6;
+    string source_record_id = 7;
+}
+
+message RecordUsageResponse {
+    SubscriptionUsage data = 1;
+}
+
+message RunBillingRequest {
+    string tenant_id = 1;
+    string run_type = 2;
+    string billing_period_start = 3;
+    string billing_period_end = 4;
+}
+
+message RunBillingResponse {
+    SubscriptionBillingRun data = 1;
+}
+
+message GetSubscriptionAnalyticsRequest {
+    string tenant_id = 1;
+    string metric_type = 2;
+    string date_from = 3;
+    string date_to = 4;
+    string product_id = 5;
+}
+
+message GetSubscriptionAnalyticsResponse {
+    string metric_type = 1;
+    repeated SubscriptionMetricEntry entries = 2;
+}
+
+message SubscriptionMetricEntry {
+    string metric_date = 1;
+    double metric_value = 2;
+    string currency_code = 3;
+    string period_type = 4;
+}
+
+message GetCustomerSubscriptionsRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string status = 3;
+}
+
+message GetCustomerSubscriptionsResponse {
+    repeated Subscription items = 1;
+    int32 total_count = 2;
+}
 ```
 
 ---

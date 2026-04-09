@@ -610,6 +610,210 @@ service MarketingService {
     rpc GetCampaignAnalytics(GetCampaignAnalyticsRequest) returns (GetCampaignAnalyticsResponse);
     rpc HandoffLead(HandoffLeadRequest) returns (HandoffLeadResponse);
 }
+
+// Entity messages
+message Campaign {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_code = 3;
+    string name = 4;
+    string description = 5;
+    string campaign_type = 6;
+    string campaign_purpose = 7;
+    string status = 8;
+    string start_date = 9;
+    string end_date = 10;
+    int64 budget_cents = 11;
+    int64 actual_cost_cents = 12;
+    string currency_code = 13;
+    int64 expected_revenue_cents = 14;
+    string owner_id = 15;
+    string team = 16;
+    string tags = 17;
+    string priority = 18;
+    string parent_campaign_id = 19;
+    string recurrence = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+message CampaignChannel {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_id = 3;
+    string channel_type = 4;
+    string channel_config = 5;
+    string sender_name = 6;
+    string sender_address = 7;
+    string reply_to = 8;
+    string template_id = 9;
+    int32 daily_send_limit = 10;
+    int32 total_send_limit = 11;
+    int32 sent_count = 12;
+    int32 delivered_count = 13;
+    int32 is_primary = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message CampaignTouch {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_id = 3;
+    string touch_name = 4;
+    string touch_type = 5;
+    string channel_id = 6;
+    string asset_id = 7;
+    string scheduled_at = 8;
+    string sent_at = 9;
+    int32 sent_count = 10;
+    int32 delivered_count = 11;
+    int32 open_count = 12;
+    int32 click_count = 13;
+    int32 response_count = 14;
+    int32 conversion_count = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message CampaignResponse {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_id = 3;
+    string touch_id = 4;
+    string profile_id = 5;
+    string response_type = 6;
+    string responded_at = 7;
+    string details = 8;
+    string created_at = 9;
+}
+
+message LeadScore {
+    string id = 1;
+    string tenant_id = 2;
+    string profile_id = 3;
+    string score_model_id = 4;
+    double score_value = 5;
+    string score_grade = 6;
+    string scored_at = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+message MarketingAnalytics {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_id = 3;
+    string metric_date = 4;
+    string metric_type = 5;
+    double metric_value = 6;
+    string currency_code = 7;
+    string period_type = 8;
+    string created_at = 9;
+}
+
+// Request/Response messages
+message CreateCampaignRequest {
+    string tenant_id = 1;
+    string campaign_code = 2;
+    string name = 3;
+    string description = 4;
+    string campaign_type = 5;
+    string campaign_purpose = 6;
+    string start_date = 7;
+    string end_date = 8;
+    int64 budget_cents = 9;
+    string currency_code = 10;
+    int64 expected_revenue_cents = 11;
+    string owner_id = 12;
+    string priority = 13;
+}
+
+message CreateCampaignResponse {
+    Campaign data = 1;
+}
+
+message GetCampaignRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCampaignResponse {
+    Campaign data = 1;
+    repeated CampaignChannel channels = 2;
+}
+
+message ScheduleTouchRequest {
+    string tenant_id = 1;
+    string campaign_id = 2;
+    string touch_name = 3;
+    string touch_type = 4;
+    string channel_id = 5;
+    string asset_id = 6;
+    string scheduled_at = 7;
+    string audience_criteria = 8;
+}
+
+message ScheduleTouchResponse {
+    CampaignTouch data = 1;
+}
+
+message TrackResponseRequest {
+    string tenant_id = 1;
+    string campaign_id = 2;
+    string touch_id = 3;
+    string profile_id = 4;
+    string response_type = 5;
+    string details = 6;
+}
+
+message TrackResponseResponse {
+    CampaignResponse data = 1;
+}
+
+message CalculateLeadScoreRequest {
+    string tenant_id = 1;
+    string profile_id = 2;
+    string score_model_id = 3;
+}
+
+message CalculateLeadScoreResponse {
+    LeadScore data = 1;
+    repeated string score_breakdown = 2;
+}
+
+message GetCampaignAnalyticsRequest {
+    string tenant_id = 1;
+    string campaign_id = 2;
+    string date_from = 3;
+    string date_to = 4;
+}
+
+message GetCampaignAnalyticsResponse {
+    repeated MarketingAnalytics metrics = 1;
+    int64 total_sent = 2;
+    int64 total_delivered = 3;
+    int64 total_opens = 4;
+    int64 total_clicks = 5;
+    int64 total_conversions = 6;
+    double roi_percent = 7;
+}
+
+message HandoffLeadRequest {
+    string tenant_id = 1;
+    string profile_id = 2;
+    string campaign_id = 3;
+    string assigned_to = 4;
+    string handoff_reason = 5;
+}
+
+message HandoffLeadResponse {
+    string profile_id = 1;
+    string campaign_id = 2;
+    string lead_id = 3;
+    string status = 4;
+}
 ```
 
 ---

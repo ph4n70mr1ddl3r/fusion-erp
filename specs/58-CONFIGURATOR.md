@@ -507,6 +507,240 @@ service ConfiguratorService {
     rpc CompleteSession(CompleteSessionRequest) returns (CompleteSessionResponse);
     rpc GenerateBOM(GenerateBOMRequest) returns (GenerateBOMResponse);
 }
+
+// Entity messages
+message ConfiguratorModel {
+    string id = 1;
+    string tenant_id = 2;
+    string model_code = 3;
+    string name = 4;
+    string description = 5;
+    string product_family = 6;
+    string base_item_id = 7;
+    string model_version = 8;
+    string configuration_strategy = 9;
+    int32 max_configuration_depth = 10;
+    string validation_mode = 11;
+    string status = 12;
+    string effective_from = 13;
+    string effective_to = 14;
+    int32 last_rule_evaluation_ms = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message ConfiguratorFeature {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string feature_name = 4;
+    string feature_code = 5;
+    string feature_type = 6;
+    string description = 7;
+    int32 is_required = 8;
+    int32 min_selections = 9;
+    int32 max_selections = 10;
+    string default_value = 11;
+    int32 display_order = 12;
+    string group_name = 13;
+    string parent_feature_id = 14;
+    string selection_triggers = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message ConfiguratorOption {
+    string id = 1;
+    string tenant_id = 2;
+    string feature_id = 3;
+    string option_code = 4;
+    string option_label = 5;
+    string option_value = 6;
+    string description = 7;
+    double numeric_value = 8;
+    string color_value = 9;
+    string image_url = 10;
+    int32 lead_time_days = 11;
+    double weight_impact = 12;
+    int64 cost_impact_cents = 13;
+    int32 is_default = 14;
+    int32 is_recommended = 15;
+    int32 display_order = 16;
+    string availability_status = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message ConfiguratorRule {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string rule_name = 4;
+    string rule_code = 5;
+    string rule_type = 6;
+    int32 priority = 7;
+    string severity = 8;
+    string source_feature_id = 9;
+    string source_option_id = 10;
+    string target_feature_id = 11;
+    string target_option_id = 12;
+    string condition_expression = 13;
+    string action_type = 14;
+    string message = 15;
+    string effective_from = 16;
+    string effective_to = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message ConfigurationSession {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string user_id = 4;
+    string session_token = 5;
+    string status = 6;
+    string selections = 7;
+    string validation_result = 8;
+    string generated_bom = 9;
+    int64 generated_price_cents = 10;
+    string source_type = 11;
+    string source_ref_id = 12;
+    string started_at = 13;
+    string completed_at = 14;
+    string expires_at = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message BomMapping {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string feature_id = 4;
+    string option_id = 5;
+    string bom_item_id = 6;
+    double bom_quantity = 7;
+    string uom_code = 8;
+    string bom_position = 9;
+    int32 is_optional = 10;
+    string substitute_item_id = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message BomEntry {
+    string item_id = 1;
+    string item_name = 2;
+    double quantity = 3;
+    string uom_code = 4;
+    string bom_position = 5;
+    int32 is_optional = 6;
+    string substitute_item_id = 7;
+}
+
+// Request/Response messages
+message CreateModelRequest {
+    string tenant_id = 1;
+    string model_code = 2;
+    string name = 3;
+    string description = 4;
+    string product_family = 5;
+    string base_item_id = 6;
+    string configuration_strategy = 7;
+    int32 max_configuration_depth = 8;
+    string validation_mode = 9;
+    string effective_from = 10;
+    string effective_to = 11;
+}
+
+message CreateModelResponse {
+    ConfiguratorModel data = 1;
+}
+
+message StartSessionRequest {
+    string tenant_id = 1;
+    string model_id = 2;
+    string source_type = 3;
+    string source_ref_id = 4;
+}
+
+message StartSessionResponse {
+    ConfigurationSession data = 1;
+    repeated ConfiguratorFeature features = 2;
+}
+
+message SelectOptionRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string feature_id = 3;
+    string option_id = 4;
+}
+
+message SelectOptionResponse {
+    ConfigurationSession session = 1;
+    repeated ConfiguratorOption valid_options = 2;
+    repeated string violations = 3;
+}
+
+message DeselectOptionRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string feature_id = 3;
+    string option_id = 4;
+}
+
+message DeselectOptionResponse {
+    ConfigurationSession session = 1;
+    repeated ConfiguratorOption valid_options = 2;
+}
+
+message ValidateConfigurationRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+}
+
+message ValidateConfigurationResponse {
+    int32 is_valid = 1;
+    repeated string errors = 2;
+    repeated string warnings = 3;
+    repeated string rule_violations = 4;
+}
+
+message GetValidOptionsRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string feature_id = 3;
+}
+
+message GetValidOptionsResponse {
+    repeated ConfiguratorOption options = 1;
+}
+
+message CompleteSessionRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+}
+
+message CompleteSessionResponse {
+    ConfigurationSession session = 1;
+    int32 is_valid = 2;
+    int64 total_price_cents = 3;
+}
+
+message GenerateBOMRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+}
+
+message GenerateBOMResponse {
+    string model_id = 1;
+    repeated BomEntry items = 2;
+    int32 item_count = 3;
+    int64 total_cost_cents = 4;
+    int32 total_lead_time_days = 5;
+    double total_weight_kg = 6;
+}
 ```
 
 ---

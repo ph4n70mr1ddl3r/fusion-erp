@@ -595,6 +595,199 @@ service CDPService {
     rpc GetSegmentMembers(GetSegmentMembersRequest) returns (GetSegmentMembersResponse);
     rpc ResolveIdentity(ResolveIdentityRequest) returns (ResolveIdentityResponse);
 }
+
+// Entity messages
+message CustomerProfile {
+    string id = 1;
+    string tenant_id = 2;
+    string profile_uuid = 3;
+    string primary_email = 4;
+    string primary_phone = 5;
+    string first_name = 6;
+    string last_name = 7;
+    string company_name = 8;
+    string job_title = 9;
+    string primary_address = 10;
+    string language_code = 11;
+    string timezone = 12;
+    string customer_type = 13;
+    string lifecycle_stage = 14;
+    int64 total_lifetime_value_cents = 15;
+    int32 total_orders = 16;
+    string first_interaction_date = 17;
+    string last_interaction_date = 18;
+    string account_source = 19;
+    string account_ref_id = 20;
+    string ar_customer_id = 21;
+    string crm_contact_id = 22;
+    string tags = 23;
+    string consent_status = 24;
+    string consent_date = 25;
+    int32 do_not_contact = 26;
+    string master_profile_id = 27;
+    string created_at = 28;
+    string updated_at = 29;
+}
+
+message ProfileIdentity {
+    string id = 1;
+    string tenant_id = 2;
+    string profile_id = 3;
+    string identity_type = 4;
+    string identity_value = 5;
+    string source_system = 6;
+    string source_record_id = 7;
+    int32 is_verified = 8;
+    string verified_at = 9;
+    int32 is_primary = 10;
+    double confidence_score = 11;
+    string last_seen_at = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ProfileActivity {
+    string id = 1;
+    string tenant_id = 2;
+    string profile_id = 3;
+    string activity_type = 4;
+    string source_system = 5;
+    string source_record_id = 6;
+    string activity_timestamp = 7;
+    string details = 8;
+    double value = 9;
+    string currency_code = 10;
+    string created_at = 11;
+}
+
+message ProfileSegment {
+    string id = 1;
+    string tenant_id = 2;
+    string segment_name = 3;
+    string segment_code = 4;
+    string description = 5;
+    string segment_type = 6;
+    string rules = 7;
+    int32 estimated_size = 8;
+    int32 actual_size = 9;
+    string status = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message ProfileScore {
+    string id = 1;
+    string tenant_id = 2;
+    string profile_id = 3;
+    string score_model_id = 4;
+    double score_value = 5;
+    string score_level = 6;
+    string scored_at = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+// Request/Response messages
+message GetProfileRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProfileResponse {
+    CustomerProfile data = 1;
+    repeated ProfileIdentity identities = 2;
+}
+
+message GetProfile360Request {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProfile360Response {
+    CustomerProfile profile = 1;
+    repeated ProfileIdentity identities = 2;
+    repeated ProfileActivity recent_activities = 3;
+    repeated ProfileScore scores = 4;
+    repeated string segment_ids = 5;
+}
+
+message SearchProfilesRequest {
+    string tenant_id = 1;
+    string query = 2;
+    string customer_type = 3;
+    string lifecycle_stage = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message SearchProfilesResponse {
+    repeated CustomerProfile items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message MergeProfilesRequest {
+    string tenant_id = 1;
+    string survivor_profile_id = 2;
+    string subsumed_profile_id = 3;
+    string merge_reason = 4;
+}
+
+message MergeProfilesResponse {
+    CustomerProfile merged_profile = 1;
+    repeated ProfileIdentity merged_identities = 2;
+}
+
+message IngestActivityRequest {
+    string tenant_id = 1;
+    string profile_id = 2;
+    string activity_type = 3;
+    string source_system = 4;
+    string source_record_id = 5;
+    string activity_timestamp = 6;
+    string details = 7;
+}
+
+message IngestActivityResponse {
+    ProfileActivity data = 1;
+}
+
+message EvaluateSegmentRequest {
+    string tenant_id = 1;
+    string segment_id = 2;
+}
+
+message EvaluateSegmentResponse {
+    string segment_id = 1;
+    int32 total_matching = 2;
+    int32 added = 3;
+    int32 removed = 4;
+}
+
+message GetSegmentMembersRequest {
+    string tenant_id = 1;
+    string segment_id = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message GetSegmentMembersResponse {
+    repeated CustomerProfile items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message ResolveIdentityRequest {
+    string tenant_id = 1;
+    string identity_type = 2;
+    string identity_value = 3;
+}
+
+message ResolveIdentityResponse {
+    string profile_id = 1;
+    double confidence_score = 2;
+    repeated ProfileIdentity matched_identities = 3;
+}
 ```
 
 ---

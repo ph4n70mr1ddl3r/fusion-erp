@@ -655,6 +655,195 @@ service CommerceService {
     rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
     rpc CheckAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
 }
+
+// Entity messages
+message Storefront {
+    string id = 1;
+    string tenant_id = 2;
+    string store_code = 3;
+    string name = 4;
+    string description = 5;
+    string store_type = 6;
+    string base_url = 7;
+    string currency_code = 8;
+    string language_code = 9;
+    string timezone = 10;
+    string theme_config = 11;
+    string seo_config = 12;
+    string legal_config = 13;
+    int32 tax_inclusive = 14;
+    int32 allow_guest_checkout = 15;
+    int32 allow_wishlist = 16;
+    int32 allow_reviews = 17;
+    int32 max_cart_items = 18;
+    int32 session_timeout_minutes = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+message CatalogProduct {
+    string id = 1;
+    string tenant_id = 2;
+    string catalog_id = 3;
+    string category_id = 4;
+    string inventory_item_id = 5;
+    string sku = 6;
+    string name = 7;
+    string short_description = 8;
+    string long_description = 9;
+    string product_url = 10;
+    string primary_image_url = 11;
+    string additional_images = 12;
+    int64 price_cents = 13;
+    int64 list_price_cents = 14;
+    string currency_code = 15;
+    int32 is_featured = 16;
+    int32 is_new = 17;
+    int32 is_bestseller = 18;
+    int32 min_order_quantity = 19;
+    int32 max_order_quantity = 20;
+    string availability_status = 21;
+    string created_at = 22;
+    string updated_at = 23;
+}
+
+message CartItem {
+    string id = 1;
+    string tenant_id = 2;
+    string cart_id = 3;
+    string product_id = 4;
+    string sku = 5;
+    string name = 6;
+    int32 quantity = 7;
+    int64 unit_price_cents = 8;
+    int64 line_total_cents = 9;
+    string image_url = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message CommerceOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string order_number = 3;
+    string store_id = 4;
+    string customer_id = 5;
+    string status = 6;
+    string currency_code = 7;
+    int64 subtotal_cents = 8;
+    int64 discount_cents = 9;
+    int64 tax_cents = 10;
+    int64 shipping_cents = 11;
+    int64 total_cents = 12;
+    string payment_method = 13;
+    string payment_status = 14;
+    string shipping_method = 15;
+    string billing_address = 16;
+    string shipping_address = 17;
+    string promotion_code = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+// Request/Response messages
+message BrowseCatalogRequest {
+    string tenant_id = 1;
+    string store_id = 2;
+    string category_id = 3;
+    int32 page = 4;
+    int32 page_size = 5;
+    string sort_by = 6;
+    string sort_order = 7;
+}
+
+message BrowseCatalogResponse {
+    repeated CatalogProduct items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message SearchProductsRequest {
+    string tenant_id = 1;
+    string store_id = 2;
+    string query = 3;
+    string category_id = 4;
+    int64 min_price_cents = 5;
+    int64 max_price_cents = 6;
+    int32 page = 7;
+    int32 page_size = 8;
+}
+
+message SearchProductsResponse {
+    repeated CatalogProduct items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message GetProductDetailRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProductDetailResponse {
+    CatalogProduct data = 1;
+    int64 available_quantity = 2;
+    string availability_status = 3;
+}
+
+message ManageCartRequest {
+    string tenant_id = 1;
+    string cart_id = 2;
+    string action = 3;
+    string product_id = 4;
+    int32 quantity = 5;
+}
+
+message ManageCartResponse {
+    string cart_id = 1;
+    repeated CartItem items = 2;
+    int64 subtotal_cents = 3;
+    int64 total_cents = 4;
+}
+
+message CheckoutRequest {
+    string tenant_id = 1;
+    string cart_id = 2;
+    string customer_id = 3;
+    string payment_method = 4;
+    string payment_token = 5;
+    string shipping_method_id = 6;
+    string billing_address = 7;
+    string shipping_address = 8;
+    string promotion_code = 9;
+}
+
+message CheckoutResponse {
+    CommerceOrder order = 1;
+    string payment_status = 2;
+}
+
+message GetOrderRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetOrderResponse {
+    CommerceOrder data = 1;
+}
+
+message CheckAvailabilityRequest {
+    string tenant_id = 1;
+    string inventory_item_id = 2;
+    int32 quantity = 3;
+}
+
+message CheckAvailabilityResponse {
+    string inventory_item_id = 1;
+    int64 available_quantity = 2;
+    string availability_status = 3;
+    string available_date = 4;
+}
 ```
 
 ---

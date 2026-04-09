@@ -539,6 +539,257 @@ service CPQService {
     rpc GenerateProposal(GenerateProposalRequest) returns (GenerateProposalResponse);
     rpc ConvertToOrder(ConvertToOrderRequest) returns (ConvertToOrderResponse);
 }
+
+// Entity messages
+message CpqProductModel {
+    string id = 1;
+    string tenant_id = 2;
+    string model_code = 3;
+    string name = 4;
+    string description = 5;
+    string base_product_id = 6;
+    string model_type = 7;
+    string configuration_type = 8;
+    int64 base_price_cents = 9;
+    string currency_code = 10;
+    int32 min_quantity = 11;
+    int32 max_quantity = 12;
+    int32 lead_time_days = 13;
+    string status = 14;
+    string effective_from = 15;
+    string effective_to = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message ConfigurationAttribute {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string attribute_name = 4;
+    string attribute_code = 5;
+    string attribute_type = 6;
+    string data_type = 7;
+    int32 is_required = 8;
+    string default_value = 9;
+    string validation_regex = 10;
+    string min_value = 11;
+    string max_value = 12;
+    int32 sort_order = 13;
+    string group_name = 14;
+    int32 is_configurable = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message ConfigurationOption {
+    string id = 1;
+    string tenant_id = 2;
+    string attribute_id = 3;
+    string option_code = 4;
+    string option_label = 5;
+    string option_value = 6;
+    string description = 7;
+    int64 price_impact_cents = 8;
+    string price_impact_type = 9;
+    int32 is_default = 10;
+    int32 sort_order = 11;
+    string image_url = 12;
+    int32 lead_time_delta_days = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message Quote {
+    string id = 1;
+    string tenant_id = 2;
+    string quote_number = 3;
+    string customer_id = 4;
+    string opportunity_id = 5;
+    string sales_rep_id = 6;
+    string status = 7;
+    string valid_until = 8;
+    string currency_code = 9;
+    int64 subtotal_cents = 10;
+    int64 discount_cents = 11;
+    int64 tax_cents = 12;
+    int64 total_cents = 13;
+    string payment_terms = 14;
+    string delivery_terms = 15;
+    string notes = 16;
+    string internal_notes = 17;
+    double probability_percent = 18;
+    string conversion_order_id = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message QuoteLine {
+    string id = 1;
+    string tenant_id = 2;
+    string quote_id = 3;
+    int32 line_number = 4;
+    string model_id = 5;
+    string product_id = 6;
+    string parent_line_id = 7;
+    string line_type = 8;
+    string description = 9;
+    string configuration_json = 10;
+    int32 quantity = 11;
+    int64 unit_price_cents = 12;
+    int64 list_price_cents = 13;
+    double discount_percent = 14;
+    int64 discount_cents = 15;
+    int64 subtotal_cents = 16;
+    int32 lead_time_days = 17;
+    string delivery_date = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message QuotePricing {
+    string id = 1;
+    string tenant_id = 2;
+    string quote_id = 3;
+    string quote_line_id = 4;
+    string price_rule_id = 5;
+    string price_source = 6;
+    int64 list_price_cents = 7;
+    int64 applied_price_cents = 8;
+    int64 adjustment_cents = 9;
+    string adjustment_reason = 10;
+    int32 is_override = 11;
+    string override_approved_by = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message PriceRule {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string rule_name = 4;
+    string rule_code = 5;
+    string rule_type = 6;
+    string condition_expression = 7;
+    int64 price_adjustment_cents = 8;
+    string adjustment_type = 9;
+    int32 priority = 10;
+    string stacking_behavior = 11;
+    string effective_from = 12;
+    string effective_to = 13;
+    int32 max_applications = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Request/Response messages
+message CreateQuoteRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string opportunity_id = 3;
+    string sales_rep_id = 4;
+    string currency_code = 5;
+    string valid_until = 6;
+    string payment_terms = 7;
+    string delivery_terms = 8;
+    string notes = 9;
+}
+
+message CreateQuoteResponse {
+    Quote data = 1;
+}
+
+message GetQuoteRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetQuoteResponse {
+    Quote data = 1;
+    repeated QuoteLine lines = 2;
+}
+
+message StartConfigurationRequest {
+    string tenant_id = 1;
+    string model_id = 2;
+    string quote_id = 3;
+}
+
+message StartConfigurationResponse {
+    string session_id = 1;
+    repeated ConfigurationAttribute attributes = 2;
+    repeated ConfigurationOption options = 3;
+}
+
+message SelectOptionRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string attribute_id = 3;
+    string option_id = 4;
+}
+
+message SelectOptionResponse {
+    repeated ConfigurationOption valid_options = 1;
+    repeated string violations = 2;
+}
+
+message ValidateConfigurationRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+}
+
+message ValidateConfigurationResponse {
+    int32 is_valid = 1;
+    repeated string errors = 2;
+    repeated string warnings = 3;
+}
+
+message GetValidOptionsRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string attribute_id = 3;
+}
+
+message GetValidOptionsResponse {
+    repeated ConfigurationOption options = 1;
+}
+
+message CalculatePricingRequest {
+    string tenant_id = 1;
+    string quote_id = 2;
+}
+
+message CalculatePricingResponse {
+    int64 subtotal_cents = 1;
+    int64 discount_cents = 2;
+    int64 tax_cents = 3;
+    int64 total_cents = 4;
+    repeated QuotePricing pricing_lines = 5;
+}
+
+message GenerateProposalRequest {
+    string tenant_id = 1;
+    string quote_id = 2;
+    string template_id = 3;
+    string document_format = 4;
+}
+
+message GenerateProposalResponse {
+    string document_id = 1;
+    string document_url = 2;
+}
+
+message ConvertToOrderRequest {
+    string tenant_id = 1;
+    string quote_id = 2;
+}
+
+message ConvertToOrderResponse {
+    string quote_id = 1;
+    string order_id = 2;
+    string status = 3;
+}
 ```
 
 ---
