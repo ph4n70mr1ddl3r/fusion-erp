@@ -212,7 +212,168 @@ CREATE TABLE gl_analytics (
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.guided_learning.v1;
+
+service GuidedLearningService {
+    rpc GetTopic(GetTopicRequest) returns (GetTopicResponse);
+    rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
+    rpc GetGuidance(GetGuidanceRequest) returns (GetGuidanceResponse);
+    rpc RecordProgress(RecordProgressRequest) returns (RecordProgressResponse);
+    rpc SubmitFeedback(SubmitFeedbackRequest) returns (SubmitFeedbackResponse);
+    rpc GetSmartTip(GetSmartTipRequest) returns (GetSmartTipResponse);
+}
+
+// Topic messages
+message GetTopicRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTopicResponse {
+    Topic data = 1;
+    repeated Step steps = 2;
+}
+
+message Topic {
+    string id = 1;
+    string tenant_id = 2;
+    string topic_code = 3;
+    string topic_name = 4;
+    string topic_type = 5;
+    string target_page = 6;
+    string target_element = 7;
+    string target_roles = 8;
+    string trigger_type = 9;
+    string trigger_config = 10;
+    int32 priority = 11;
+    string status = 12;
+    int32 version_number = 13;
+    string display_frequency = 14;
+    int32 dismissible = 15;
+    string start_date = 16;
+    string end_date = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message Step {
+    string id = 1;
+    string topic_id = 2;
+    int32 step_number = 3;
+    string step_title = 4;
+    string step_content = 5;
+    string content_type = 6;
+    string target_element = 7;
+    string placement = 8;
+    string action_type = 9;
+    string action_config = 10;
+    int32 is_optional = 11;
+    int32 wait_for_action = 12;
+}
+
+message CreateTopicRequest {
+    string tenant_id = 1;
+    string topic_code = 2;
+    string topic_name = 3;
+    string topic_type = 4;
+    string target_page = 5;
+    string target_element = 6;
+    string target_roles = 7;
+    string trigger_type = 8;
+    string trigger_config = 9;
+    int32 priority = 10;
+    string display_frequency = 11;
+    string steps_json = 12;
+}
+
+message CreateTopicResponse {
+    Topic data = 1;
+    repeated Step steps = 2;
+}
+
+// Guidance runtime messages
+message GetGuidanceRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string page_url = 3;
+    string user_roles = 4;
+}
+
+message GetGuidanceResponse {
+    repeated Topic topics = 1;
+    repeated SmartTip tips = 2;
+}
+
+message SmartTip {
+    string id = 1;
+    string tip_code = 2;
+    string tip_title = 3;
+    string tip_content = 4;
+    string target_element = 5;
+    string trigger_condition = 6;
+    int32 priority = 7;
+}
+
+// Progress messages
+message RecordProgressRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string topic_id = 3;
+    int32 current_step = 4;
+    int32 total_steps = 5;
+    string status = 6;
+    int32 time_spent_seconds = 7;
+}
+
+message RecordProgressResponse {
+    string id = 1;
+    string status = 2;
+    int32 completed_steps = 3;
+}
+
+// Feedback messages
+message SubmitFeedbackRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string topic_id = 3;
+    int32 feedback_rating = 4;
+    string feedback_comment = 5;
+}
+
+message SubmitFeedbackResponse {
+    string id = 1;
+}
+
+// Smart Tip messages
+message GetSmartTipRequest {
+    string tenant_id = 1;
+    string tip_code = 2;
+}
+
+message GetSmartTipResponse {
+    SmartTip data = 1;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | gl_topics | -- |
+| V002 | gl_steps | V001 |
+| V003 | gl_user_progress | V001 |
+| V004 | gl_smart_tips | -- |
+| V005 | gl_analytics | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Role Targeting**: Guidance shown only to users with matching roles
 2. **Display Frequency**: ONCE shows only on first visit; every visit shows each session
@@ -223,7 +384,7 @@ CREATE TABLE gl_analytics (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

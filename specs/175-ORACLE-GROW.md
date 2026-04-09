@@ -233,7 +233,198 @@ CREATE INDEX idx_gr_mentor_mentor ON gr_mentorships(mentor_id, status);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.grow.v1;
+
+service GrowService {
+    rpc GetGrowthProfile(GetGrowthProfileRequest) returns (GetGrowthProfileResponse);
+    rpc AnalyzeSkillGaps(AnalyzeSkillGapsRequest) returns (AnalyzeSkillGapsResponse);
+    rpc CreateGrowthPlan(CreateGrowthPlanRequest) returns (CreateGrowthPlanResponse);
+    rpc GetGrowthPlan(GetGrowthPlanRequest) returns (GetGrowthPlanResponse);
+    rpc GetRecommendations(GetRecommendationsRequest) returns (GetRecommendationsResponse);
+    rpc RequestMentorship(RequestMentorshipRequest) returns (RequestMentorshipResponse);
+}
+
+// Growth Profile messages
+message GetGrowthProfileRequest {
+    string tenant_id = 1;
+    string person_id = 2;
+}
+
+message GetGrowthProfileResponse {
+    GrowthProfile data = 1;
+}
+
+message GrowthProfile {
+    string id = 1;
+    string tenant_id = 2;
+    string person_id = 3;
+    string career_aspiration = 4;
+    string target_roles = 5;
+    string target_skills = 6;
+    string current_skill_scores = 7;
+    string skill_gaps = 8;
+    string growth_readiness = 9;
+    string last_ai_analysis = 10;
+    string ai_recommendations = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Skill Gap Analysis messages
+message AnalyzeSkillGapsRequest {
+    string tenant_id = 1;
+    string person_id = 2;
+    string target_role_id = 3;
+}
+
+message AnalyzeSkillGapsResponse {
+    GrowthProfile profile = 1;
+    repeated SkillGap gaps = 2;
+}
+
+message SkillGap {
+    string skill = 1;
+    double current_score = 2;
+    double target_score = 3;
+    double gap = 4;
+}
+
+// Growth Plan messages
+message CreateGrowthPlanRequest {
+    string tenant_id = 1;
+    string person_id = 2;
+    string plan_name = 3;
+    string plan_type = 4;
+    string target_completion_date = 5;
+    string notes = 6;
+}
+
+message CreateGrowthPlanResponse {
+    GrowthPlan data = 1;
+}
+
+message GetGrowthPlanRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetGrowthPlanResponse {
+    GrowthPlan data = 1;
+    repeated GrowthActivity activities = 2;
+}
+
+message GrowthPlan {
+    string id = 1;
+    string tenant_id = 2;
+    string person_id = 3;
+    string plan_name = 4;
+    string plan_type = 5;
+    string status = 6;
+    string target_completion_date = 7;
+    double completion_pct = 8;
+    int32 total_milestones = 9;
+    int32 completed_milestones = 10;
+    int32 manager_visible = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message GrowthActivity {
+    string id = 1;
+    string tenant_id = 2;
+    string plan_id = 3;
+    string activity_type = 4;
+    string title = 5;
+    string description = 6;
+    string source = 7;
+    double ai_relevance_score = 8;
+    string target_skill = 9;
+    string status = 10;
+    string due_date = 11;
+    string completed_date = 12;
+    double estimated_hours = 13;
+    double actual_hours = 14;
+    double skill_score_before = 15;
+    double skill_score_after = 16;
+    string created_at = 17;
+}
+
+// Recommendation messages
+message GetRecommendationsRequest {
+    string tenant_id = 1;
+    string person_id = 2;
+    string recommendation_type = 3;
+}
+
+message GetRecommendationsResponse {
+    repeated AIRecommendation recommendations = 1;
+}
+
+message AIRecommendation {
+    string id = 1;
+    string tenant_id = 2;
+    string person_id = 3;
+    string recommendation_type = 4;
+    string title = 5;
+    string description = 6;
+    double relevance_score = 7;
+    string reasoning = 8;
+    string target_skills = 9;
+    string status = 10;
+    string created_at = 11;
+}
+
+// Mentorship messages
+message RequestMentorshipRequest {
+    string tenant_id = 1;
+    string mentor_id = 2;
+    string mentee_id = 3;
+    string focus_area = 4;
+    string goals = 5;
+    string frequency = 6;
+}
+
+message RequestMentorshipResponse {
+    Mentorship data = 1;
+}
+
+message Mentorship {
+    string id = 1;
+    string tenant_id = 2;
+    string mentor_id = 3;
+    string mentee_id = 4;
+    string focus_area = 5;
+    string goals = 6;
+    string start_date = 7;
+    string end_date = 8;
+    string frequency = 9;
+    string status = 10;
+    double ai_match_score = 11;
+    string ai_match_reason = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | gr_growth_profiles | -- |
+| V002 | gr_growth_plans | -- |
+| V003 | gr_activities | V002 |
+| V004 | gr_ai_recommendations | -- |
+| V005 | gr_mentorships | -- |
+
+---
+
+## 7. Business Rules
 
 1. **AI Analysis Frequency**: Skill gap analysis refreshed monthly or on demand
 2. **Recommendation Limit**: Max 10 active AI recommendations per person at a time
@@ -244,7 +435,7 @@ CREATE INDEX idx_gr_mentor_mentor ON gr_mentorships(mentor_id, status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

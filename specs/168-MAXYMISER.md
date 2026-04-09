@@ -252,7 +252,176 @@ CREATE TABLE mx_segments (
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.maxymiser.v1;
+
+service MaxymiserService {
+    rpc GetTest(GetTestRequest) returns (GetTestResponse);
+    rpc CreateTest(CreateTestRequest) returns (CreateTestResponse);
+    rpc TrackEvent(TrackEventRequest) returns (TrackEventResponse);
+    rpc GetDecision(GetDecisionRequest) returns (GetDecisionResponse);
+    rpc GetPersonalization(GetPersonalizationRequest) returns (GetPersonalizationResponse);
+    rpc CreateSegment(CreateSegmentRequest) returns (CreateSegmentResponse);
+}
+
+// Test messages
+message GetTestRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTestResponse {
+    Test data = 1;
+}
+
+message Test {
+    string id = 1;
+    string tenant_id = 2;
+    string test_code = 3;
+    string test_name = 4;
+    string test_type = 5;
+    string channel = 6;
+    string status = 7;
+    string primary_metric = 8;
+    double traffic_allocation_pct = 9;
+    int32 total_visitors = 10;
+    int32 total_conversions = 11;
+    string winner_variant_id = 12;
+    double lift_pct = 13;
+    double statistical_significance = 14;
+    string test_start_date = 15;
+    string test_end_date = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message CreateTestRequest {
+    string tenant_id = 1;
+    string test_code = 2;
+    string test_name = 3;
+    string test_type = 4;
+    string channel = 5;
+    string target_url = 6;
+    string primary_metric = 7;
+    string targeting_rules = 8;
+    double traffic_allocation_pct = 9;
+    double confidence_level = 10;
+    string owner_id = 11;
+}
+
+message CreateTestResponse {
+    Test data = 1;
+}
+
+// Event tracking messages
+message TrackEventRequest {
+    string tenant_id = 1;
+    string visitor_id = 2;
+    string session_id = 3;
+    string test_id = 4;
+    string variant_id = 5;
+    string event_type = 6;
+    string page_url = 7;
+    string device_type = 8;
+    int64 revenue_cents = 9;
+    string custom_data = 10;
+}
+
+message TrackEventResponse {
+    string id = 1;
+}
+
+// Decisioning messages
+message GetDecisionRequest {
+    string tenant_id = 1;
+    string visitor_id = 2;
+    string page_url = 3;
+    string device_type = 4;
+    string audience_attributes = 5;
+}
+
+message GetDecisionResponse {
+    string test_id = 1;
+    string variant_id = 2;
+    string variant_code = 3;
+    string content_changes = 4;
+    string redirect_url = 5;
+    string personalization_id = 6;
+    string content_variations = 7;
+}
+
+// Personalization messages
+message GetPersonalizationRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetPersonalizationResponse {
+    PersonalizationRule data = 1;
+}
+
+message PersonalizationRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string channel = 4;
+    string target_pages = 5;
+    string audience_segments = 6;
+    string content_variations = 7;
+    int32 priority = 8;
+    string status = 9;
+    int32 total_impressions = 10;
+    int32 total_conversions = 11;
+    double conversion_rate = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Segment messages
+message CreateSegmentRequest {
+    string tenant_id = 1;
+    string segment_code = 2;
+    string segment_name = 3;
+    string description = 4;
+    string criteria = 5;
+}
+
+message CreateSegmentResponse {
+    Segment data = 1;
+}
+
+message Segment {
+    string id = 1;
+    string tenant_id = 2;
+    string segment_code = 3;
+    string segment_name = 4;
+    string description = 5;
+    string criteria = 6;
+    int32 estimated_size = 7;
+    string status = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | mx_tests | -- |
+| V002 | mx_variants | V001 |
+| V003 | mx_personalization | -- |
+| V004 | mx_segments | -- |
+| V005 | mx_visitor_events | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Sample Size**: Tests must reach minimum sample size before declaring a winner
 2. **Traffic Split**: Control always receives at least equal traffic allocation
@@ -264,7 +433,7 @@ CREATE TABLE mx_segments (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

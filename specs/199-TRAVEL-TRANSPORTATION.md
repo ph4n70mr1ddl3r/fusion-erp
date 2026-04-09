@@ -238,7 +238,189 @@ CREATE INDEX idx_tt_booking_date ON tt_booking_records(travel_date);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.travel_transportation.v1;
+
+service TravelTransportationService {
+    rpc GetFleetAsset(GetFleetAssetRequest) returns (GetFleetAssetResponse);
+    rpc GetRoute(GetRouteRequest) returns (GetRouteResponse);
+    rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
+    rpc GetBooking(GetBookingRequest) returns (GetBookingResponse);
+    rpc AssignCrew(AssignCrewRequest) returns (AssignCrewResponse);
+    rpc GetRevenueManagement(GetRevenueManagementRequest) returns (GetRevenueManagementResponse);
+}
+
+// Fleet asset messages
+message GetFleetAssetRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetFleetAssetResponse {
+    TtFleetAsset data = 1;
+}
+
+message TtFleetAsset {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_code = 3;
+    string asset_type = 4;
+    string registration_number = 5;
+    string make = 6;
+    string model = 7;
+    int32 year = 8;
+    int32 capacity_passengers = 9;
+    double capacity_cargo_kg = 10;
+    string fuel_type = 11;
+    string maintenance_schedule_id = 12;
+    string current_location = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Route messages
+message GetRouteRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetRouteResponse {
+    TtRoute data = 1;
+}
+
+message TtRoute {
+    string id = 1;
+    string tenant_id = 2;
+    string route_code = 3;
+    string origin_code = 4;
+    string destination_code = 5;
+    double distance_km = 6;
+    int32 duration_minutes = 7;
+    string service_type = 8;
+    string frequency = 9;
+    string operating_days = 10;
+    string peak_season = 11;
+    string status = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Booking messages
+message CreateBookingRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string customer_type = 3;
+    string route_id = 4;
+    string fare_class = 5;
+    string travel_date = 6;
+    int64 fare_cents = 7;
+    int64 taxes_cents = 8;
+    int64 total_cents = 9;
+    string ancillary_services = 10;
+    string payment_reference = 11;
+}
+
+message CreateBookingResponse {
+    TtBookingRecord data = 1;
+}
+
+message GetBookingRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetBookingResponse {
+    TtBookingRecord data = 1;
+}
+
+message TtBookingRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string booking_reference = 3;
+    string customer_id = 4;
+    string customer_type = 5;
+    string route_id = 6;
+    string fare_class = 7;
+    string booking_date = 8;
+    string travel_date = 9;
+    int64 fare_cents = 10;
+    int64 taxes_cents = 11;
+    int64 total_cents = 12;
+    string status = 13;
+    string ancillary_services = 14;
+    string payment_reference = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Crew messages
+message AssignCrewRequest {
+    string tenant_id = 1;
+    string crew_id = 2;
+    string crew_name = 3;
+    string role = 4;
+    string qualifications = 5;
+    string certifications = 6;
+    string assigned_route_id = 7;
+    string assignment_date = 8;
+}
+
+message AssignCrewResponse {
+    string id = 1;
+    string crew_id = 2;
+    string assignment_status = 3;
+    double duty_hours_period = 4;
+}
+
+// Revenue management messages
+message GetRevenueManagementRequest {
+    string tenant_id = 1;
+    string route_id = 2;
+    string fare_class = 3;
+    string period = 4;
+}
+
+message GetRevenueManagementResponse {
+    TtRevenueManagement data = 1;
+}
+
+message TtRevenueManagement {
+    string id = 1;
+    string tenant_id = 2;
+    string route_id = 3;
+    string fare_class = 4;
+    string period = 5;
+    int32 demand_forecast_qty = 6;
+    int64 yield_target_cents = 7;
+    string dynamic_pricing_rules = 8;
+    int64 current_avg_fare_cents = 9;
+    int64 competitor_avg_fare_cents = 10;
+    double load_factor_pct = 11;
+    int64 revenue_cents = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | tt_fleet_assets | -- |
+| V002 | tt_routes | -- |
+| V003 | tt_revenue_management | V002 |
+| V004 | tt_crew_scheduling | V002 |
+| V005 | tt_booking_records | V002 |
+
+---
+
+## 7. Business Rules
 
 1. **Duty Time Compliance**: Crew cannot be assigned if rest period requirements not met
 2. **Dynamic Pricing**: Fares adjusted based on demand forecast, competitor pricing, and load factor
@@ -249,13 +431,20 @@ CREATE INDEX idx_tt_booking_date ON tt_booking_records(travel_date);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Maintenance Cloud (167) | Fleet maintenance scheduling |
-| Financials (06) | Revenue recognition and AP |
-| Order Management (32) | Cargo booking integration |
-| Asset Management (23) | Fleet asset registry |
-| Payment (14) | Booking payment processing |
-| Notification Center (165) | Booking confirmations and alerts |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| maintenance-service | `GetSchedule` | Fleet maintenance scheduling |
+| gl-service | `PostJournal` | Revenue recognition and AP |
+| order-service | `GetOrder` | Cargo booking integration |
+| asset-service | `GetAsset` | Fleet asset registry |
+| payment-service | `ProcessPayment` | Booking payment processing |
+| notification-service | `SendConfirmation` | Booking confirmations and alerts |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| financials-service | `GetRevenue` | Revenue reporting |
+| maintenance-service | `GetFleetStatus` | Fleet availability for maintenance |

@@ -252,7 +252,475 @@ CREATE INDEX idx_ad_cdrl_status ON ad_cdrl_deliverables(tenant_id, status);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+
+package fusion.aerospace_defense.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ── Service ──────────────────────────────────────────────────────────
+service AerospaceDefenseService {
+  // Government Contracts
+  rpc CreateContract(CreateContractRequest) returns (GovernmentContract);
+  rpc GetContract(GetContractRequest) returns (GovernmentContract);
+  rpc ListContracts(ListContractsRequest) returns (ListContractsResponse);
+  rpc UpdateContract(UpdateContractRequest) returns (GovernmentContract);
+
+  // Earned Value Management
+  rpc RecordEvm(RecordEvmRequest) returns (EvmRecord);
+  rpc GetEvmDashboard(GetEvmDashboardRequest) returns (EvmDashboard);
+
+  // ITAR Compliance
+  rpc RegisterItarItem(RegisterItarItemRequest) returns (ItarRecord);
+  rpc CheckForeignAccess(CheckForeignAccessRequest) returns (CheckForeignAccessResponse);
+  rpc ListItarItems(ListItarItemsRequest) returns (ListItarItemsResponse);
+
+  // Security Clearances
+  rpc RecordClearance(RecordClearanceRequest) returns (SecurityClearance);
+  rpc ListClearances(ListClearancesRequest) returns (ListClearancesResponse);
+  rpc GetReinvestigations(GetReinvestigationsRequest) returns (ListClearancesResponse);
+
+  // CDRL Deliverables
+  rpc CreateCdrl(CreateCdrlRequest) returns (CdrlDeliverable);
+  rpc SubmitCdrl(SubmitCdrlRequest) returns (CdrlDeliverable);
+  rpc ListCdrls(ListCdrlsRequest) returns (ListCdrlsResponse);
+}
+
+// ── Enums ────────────────────────────────────────────────────────────
+enum ContractType {
+  CONTRACT_TYPE_UNSPECIFIED = 0;
+  CONTRACT_TYPE_FFP = 1;
+  CONTRACT_TYPE_CPFF = 2;
+  CONTRACT_TYPE_CPIF = 3;
+  CONTRACT_TYPE_CPAF = 4;
+  CONTRACT_TYPE_TM = 5;
+  CONTRACT_TYPE_IDIQ = 6;
+  CONTRACT_TYPE_GSA_SCHEDULE = 7;
+  CONTRACT_TYPE_BPA = 8;
+}
+
+enum ContractStatus {
+  CONTRACT_STATUS_UNSPECIFIED = 0;
+  CONTRACT_STATUS_PROPOSAL = 1;
+  CONTRACT_STATUS_AWARDED = 2;
+  CONTRACT_STATUS_ACTIVE = 3;
+  CONTRACT_STATUS_MODIFIED = 4;
+  CONTRACT_STATUS_COMPLETED = 5;
+  CONTRACT_STATUS_TERMINATED = 6;
+}
+
+enum ClassificationLevel {
+  CLASSIFICATION_UNSPECIFIED = 0;
+  CLASSIFICATION_UNCLASSIFIED = 1;
+  CLASSIFICATION_CUI = 2;
+  CLASSIFICATION_CONFIDENTIAL = 3;
+  CLASSIFICATION_SECRET = 4;
+  CLASSIFICATION_TOP_SECRET = 5;
+}
+
+enum ItarStatus {
+  ITAR_STATUS_UNSPECIFIED = 0;
+  ITAR_STATUS_ACTIVE = 1;
+  ITAR_STATUS_EXPIRED = 2;
+  ITAR_STATUS_REVOKED = 3;
+  ITAR_STATUS_PENDING = 4;
+}
+
+enum LicenseType {
+  LICENSE_TYPE_UNSPECIFIED = 0;
+  LICENSE_TYPE_DSP_5 = 1;
+  LICENSE_TYPE_DSP_73 = 2;
+  LICENSE_TYPE_TAAS = 3;
+  LICENSE_TYPE_MLA = 4;
+  LICENSE_TYPE_WDA = 5;
+}
+
+enum ClearanceLevel {
+  CLEARANCE_LEVEL_UNSPECIFIED = 0;
+  CLEARANCE_LEVEL_CONFIDENTIAL = 1;
+  CLEARANCE_LEVEL_SECRET = 2;
+  CLEARANCE_LEVEL_TOP_SECRET = 3;
+  CLEARANCE_LEVEL_TS_SCI = 4;
+}
+
+enum InvestigationType {
+  INVESTIGATION_TYPE_UNSPECIFIED = 0;
+  INVESTIGATION_TYPE_T1 = 1;
+  INVESTIGATION_TYPE_T2 = 2;
+  INVESTIGATION_TYPE_T3 = 3;
+  INVESTIGATION_TYPE_T4 = 4;
+  INVESTIGATION_TYPE_T5 = 5;
+}
+
+enum ClearanceEligibility {
+  CLEARANCE_ELIGIBILITY_UNSPECIFIED = 0;
+  CLEARANCE_ELIGIBILITY_ACTIVE = 1;
+  CLEARANCE_ELIGIBILITY_SUSPENDED = 2;
+  CLEARANCE_ELIGIBILITY_REVOKED = 3;
+  CLEARANCE_ELIGIBILITY_EXPIRED = 4;
+  CLEARANCE_ELIGIBILITY_PENDING = 5;
+}
+
+enum DeliverableType {
+  DELIVERABLE_TYPE_UNSPECIFIED = 0;
+  DELIVERABLE_TYPE_REPORT = 1;
+  DELIVERABLE_TYPE_DATA = 2;
+  DELIVERABLE_TYPE_SOFTWARE = 3;
+  DELIVERABLE_TYPE_HARDWARE = 4;
+  DELIVERABLE_TYPE_DOCUMENTATION = 5;
+  DELIVERABLE_TYPE_TRAINING = 6;
+}
+
+enum DeliverableFrequency {
+  DELIVERABLE_FREQ_UNSPECIFIED = 0;
+  DELIVERABLE_FREQ_ONE_TIME = 1;
+  DELIVERABLE_FREQ_MONTHLY = 2;
+  DELIVERABLE_FREQ_QUARTERLY = 3;
+  DELIVERABLE_FREQ_ANNUAL = 4;
+  DELIVERABLE_FREQ_AS_REQUIRED = 5;
+}
+
+enum CdrlStatus {
+  CDRL_STATUS_UNSPECIFIED = 0;
+  CDRL_STATUS_PENDING = 1;
+  CDRL_STATUS_IN_PROGRESS = 2;
+  CDRL_STATUS_SUBMITTED = 3;
+  CDRL_STATUS_ACCEPTED = 4;
+  CDRL_STATUS_REJECTED = 5;
+  CDRL_STATUS_OVERDUE = 6;
+}
+
+// ── Common Messages ──────────────────────────────────────────────────
+message AuditInfo {
+  string created_at = 1;
+  string updated_at = 2;
+  string created_by = 3;
+  string updated_by = 4;
+  int32 version = 5;
+}
+
+// ── Government Contract Messages ─────────────────────────────────────
+message GovernmentContract {
+  string id = 1;
+  string tenant_id = 2;
+  string contract_number = 3;
+  ContractType contract_type = 4;
+  string program_name = 5;
+  string contracting_agency = 6;
+  string contracting_officer = 7;
+  int64 contract_value_cents = 8;
+  int64 funded_value_cents = 9;
+  int64 obligated_value_cents = 10;
+  int64 invoiced_value_cents = 11;
+  string start_date = 12;
+  string end_date = 13;
+  int32 option_years = 14;
+  string pop_start = 15;
+  string pop_end = 16;
+  ClassificationLevel classification_level = 17;
+  bool dfars_applicable = 18;
+  bool itar_applicable = 19;
+  bool evms_required = 20;
+  string cdrl_items = 21;              // JSON
+  ContractStatus status = 22;
+  AuditInfo audit = 23;
+}
+
+message CreateContractRequest {
+  string tenant_id = 1;
+  string contract_number = 2;
+  ContractType contract_type = 3;
+  string program_name = 4;
+  string contracting_agency = 5;
+  string contracting_officer = 6;
+  int64 contract_value_cents = 7;
+  int64 funded_value_cents = 8;
+  string start_date = 9;
+  string end_date = 10;
+  int32 option_years = 11;
+  string pop_start = 12;
+  string pop_end = 13;
+  ClassificationLevel classification_level = 14;
+  bool dfars_applicable = 15;
+  bool itar_applicable = 16;
+  bool evms_required = 17;
+  string user_id = 18;
+}
+
+message GetContractRequest {
+  string id = 1;
+  string tenant_id = 2;
+}
+
+message ListContractsRequest {
+  string tenant_id = 1;
+  ContractStatus status = 2;
+  ContractType contract_type = 3;
+  string contracting_agency = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message ListContractsResponse {
+  repeated GovernmentContract contracts = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message UpdateContractRequest {
+  string id = 1;
+  string tenant_id = 2;
+  int64 funded_value_cents = 3;
+  int64 obligated_value_cents = 4;
+  int64 invoiced_value_cents = 5;
+  ContractStatus status = 6;
+  string user_id = 7;
+}
+
+// ── EVM Messages ─────────────────────────────────────────────────────
+message EvmRecord {
+  string id = 1;
+  string tenant_id = 2;
+  string contract_id = 3;
+  string wbs_element = 4;
+  string reporting_period = 5;
+  int64 planned_value_cents = 6;
+  int64 earned_value_cents = 7;
+  int64 actual_cost_cents = 8;
+  int64 schedule_variance_cents = 9;
+  int64 cost_variance_cents = 10;
+  double spi = 11;
+  double cpi = 12;
+  int64 eac_cents = 13;
+  int64 etc_cents = 14;
+  int64 vac_cents = 15;
+  int64 bac_cents = 16;
+  double completion_pct = 17;
+  string variance_explanation = 18;
+  string corrective_actions = 19;
+  AuditInfo audit = 20;
+}
+
+message RecordEvmRequest {
+  string tenant_id = 1;
+  string contract_id = 2;
+  string wbs_element = 3;
+  string reporting_period = 4;
+  int64 planned_value_cents = 5;
+  int64 earned_value_cents = 6;
+  int64 actual_cost_cents = 7;
+  int64 eac_cents = 8;
+  int64 etc_cents = 9;
+  int64 bac_cents = 10;
+  double completion_pct = 11;
+  string variance_explanation = 12;
+  string corrective_actions = 13;
+  string user_id = 14;
+}
+
+message EvmDashboard {
+  string contract_id = 1;
+  repeated EvmRecord records = 2;
+  double overall_spi = 3;
+  double overall_cpi = 4;
+  int64 total_planned_value_cents = 5;
+  int64 total_earned_value_cents = 6;
+  int64 total_actual_cost_cents = 7;
+  double overall_completion_pct = 8;
+}
+
+message GetEvmDashboardRequest {
+  string contract_id = 1;
+  string tenant_id = 2;
+  string reporting_period = 3;
+}
+
+// ── ITAR Messages ────────────────────────────────────────────────────
+message ItarRecord {
+  string id = 1;
+  string tenant_id = 2;
+  string item_description = 3;
+  string usml_category = 4;
+  string export_classification = 5;
+  string license_number = 6;
+  LicenseType license_type = 7;
+  bool foreign_person_access = 8;
+  string countries_involved = 9;       // JSON
+  string authorized_recipients = 10;   // JSON
+  string approval_authority = 11;
+  string approved_at = 12;
+  string expiry_date = 13;
+  ItarStatus status = 14;
+  AuditInfo audit = 15;
+}
+
+message RegisterItarItemRequest {
+  string tenant_id = 1;
+  string item_description = 2;
+  string usml_category = 3;
+  string export_classification = 4;
+  string license_number = 5;
+  LicenseType license_type = 6;
+  string countries_involved = 7;       // JSON
+  string authorized_recipients = 8;    // JSON
+  string approval_authority = 9;
+  string expiry_date = 10;
+  string user_id = 11;
+}
+
+message CheckForeignAccessRequest {
+  string itar_item_id = 1;
+  string tenant_id = 2;
+  string person_id = 3;
+  string person_nationality = 4;
+}
+
+message CheckForeignAccessResponse {
+  bool access_allowed = 1;
+  string reason = 2;
+  string applicable_license = 3;
+}
+
+message ListItarItemsRequest {
+  string tenant_id = 1;
+  ItarStatus status = 2;
+  string usml_category = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListItarItemsResponse {
+  repeated ItarRecord items = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+// ── Security Clearance Messages ──────────────────────────────────────
+message SecurityClearance {
+  string id = 1;
+  string tenant_id = 2;
+  string person_id = 3;
+  ClearanceLevel clearance_level = 4;
+  InvestigationType investigation_type = 5;
+  string sponsoring_agency = 6;
+  string granted_date = 7;
+  string expiration_date = 8;
+  string reinvestigation_date = 9;
+  ClearanceEligibility eligibility = 10;
+  string program_access = 11;          // JSON
+  string foreign_travel_approval = 12;
+  bool continuous_evaluation = 13;
+  AuditInfo audit = 14;
+}
+
+message RecordClearanceRequest {
+  string tenant_id = 1;
+  string person_id = 2;
+  ClearanceLevel clearance_level = 3;
+  InvestigationType investigation_type = 4;
+  string sponsoring_agency = 5;
+  string granted_date = 6;
+  string expiration_date = 7;
+  string reinvestigation_date = 8;
+  string program_access = 9;           // JSON
+  bool continuous_evaluation = 10;
+  string user_id = 11;
+}
+
+message ListClearancesRequest {
+  string tenant_id = 1;
+  string person_id = 2;
+  ClearanceLevel clearance_level = 3;
+  ClearanceEligibility eligibility = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message ListClearancesResponse {
+  repeated SecurityClearance clearances = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message GetReinvestigationsRequest {
+  string tenant_id = 1;
+  string before_date = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+// ── CDRL Deliverable Messages ────────────────────────────────────────
+message CdrlDeliverable {
+  string id = 1;
+  string tenant_id = 2;
+  string contract_id = 3;
+  string cdrl_number = 4;
+  string deliverable_title = 5;
+  DeliverableType deliverable_type = 6;
+  DeliverableFrequency frequency = 7;
+  string due_date = 8;
+  string submitted_date = 9;
+  string accepted_date = 10;
+  string rejected_date = 11;
+  string rejection_reason = 12;
+  bool government_approval_required = 13;
+  ClassificationLevel classification_level = 14;
+  string distribution = 15;            // JSON
+  CdrlStatus status = 16;
+  AuditInfo audit = 17;
+}
+
+message CreateCdrlRequest {
+  string tenant_id = 1;
+  string contract_id = 2;
+  string cdrl_number = 3;
+  string deliverable_title = 4;
+  DeliverableType deliverable_type = 5;
+  DeliverableFrequency frequency = 6;
+  string due_date = 7;
+  bool government_approval_required = 8;
+  ClassificationLevel classification_level = 9;
+  string distribution = 10;            // JSON
+  string user_id = 11;
+}
+
+message SubmitCdrlRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string submitted_date = 3;
+}
+
+message ListCdrlsRequest {
+  string tenant_id = 1;
+  string contract_id = 2;
+  CdrlStatus status = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListCdrlsResponse {
+  repeated CdrlDeliverable deliverables = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+```
+
+## 6. Migration Order
+
+| Order | Table | Depends On |
+|-------|-------|------------|
+| 1 | `ad_contracts` | — |
+| 2 | `ad_evm_records` | `ad_contracts` |
+| 3 | `ad_itar_records` | — |
+| 4 | `ad_clearances` | — |
+| 5 | `ad_cdrl_deliverables` | `ad_contracts` |
+
+---
+
+## 7. Business Rules
 
 1. **EVM Thresholds**: CPI or SPI below 0.90 triggers management review; below 0.85 triggers corrective action
 2. **ITAR Compliance**: Foreign person access to ITAR items blocked without valid license
@@ -263,7 +731,7 @@ CREATE INDEX idx_ad_cdrl_status ON ad_cdrl_deliverables(tenant_id, status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

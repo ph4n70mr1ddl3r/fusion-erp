@@ -208,7 +208,166 @@ CREATE INDEX idx_es_log_user ON es_search_log(user_id, timestamp DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.enterprise_search.v1;
+
+service EnterpriseSearchService {
+    rpc Search(SearchRequest) returns (SearchResponse);
+    rpc Suggest(SuggestRequest) returns (SuggestResponse);
+    rpc GetSavedSearch(GetSavedSearchRequest) returns (GetSavedSearchResponse);
+    rpc SaveSearch(SaveSearchRequest) returns (SaveSearchResponse);
+    rpc GetIndexConfig(GetIndexConfigRequest) returns (GetIndexConfigResponse);
+    rpc RebuildIndex(RebuildIndexRequest) returns (RebuildIndexResponse);
+}
+
+// Search messages
+message SearchRequest {
+    string tenant_id = 1;
+    string query_text = 2;
+    string filters = 3;
+    string sort_config = 4;
+    string scope_modules = 5;
+    int32 page_size = 6;
+    string page_token = 7;
+}
+
+message SearchResponse {
+    repeated SearchResult results = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+    string facet_counts = 4;
+}
+
+message SearchResult {
+    string id = 1;
+    string module = 2;
+    string title = 3;
+    string snippet = 4;
+    string url = 5;
+    double score = 6;
+    string highlight = 7;
+}
+
+// Suggest messages
+message SuggestRequest {
+    string tenant_id = 1;
+    string prefix = 2;
+    int32 max_suggestions = 3;
+    string scope_modules = 4;
+}
+
+message SuggestResponse {
+    repeated Suggestion suggestions = 1;
+}
+
+message Suggestion {
+    string term = 1;
+    string suggestion_type = 2;
+    int32 frequency = 3;
+}
+
+// Saved Search messages
+message GetSavedSearchRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSavedSearchResponse {
+    SavedSearch data = 1;
+}
+
+message SavedSearch {
+    string id = 1;
+    string tenant_id = 2;
+    string search_name = 3;
+    string owner_id = 4;
+    string query_text = 5;
+    string filters = 6;
+    string sort_config = 7;
+    string result_fields = 8;
+    string scope_modules = 9;
+    int32 is_shared = 10;
+    string shared_with = 11;
+    int32 alert_enabled = 12;
+    string alert_frequency = 13;
+    int32 result_count = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message SaveSearchRequest {
+    string tenant_id = 1;
+    string search_name = 2;
+    string query_text = 3;
+    string filters = 4;
+    string sort_config = 5;
+    string scope_modules = 6;
+    int32 is_shared = 7;
+    string shared_with = 8;
+    int32 alert_enabled = 9;
+    string alert_frequency = 10;
+}
+
+message SaveSearchResponse {
+    SavedSearch data = 1;
+}
+
+// Index Config messages
+message GetIndexConfigRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetIndexConfigResponse {
+    IndexConfig data = 1;
+}
+
+message IndexConfig {
+    string id = 1;
+    string tenant_id = 2;
+    string index_name = 3;
+    string source_module = 4;
+    string source_table = 5;
+    string display_name = 6;
+    string fields = 7;
+    string display_fields = 8;
+    double search_weight = 9;
+    int32 freshness_boost_hours = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message RebuildIndexRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message RebuildIndexResponse {
+    string id = 1;
+    string status = 2;
+    int32 documents_indexed = 3;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | es_index_configs | -- |
+| V002 | es_saved_searches | -- |
+| V003 | es_suggestions | -- |
+| V004 | es_search_analytics | -- |
+| V005 | es_search_log | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Relevance Tuning**: Search relevance tuned by field weight, freshness, and click-through data
 2. **Security Trimming**: Search results filtered based on user's data access permissions
@@ -221,15 +380,19 @@ CREATE INDEX idx_es_log_user ON es_search_log(user_id, timestamp DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| All Modules | Data indexing and search |
-| Document Management (29) | Full-text document search |
-| Auth & Security (05) | Search result permission filtering |
-| Knowledge Management (82) | Knowledge base search |
-| Product Hub (51) | Product search |
-| Core HR (62) | People search |
-| Digital Assistant (43) | Conversational search |
-| Frontend (20) | Search UI components |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| auth-service | `GetUserPermissions` | Security trimming for search results |
+| document-service | `GetDocumentContent` | Full-text document indexing |
+| knowledge-service | `GetArticles` | Knowledge base content indexing |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| All modules | `IndexDocument` | Index created/updated records |
+| All modules | `RemoveDocument` | Remove deleted records from index |
+| digital-assistant-service | `Search` | Conversational search queries |
+| frontend-service | `Search` | UI search component queries |

@@ -268,7 +268,432 @@ CREATE INDEX idx_ce_rfi_due ON ce_submittals_rfis(due_date);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+
+package fusion.construction.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ── Service ──────────────────────────────────────────────────────────
+service ConstructionEngineeringService {
+  // Projects
+  rpc CreateProject(CreateProjectRequest) returns (Project);
+  rpc GetProject(GetProjectRequest) returns (Project);
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+  rpc UpdateProject(UpdateProjectRequest) returns (Project);
+
+  // Progress Claims
+  rpc CreateProgressClaim(CreateProgressClaimRequest) returns (ProgressClaim);
+  rpc CertifyProgressClaim(CertifyProgressClaimRequest) returns (ProgressClaim);
+
+  // Change Orders
+  rpc CreateChangeOrder(CreateChangeOrderRequest) returns (ChangeOrder);
+  rpc ApproveChangeOrder(ApproveChangeOrderRequest) returns (ChangeOrder);
+
+  // Daily Logs
+  rpc SubmitDailyLog(SubmitDailyLogRequest) returns (DailyLog);
+  rpc ListDailyLogs(ListDailyLogsRequest) returns (ListDailyLogsResponse);
+
+  // Submittals & RFIs
+  rpc CreateSubmittalRfi(CreateSubmittalRfiRequest) returns (SubmittalRfi);
+  rpc RespondToSubmittalRfi(RespondToSubmittalRfiRequest) returns (SubmittalRfi);
+}
+
+// ── Enums ────────────────────────────────────────────────────────────
+enum ProjectType {
+  PROJECT_TYPE_UNSPECIFIED = 0;
+  PROJECT_TYPE_GENERAL_CONSTRUCTION = 1;
+  PROJECT_TYPE_DESIGN_BUILD = 2;
+  PROJECT_TYPE_EPC = 3;
+  PROJECT_TYPE_RENOVATION = 4;
+  PROJECT_TYPE_INFRASTRUCTURE = 5;
+  PROJECT_TYPE_RESIDENTIAL = 6;
+  PROJECT_TYPE_COMMERCIAL = 7;
+}
+
+enum ContractType {
+  CONTRACT_TYPE_UNSPECIFIED = 0;
+  CONTRACT_TYPE_LUMP_SUM = 1;
+  CONTRACT_TYPE_UNIT_PRICE = 2;
+  CONTRACT_TYPE_COST_PLUS = 3;
+  CONTRACT_TYPE_GMP = 4;
+  CONTRACT_TYPE_TIME_MATERIALS = 5;
+}
+
+enum ProjectStatus {
+  PROJECT_STATUS_UNSPECIFIED = 0;
+  PROJECT_STATUS_PLANNING = 1;
+  PROJECT_STATUS_BIDDING = 2;
+  PROJECT_STATUS_IN_PROGRESS = 3;
+  PROJECT_STATUS_SUBSTANTIALLY_COMPLETE = 4;
+  PROJECT_STATUS_COMPLETED = 5;
+  PROJECT_STATUS_CLOSED = 6;
+}
+
+enum ClaimStatus {
+  CLAIM_STATUS_UNSPECIFIED = 0;
+  CLAIM_STATUS_DRAFT = 1;
+  CLAIM_STATUS_SUBMITTED = 2;
+  CLAIM_STATUS_UNDER_REVIEW = 3;
+  CLAIM_STATUS_CERTIFIED = 4;
+  CLAIM_STATUS_REJECTED = 5;
+  CLAIM_STATUS_PAID = 6;
+}
+
+enum ChangeOrderType {
+  CO_TYPE_UNSPECIFIED = 0;
+  CO_TYPE_OWNER_DIRECTED = 1;
+  CO_TYPE_CONSTRUCTION_CHANGE_DIRECTIVE = 2;
+  CO_TYPE_VARIATION = 3;
+  CO_TYPE_FIELD_ORDER = 4;
+  CO_TYPE_CLAIM = 5;
+}
+
+enum ChangeOrderStatus {
+  CO_STATUS_UNSPECIFIED = 0;
+  CO_STATUS_DRAFT = 1;
+  CO_STATUS_SUBMITTED = 2;
+  CO_STATUS_UNDER_REVIEW = 3;
+  CO_STATUS_APPROVED = 4;
+  CO_STATUS_REJECTED = 5;
+  CO_STATUS_EXECUTED = 6;
+}
+
+enum ItemType {
+  ITEM_TYPE_UNSPECIFIED = 0;
+  ITEM_TYPE_SUBMITTAL = 1;
+  ITEM_TYPE_RFI = 2;
+  ITEM_TYPE_SHOP_DRAWING = 3;
+  ITEM_TYPE_SAMPLE = 4;
+}
+
+enum Priority {
+  PRIORITY_UNSPECIFIED = 0;
+  PRIORITY_LOW = 1;
+  PRIORITY_NORMAL = 2;
+  PRIORITY_HIGH = 3;
+  PRIORITY_URGENT = 4;
+}
+
+enum RfiStatus {
+  RFI_STATUS_UNSPECIFIED = 0;
+  RFI_STATUS_OPEN = 1;
+  RFI_STATUS_IN_REVIEW = 2;
+  RFI_STATUS_RESPONDED = 3;
+  RFI_STATUS_CLOSED = 4;
+  RFI_STATUS_VOID = 5;
+}
+
+// ── Common Messages ──────────────────────────────────────────────────
+message AuditInfo {
+  string created_at = 1;
+  string updated_at = 2;
+  string created_by = 3;
+  string updated_by = 4;
+  int32 version = 5;
+}
+
+// ── Project Messages ─────────────────────────────────────────────────
+message Project {
+  string id = 1;
+  string tenant_id = 2;
+  string project_number = 3;
+  string project_name = 4;
+  ProjectType project_type = 5;
+  string client_id = 6;
+  ContractType contract_type = 7;
+  int64 contract_value_cents = 8;
+  int64 estimated_cost_cents = 9;
+  string location = 10;
+  string site_address = 11;
+  string start_date = 12;
+  string planned_end_date = 13;
+  string actual_end_date = 14;
+  string project_manager_id = 15;
+  string superintendent_id = 16;
+  string prime_contractor_id = 17;
+  string permit_number = 18;
+  string permit_expiry = 19;
+  string safety_plan_id = 20;
+  string bim_model_reference = 21;
+  int32 weather_delay_days = 22;
+  double completion_pct = 23;
+  ProjectStatus status = 24;
+  AuditInfo audit = 25;
+}
+
+message CreateProjectRequest {
+  string tenant_id = 1;
+  string project_number = 2;
+  string project_name = 3;
+  ProjectType project_type = 4;
+  string client_id = 5;
+  ContractType contract_type = 6;
+  int64 contract_value_cents = 7;
+  int64 estimated_cost_cents = 8;
+  string location = 9;
+  string site_address = 10;
+  string start_date = 11;
+  string planned_end_date = 12;
+  string project_manager_id = 13;
+  string superintendent_id = 14;
+  string prime_contractor_id = 15;
+  string permit_number = 16;
+  string permit_expiry = 17;
+  string safety_plan_id = 18;
+  string bim_model_reference = 19;
+  string user_id = 20;
+}
+
+message GetProjectRequest {
+  string id = 1;
+  string tenant_id = 2;
+}
+
+message ListProjectsRequest {
+  string tenant_id = 1;
+  ProjectStatus status = 2;
+  string client_id = 3;
+  string project_manager_id = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message ListProjectsResponse {
+  repeated Project projects = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message UpdateProjectRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string project_name = 3;
+  int64 contract_value_cents = 4;
+  int64 estimated_cost_cents = 5;
+  string planned_end_date = 6;
+  string actual_end_date = 7;
+  double completion_pct = 8;
+  ProjectStatus status = 9;
+  string user_id = 10;
+}
+
+// ── Progress Claim Messages ──────────────────────────────────────────
+message ProgressClaim {
+  string id = 1;
+  string tenant_id = 2;
+  string project_id = 3;
+  string claim_number = 4;
+  string period_start = 5;
+  string period_end = 6;
+  double work_completed_pct = 7;
+  int64 work_completed_value_cents = 8;
+  int64 materials_stored_cents = 9;
+  int64 total_claimed_cents = 10;
+  double retainage_pct = 11;
+  int64 retainage_held_cents = 12;
+  int64 previous_certified_cents = 13;
+  int64 net_certified_cents = 14;
+  string change_orders_included = 15;  // JSON
+  string supporting_documents = 16;    // JSON
+  string certified_by = 17;
+  string certified_at = 18;
+  ClaimStatus status = 19;
+  AuditInfo audit = 20;
+}
+
+message CreateProgressClaimRequest {
+  string tenant_id = 1;
+  string project_id = 2;
+  string period_start = 3;
+  string period_end = 4;
+  double work_completed_pct = 5;
+  int64 work_completed_value_cents = 6;
+  int64 materials_stored_cents = 7;
+  double retainage_pct = 8;
+  string change_orders_included = 9;   // JSON
+  string user_id = 10;
+}
+
+message CertifyProgressClaimRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string certified_by = 3;
+}
+
+// ── Change Order Messages ────────────────────────────────────────────
+message ChangeOrder {
+  string id = 1;
+  string tenant_id = 2;
+  string project_id = 3;
+  string co_number = 4;
+  ChangeOrderType co_type = 5;
+  string title = 6;
+  string description = 7;
+  string reason = 8;
+  int32 impact_schedule_days = 9;
+  int64 impact_cost_cents = 10;
+  int64 proposed_cost_cents = 11;
+  int64 approved_cost_cents = 12;
+  string affected_work = 13;           // JSON
+  string documents = 14;               // JSON
+  string requested_by = 15;
+  string approved_by = 16;
+  string approved_at = 17;
+  ChangeOrderStatus status = 18;
+  AuditInfo audit = 19;
+}
+
+message CreateChangeOrderRequest {
+  string tenant_id = 1;
+  string project_id = 2;
+  string co_number = 3;
+  ChangeOrderType co_type = 4;
+  string title = 5;
+  string description = 6;
+  string reason = 7;
+  int32 impact_schedule_days = 8;
+  int64 impact_cost_cents = 9;
+  int64 proposed_cost_cents = 10;
+  string affected_work = 11;           // JSON
+  string requested_by = 12;
+  string user_id = 13;
+}
+
+message ApproveChangeOrderRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string approved_by = 3;
+  int64 approved_cost_cents = 4;
+}
+
+// ── Daily Log Messages ───────────────────────────────────────────────
+message DailyLog {
+  string id = 1;
+  string tenant_id = 2;
+  string project_id = 3;
+  string log_date = 4;
+  string weather_conditions = 5;       // JSON
+  double weather_delay_hours = 6;
+  int32 workers_on_site = 7;
+  string subcontractors_on_site = 8;   // JSON
+  string equipment_on_site = 9;        // JSON
+  string work_performed = 10;
+  string areas_worked = 11;
+  string deliveries = 12;              // JSON
+  string inspections = 13;             // JSON
+  int32 safety_incidents = 14;
+  string visitors = 15;                // JSON
+  string issues = 16;                  // JSON
+  string photos = 17;                  // JSON
+  string reported_by = 18;
+  AuditInfo audit = 19;
+}
+
+message SubmitDailyLogRequest {
+  string tenant_id = 1;
+  string project_id = 2;
+  string log_date = 3;
+  string weather_conditions = 4;       // JSON
+  double weather_delay_hours = 5;
+  int32 workers_on_site = 6;
+  string subcontractors_on_site = 7;   // JSON
+  string equipment_on_site = 8;        // JSON
+  string work_performed = 9;
+  string areas_worked = 10;
+  string deliveries = 11;              // JSON
+  string inspections = 12;             // JSON
+  int32 safety_incidents = 13;
+  string visitors = 14;                // JSON
+  string issues = 15;                  // JSON
+  string photos = 16;                  // JSON
+  string reported_by = 17;
+  string user_id = 18;
+}
+
+message ListDailyLogsRequest {
+  string tenant_id = 1;
+  string project_id = 2;
+  string log_date_from = 3;
+  string log_date_to = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message ListDailyLogsResponse {
+  repeated DailyLog daily_logs = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+// ── Submittal / RFI Messages ─────────────────────────────────────────
+message SubmittalRfi {
+  string id = 1;
+  string tenant_id = 2;
+  string project_id = 3;
+  ItemType item_type = 4;
+  string item_number = 5;
+  string subject = 6;
+  string description = 7;
+  string specification_reference = 8;
+  string drawing_reference = 9;
+  string due_date = 10;
+  string response_required_date = 11;
+  string assigned_to = 12;
+  string response = 13;
+  string response_by = 14;
+  string response_at = 15;
+  string attachments = 16;             // JSON
+  Priority priority = 17;
+  bool cost_impact = 18;
+  int32 schedule_impact_days = 19;
+  RfiStatus status = 20;
+  AuditInfo audit = 21;
+}
+
+message CreateSubmittalRfiRequest {
+  string tenant_id = 1;
+  string project_id = 2;
+  ItemType item_type = 3;
+  string item_number = 4;
+  string subject = 5;
+  string description = 6;
+  string specification_reference = 7;
+  string drawing_reference = 8;
+  string due_date = 9;
+  string response_required_date = 10;
+  string assigned_to = 11;
+  string attachments = 12;             // JSON
+  Priority priority = 13;
+  bool cost_impact = 14;
+  int32 schedule_impact_days = 15;
+  string user_id = 16;
+}
+
+message RespondToSubmittalRfiRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string response = 3;
+  string responded_by = 4;
+}
+```
+
+## 6. Migration Order
+
+| Order | Table | Depends On |
+|-------|-------|------------|
+| 1 | `ce_projects` | — |
+| 2 | `ce_progress_claims` | `ce_projects` |
+| 3 | `ce_change_orders` | `ce_projects` |
+| 4 | `ce_daily_logs` | `ce_projects` |
+| 5 | `ce_submittals_rfis` | `ce_projects` |
+
+---
+
+## 7. Business Rules
 
 1. **Retainage**: Default 10% retainage held until substantial completion; released per contract terms
 2. **Change Order Impact**: All change orders require cost and schedule impact assessment
@@ -279,7 +704,7 @@ CREATE INDEX idx_ce_rfi_due ON ce_submittals_rfis(due_date);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

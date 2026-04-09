@@ -233,7 +233,190 @@ CREATE INDEX idx_wd_vmi_frequency ON wd_vmi_configs(replenishment_frequency);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.wholesale_distribution.v1;
+
+service WholesaleDistributionService {
+    rpc GetWarehouseZone(GetWarehouseZoneRequest) returns (GetWarehouseZoneResponse);
+    rpc CreatePickWave(CreatePickWaveRequest) returns (CreatePickWaveResponse);
+    rpc GetRoutePlan(GetRoutePlanRequest) returns (GetRoutePlanResponse);
+    rpc CreateRoutePlan(CreateRoutePlanRequest) returns (CreateRoutePlanResponse);
+    rpc GetCustomerPriceList(GetCustomerPriceListRequest) returns (GetCustomerPriceListResponse);
+    rpc GetVmiConfig(GetVmiConfigRequest) returns (GetVmiConfigResponse);
+}
+
+// Warehouse zone messages
+message GetWarehouseZoneRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetWarehouseZoneResponse {
+    WdWarehouseZone data = 1;
+}
+
+message WdWarehouseZone {
+    string id = 1;
+    string tenant_id = 2;
+    string zone_code = 3;
+    string zone_name = 4;
+    string zone_type = 5;
+    string warehouse_id = 6;
+    double capacity_cubic_meters = 7;
+    double current_utilization_pct = 8;
+    string temperature_range = 9;
+    string equipment_assigned = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Pick wave messages
+message CreatePickWaveRequest {
+    string tenant_id = 1;
+    string wave_number = 2;
+    string warehouse_id = 3;
+    int32 priority = 4;
+    string cutoff_time = 5;
+    string assigned_pickers = 6;
+}
+
+message CreatePickWaveResponse {
+    WdPickWavePlan data = 1;
+}
+
+message WdPickWavePlan {
+    string id = 1;
+    string tenant_id = 2;
+    string wave_number = 3;
+    string warehouse_id = 4;
+    int32 priority = 5;
+    string cutoff_time = 6;
+    string assigned_pickers = 7;
+    int32 total_lines = 8;
+    int32 picked_lines = 9;
+    string wave_status = 10;
+    string started_at = 11;
+    string completed_at = 12;
+    double completion_pct = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+// Route plan messages
+message GetRoutePlanRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetRoutePlanResponse {
+    WdRoutePlan data = 1;
+}
+
+message CreateRoutePlanRequest {
+    string tenant_id = 1;
+    string route_code = 2;
+    string driver_id = 3;
+    string vehicle_id = 4;
+    string stops = 5;
+    double estimated_distance_km = 6;
+    int32 estimated_duration_minutes = 7;
+    string route_date = 8;
+}
+
+message CreateRoutePlanResponse {
+    WdRoutePlan data = 1;
+}
+
+message WdRoutePlan {
+    string id = 1;
+    string tenant_id = 2;
+    string route_code = 3;
+    string driver_id = 4;
+    string vehicle_id = 5;
+    string stops = 6;
+    double estimated_distance_km = 7;
+    int32 estimated_duration_minutes = 8;
+    double capacity_utilization_pct = 9;
+    string route_date = 10;
+    string route_status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Customer price list messages
+message GetCustomerPriceListRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCustomerPriceListResponse {
+    WdCustomerPriceList data = 1;
+}
+
+message WdCustomerPriceList {
+    string id = 1;
+    string tenant_id = 2;
+    string price_list_code = 3;
+    string customer_id = 4;
+    string customer_tier = 5;
+    string pricing_rules = 6;
+    string contract_id = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+    string currency_code = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// VMI messages
+message GetVmiConfigRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetVmiConfigResponse {
+    WdVmiConfig data = 1;
+}
+
+message WdVmiConfig {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_id = 3;
+    string sku = 4;
+    int32 min_level = 5;
+    int32 max_level = 6;
+    int32 reorder_point = 7;
+    int32 reorder_qty = 8;
+    string replenishment_frequency = 9;
+    string last_replenished_at = 10;
+    int32 last_replenished_qty = 11;
+    string performance_metrics = 12;
+    string status = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | wd_warehouse_zones | -- |
+| V002 | wd_pick_wave_plans | -- |
+| V003 | wd_route_plans | -- |
+| V004 | wd_customer_price_lists | -- |
+| V005 | wd_vmi_configs | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Zone Capacity**: Alerts when zone utilization exceeds 85% threshold
 2. **Wave Priority**: Higher priority waves processed first within warehouse
@@ -244,13 +427,18 @@ CREATE INDEX idx_wd_vmi_frequency ON wd_vmi_configs(replenishment_frequency);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Inventory (34) | Stock levels and thresholds |
-| Order Management (32) | Order processing |
-| Shipping (145) | Shipment and delivery |
-| Pricing (78) | Base pricing engine |
-| Warehouse Management (37) | Warehouse operations |
-| BI Publisher (150) | Operational reporting |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| inventory-service | `GetStockLevel` | Stock levels and thresholds |
+| order-service | `GetOrder` | Order processing |
+| shipping-service | `CreateShipment` | Shipment and delivery |
+| pricing-service | `CalculatePrice` | Base pricing engine |
+| warehouse-service | `GetWarehouse` | Warehouse operations |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| bi-publisher-service | `GetReportData` | Operational reporting |

@@ -197,7 +197,178 @@ CREATE INDEX idx_otbi_cache_expiry ON otbi_cache(expires_at);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.otbi.v1;
+
+service OtbiService {
+    rpc ExecuteQuery(ExecuteQueryRequest) returns (ExecuteQueryResponse);
+    rpc GetSubjectArea(GetSubjectAreaRequest) returns (GetSubjectAreaResponse);
+    rpc SaveAnalysis(SaveAnalysisRequest) returns (SaveAnalysisResponse);
+    rpc GetAnalysis(GetAnalysisRequest) returns (GetAnalysisResponse);
+    rpc CreateDashboard(CreateDashboardRequest) returns (CreateDashboardResponse);
+    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
+}
+
+// Query messages
+message ExecuteQueryRequest {
+    string tenant_id = 1;
+    string subject_area_id = 2;
+    string columns = 3;
+    string filters = 4;
+    string sort_config = 5;
+    int32 row_limit = 6;
+    string query_type = 7;
+    string prompt_values = 8;
+}
+
+message ExecuteQueryResponse {
+    string result_data = 1;
+    int32 row_count = 2;
+    int32 execution_time_ms = 3;
+    int32 cache_hit = 4;
+}
+
+// Subject Area messages
+message GetSubjectAreaRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSubjectAreaResponse {
+    SubjectArea data = 1;
+}
+
+message SubjectArea {
+    string id = 1;
+    string tenant_id = 2;
+    string area_code = 3;
+    string area_name = 4;
+    string source_module = 5;
+    string description = 6;
+    string folder_hierarchy = 7;
+    string available_metrics = 8;
+    string available_dimensions = 9;
+    string available_filters = 10;
+    string default_time_dimension = 11;
+    int32 row_count_estimate = 12;
+    string refresh_type = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+// Analysis messages
+message SaveAnalysisRequest {
+    string tenant_id = 1;
+    string analysis_name = 2;
+    string subject_area_id = 3;
+    string analysis_type = 4;
+    string description = 5;
+    string columns = 6;
+    string filters = 7;
+    string sort_config = 8;
+    string visualization_config = 9;
+    string prompt_config = 10;
+    int32 row_limit = 11;
+    string owner_id = 12;
+    string folder_path = 13;
+}
+
+message SaveAnalysisResponse {
+    Analysis data = 1;
+}
+
+message GetAnalysisRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetAnalysisResponse {
+    Analysis data = 1;
+}
+
+message Analysis {
+    string id = 1;
+    string tenant_id = 2;
+    string analysis_name = 3;
+    string subject_area_id = 4;
+    string analysis_type = 5;
+    string description = 6;
+    string columns = 7;
+    string filters = 8;
+    string sort_config = 9;
+    string visualization_config = 10;
+    string prompt_config = 11;
+    int32 row_limit = 12;
+    int32 is_shared = 13;
+    string owner_id = 14;
+    string folder_path = 15;
+    string last_run_at = 16;
+    int32 last_row_count = 17;
+    int32 avg_execution_time_ms = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+// Dashboard messages
+message CreateDashboardRequest {
+    string tenant_id = 1;
+    string dashboard_name = 2;
+    string description = 3;
+    string layout = 4;
+    string widgets = 5;
+    string prompts = 6;
+    int32 refresh_interval_seconds = 7;
+    string owner_id = 8;
+}
+
+message CreateDashboardResponse {
+    Dashboard data = 1;
+}
+
+message GetDashboardRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetDashboardResponse {
+    Dashboard data = 1;
+}
+
+message Dashboard {
+    string id = 1;
+    string tenant_id = 2;
+    string dashboard_name = 3;
+    string description = 4;
+    string layout = 5;
+    string widgets = 6;
+    string prompts = 7;
+    int32 refresh_interval_seconds = 8;
+    int32 is_shared = 9;
+    string owner_id = 10;
+    int32 is_default = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | otbi_subject_areas | -- |
+| V002 | otbi_analyses | V001 |
+| V003 | otbi_dashboards | -- |
+| V004 | otbi_query_log | -- |
+| V005 | otbi_cache | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Row Limits**: Queries limited to configured max rows (default 1000); export allows more
 2. **Query Timeout**: Queries exceeding 60 seconds killed and error returned
@@ -208,7 +379,7 @@ CREATE INDEX idx_otbi_cache_expiry ON otbi_cache(expires_at);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

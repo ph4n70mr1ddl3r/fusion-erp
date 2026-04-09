@@ -256,7 +256,206 @@ CREATE INDEX idx_im_safety_date ON im_safety_incidents(reported_at DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.industrial_mfg.v1;
+
+service IndustrialMfgService {
+    rpc GetEquipment(GetEquipmentRequest) returns (GetEquipmentResponse);
+    rpc CreateEquipment(CreateEquipmentRequest) returns (CreateEquipmentResponse);
+    rpc CreateWorkOrder(CreateWorkOrderRequest) returns (CreateWorkOrderResponse);
+    rpc GetWorkOrder(GetWorkOrderRequest) returns (GetWorkOrderResponse);
+    rpc CreateInspection(CreateInspectionRequest) returns (CreateInspectionResponse);
+    rpc ReportIncident(ReportIncidentRequest) returns (ReportIncidentResponse);
+}
+
+// Equipment messages
+message GetEquipmentRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEquipmentResponse {
+    ImEquipmentRegistry data = 1;
+}
+
+message CreateEquipmentRequest {
+    string tenant_id = 1;
+    string asset_tag = 2;
+    string equipment_name = 3;
+    string equipment_type = 4;
+    string manufacturer = 5;
+    string model_number = 6;
+    string serial_number = 7;
+    string installation_date = 8;
+    string location = 9;
+    string specifications = 10;
+    string criticality_rating = 11;
+    string warranty_expiry = 12;
+}
+
+message CreateEquipmentResponse {
+    ImEquipmentRegistry data = 1;
+}
+
+message ImEquipmentRegistry {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_tag = 3;
+    string equipment_name = 4;
+    string equipment_type = 5;
+    string manufacturer = 6;
+    string model_number = 7;
+    string serial_number = 8;
+    string installation_date = 9;
+    string location = 10;
+    string specifications = 11;
+    string criticality_rating = 12;
+    string warranty_expiry = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Work order messages
+message CreateWorkOrderRequest {
+    string tenant_id = 1;
+    string work_order_number = 2;
+    string work_order_type = 3;
+    string equipment_id = 4;
+    string description = 5;
+    int32 priority = 6;
+    string assigned_technicians = 7;
+    double estimated_hours = 8;
+    string scheduled_start = 9;
+    string scheduled_end = 10;
+}
+
+message CreateWorkOrderResponse {
+    ImWorkOrder data = 1;
+}
+
+message GetWorkOrderRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetWorkOrderResponse {
+    ImWorkOrder data = 1;
+}
+
+message ImWorkOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string work_order_number = 3;
+    string work_order_type = 4;
+    string equipment_id = 5;
+    string description = 6;
+    int32 priority = 7;
+    string assigned_technicians = 8;
+    double estimated_hours = 9;
+    double actual_hours = 10;
+    string scheduled_start = 11;
+    string scheduled_end = 12;
+    string completed_at = 13;
+    string materials_used = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Inspection messages
+message CreateInspectionRequest {
+    string tenant_id = 1;
+    string inspection_plan_id = 2;
+    string product_id = 3;
+    string batch_number = 4;
+    string checkpoint = 5;
+    string measurement_type = 6;
+    string specification = 7;
+    double tolerance_min = 8;
+    double tolerance_max = 9;
+    string inspector_id = 10;
+}
+
+message CreateInspectionResponse {
+    ImQualityInspection data = 1;
+}
+
+message ImQualityInspection {
+    string id = 1;
+    string tenant_id = 2;
+    string inspection_plan_id = 3;
+    string product_id = 4;
+    string batch_number = 5;
+    string checkpoint = 6;
+    string measurement_type = 7;
+    string specification = 8;
+    double tolerance_min = 9;
+    double tolerance_max = 10;
+    double measured_value = 11;
+    string result = 12;
+    string inspector_id = 13;
+    string inspected_at = 14;
+    string corrective_action = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+// Safety incident messages
+message ReportIncidentRequest {
+    string tenant_id = 1;
+    string incident_number = 2;
+    string incident_type = 3;
+    string severity = 4;
+    string description = 5;
+    string location = 6;
+    string involved_persons = 7;
+    string reported_by = 8;
+}
+
+message ReportIncidentResponse {
+    ImSafetyIncident data = 1;
+}
+
+message ImSafetyIncident {
+    string id = 1;
+    string tenant_id = 2;
+    string incident_number = 3;
+    string incident_type = 4;
+    string severity = 5;
+    string description = 6;
+    string location = 7;
+    string involved_persons = 8;
+    string investigation_status = 9;
+    string root_cause = 10;
+    string corrective_actions = 11;
+    string reported_by = 12;
+    string reported_at = 13;
+    string resolved_at = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | im_equipment_registry | -- |
+| V002 | im_production_lines | -- |
+| V003 | im_work_orders | V001 |
+| V004 | im_quality_inspections | -- |
+| V005 | im_safety_incidents | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Criticality-Based Priority**: CRITICAL equipment work orders prioritized above all others
 2. **OEE Calculation**: OEE = Availability x Performance x Quality; recalculated per shift
@@ -267,14 +466,21 @@ CREATE INDEX idx_im_safety_date ON im_safety_incidents(reported_at DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Maintenance Cloud (167) | Preventive maintenance scheduling |
-| Quality Management (136) | Quality specs and non-conformances |
-| Inventory (34) | Material consumption tracking |
-| Order Management (32) | Production order triggering |
-| Manufacturing (40) | Production execution |
-| Asset Management (23) | Equipment asset registry |
-| Notification Center (165) | Safety and quality alerts |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| maintenance-service | `GetSchedule` | Preventive maintenance scheduling |
+| quality-service | `GetSpec` / `GetNonConformance` | Quality specs and non-conformances |
+| inventory-service | `ConsumeMaterial` | Material consumption tracking |
+| order-service | `GetOrder` | Production order triggering |
+| manufacturing-service | `GetProductionOrder` | Production execution |
+| asset-service | `GetAsset` | Equipment asset registry |
+| notification-service | `SendAlert` | Safety and quality alerts |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| maintenance-service | `GetWorkOrder` | Work order data for maintenance planning |
+| quality-service | `GetInspection` | Quality inspection data |

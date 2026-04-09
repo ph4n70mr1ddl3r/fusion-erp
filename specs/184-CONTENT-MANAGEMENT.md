@@ -268,7 +268,181 @@ CREATE INDEX idx_cm_ct_status ON cm_content_translations(tenant_id, translation_
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.content_management.v1;
+
+service ContentManagementService {
+    rpc GetContentItem(GetContentItemRequest) returns (GetContentItemResponse);
+    rpc CreateContentItem(CreateContentItemRequest) returns (CreateContentItemResponse);
+    rpc PublishContent(PublishContentRequest) returns (PublishContentResponse);
+    rpc GetFolder(GetFolderRequest) returns (GetFolderResponse);
+    rpc CreateTranslation(CreateTranslationRequest) returns (CreateTranslationResponse);
+    rpc ApproveWorkflow(ApproveWorkflowRequest) returns (ApproveWorkflowResponse);
+}
+
+// Content item messages
+message GetContentItemRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetContentItemResponse {
+    CmContentItem data = 1;
+}
+
+message CreateContentItemRequest {
+    string tenant_id = 1;
+    string content_code = 2;
+    string title = 3;
+    string description = 4;
+    string content_type = 5;
+    string mime_type = 6;
+    string file_url = 7;
+    int32 file_size_kb = 8;
+    string folder_id = 9;
+    string tags = 10;
+    string metadata = 11;
+    string language = 12;
+    string owner_id = 13;
+}
+
+message CreateContentItemResponse {
+    CmContentItem data = 1;
+}
+
+message CmContentItem {
+    string id = 1;
+    string tenant_id = 2;
+    string content_code = 3;
+    string title = 4;
+    string description = 5;
+    string content_type = 6;
+    string mime_type = 7;
+    string file_url = 8;
+    int32 file_size_kb = 9;
+    string folder_id = 10;
+    string tags = 11;
+    string metadata = 12;
+    string language = 13;
+    bool is_translation_source = 14;
+    string source_content_id = 15;
+    int32 current_version = 16;
+    string thumbnail_url = 17;
+    string checksum = 18;
+    string owner_id = 19;
+    string published_at = 20;
+    string expires_at = 21;
+    string status = 22;
+    string created_at = 23;
+    string updated_at = 24;
+}
+
+// Publish messages
+message PublishContentRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string change_notes = 3;
+}
+
+message PublishContentResponse {
+    string id = 1;
+    string status = 2;
+    int32 version = 3;
+    string published_at = 4;
+}
+
+// Folder messages
+message GetFolderRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetFolderResponse {
+    CmFolder data = 1;
+}
+
+message CmFolder {
+    string id = 1;
+    string tenant_id = 2;
+    string folder_path = 3;
+    string folder_name = 4;
+    string parent_folder_id = 5;
+    string description = 6;
+    string permissions = 7;
+    bool inherit_permissions = 8;
+    int32 content_count = 9;
+    int32 total_size_kb = 10;
+    string owner_id = 11;
+    string status = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Translation messages
+message CreateTranslationRequest {
+    string tenant_id = 1;
+    string source_content_id = 2;
+    string target_language = 3;
+    string translator_id = 4;
+    string translation_vendor = 5;
+    string due_date = 6;
+}
+
+message CreateTranslationResponse {
+    CmTranslation data = 1;
+}
+
+message CmTranslation {
+    string id = 1;
+    string tenant_id = 2;
+    string source_content_id = 3;
+    string translated_content_id = 4;
+    string target_language = 5;
+    string translation_status = 6;
+    string translator_id = 7;
+    string translation_vendor = 8;
+    string assigned_at = 9;
+    string due_date = 10;
+    string completed_at = 11;
+    double quality_score = 12;
+    int32 word_count = 13;
+    string created_at = 14;
+}
+
+// Workflow messages
+message ApproveWorkflowRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string comment = 3;
+    bool approved = 4;
+}
+
+message ApproveWorkflowResponse {
+    string id = 1;
+    string status = 2;
+    int32 current_stage = 3;
+    int32 total_stages = 4;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | cm_folders | -- |
+| V002 | cm_content_items | V001 |
+| V003 | cm_content_versions | V002 |
+| V004 | cm_approval_workflows | V002 |
+| V005 | cm_content_translations | V002 |
+
+---
+
+## 7. Business Rules
 
 1. **Version Control**: Every content change creates a new version; previous versions are never deleted
 2. **Permission Inheritance**: Folders inherit permissions from parent unless explicitly overridden
@@ -280,15 +454,20 @@ CREATE INDEX idx_cm_ct_status ON cm_content_translations(tenant_id, translation_
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Identity (05) | User authentication and role-based permissions |
-| Workflow (16) | Approval workflow orchestration |
-| Document Management (29) | Document storage and retrieval |
-| Eloqua (181) | Email template content management |
-| Responsys (182) | Cross-channel message content |
-| CX Advertising (183) | Creative asset management |
-| CX Analytics (131) | Content engagement analytics |
-| Notification Center (165) | Approval and review notifications |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| identity-service | `GetUser` / `CheckPermission` | User authentication and role-based permissions |
+| workflow-service | `SubmitApproval` | Approval workflow orchestration |
+| document-service | `StoreFile` / `RetrieveFile` | Document storage and retrieval |
+| notification-service | `SendNotification` | Approval and review notifications |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| eloqua-service | `GetContentItem` | Email template content management |
+| responsys-service | `GetContentItem` | Cross-channel message content |
+| cx-advertising-service | `GetContentItem` | Creative asset management |
+| cx-analytics-service | `GetContentMetrics` | Content engagement analytics |

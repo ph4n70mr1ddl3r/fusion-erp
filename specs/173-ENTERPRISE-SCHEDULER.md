@@ -213,7 +213,177 @@ CREATE INDEX idx_sched_log_exec ON sched_execution_log(execution_id, timestamp);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.scheduler.v1;
+
+service SchedulerService {
+    rpc GetJobDefinition(GetJobDefinitionRequest) returns (GetJobDefinitionResponse);
+    rpc RegisterJob(RegisterJobRequest) returns (RegisterJobResponse);
+    rpc CreateSchedule(CreateScheduleRequest) returns (CreateScheduleResponse);
+    rpc RunJob(RunJobRequest) returns (RunJobResponse);
+    rpc GetExecution(GetExecutionRequest) returns (GetExecutionResponse);
+    rpc CancelExecution(CancelExecutionRequest) returns (CancelExecutionResponse);
+}
+
+// Job Definition messages
+message GetJobDefinitionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetJobDefinitionResponse {
+    JobDefinition data = 1;
+}
+
+message JobDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string job_code = 3;
+    string job_name = 4;
+    string job_type = 5;
+    string source_module = 6;
+    string execution_endpoint = 7;
+    string execution_method = 8;
+    string parameters = 9;
+    string default_parameters = 10;
+    int32 timeout_seconds = 11;
+    int32 max_retries = 12;
+    int32 retry_delay_seconds = 13;
+    double retry_backoff_multiplier = 14;
+    int32 priority = 15;
+    int32 singleton = 16;
+    string status = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message RegisterJobRequest {
+    string tenant_id = 1;
+    string job_code = 2;
+    string job_name = 3;
+    string job_type = 4;
+    string source_module = 5;
+    string execution_endpoint = 6;
+    string execution_method = 7;
+    string parameters = 8;
+    int32 timeout_seconds = 9;
+    int32 max_retries = 10;
+    int32 retry_delay_seconds = 11;
+    int32 priority = 12;
+    int32 singleton = 13;
+}
+
+message RegisterJobResponse {
+    JobDefinition data = 1;
+}
+
+// Schedule messages
+message CreateScheduleRequest {
+    string tenant_id = 1;
+    string schedule_name = 2;
+    string job_id = 3;
+    string cron_expression = 4;
+    string timezone = 5;
+    string parameters = 6;
+    string active_from = 7;
+    string active_to = 8;
+    int32 max_consecutive_failures = 9;
+}
+
+message CreateScheduleResponse {
+    Schedule data = 1;
+}
+
+message Schedule {
+    string id = 1;
+    string tenant_id = 2;
+    string schedule_name = 3;
+    string job_id = 4;
+    string cron_expression = 5;
+    string timezone = 6;
+    string status = 7;
+    string last_run_at = 8;
+    string last_run_status = 9;
+    string next_run_at = 10;
+    int32 total_runs = 11;
+    int32 consecutive_failures = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Execution messages
+message RunJobRequest {
+    string tenant_id = 1;
+    string job_id = 2;
+    string trigger_type = 3;
+    string parameters = 4;
+    int32 priority = 5;
+}
+
+message RunJobResponse {
+    Execution data = 1;
+}
+
+message GetExecutionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetExecutionResponse {
+    Execution data = 1;
+}
+
+message Execution {
+    string id = 1;
+    string tenant_id = 2;
+    string job_id = 3;
+    string schedule_id = 4;
+    string execution_number = 5;
+    string trigger_type = 6;
+    string status = 7;
+    int32 priority = 8;
+    string parameters = 9;
+    string started_at = 10;
+    string completed_at = 11;
+    int32 execution_time_ms = 12;
+    string result_summary = 13;
+    string error_message = 14;
+    int32 records_processed = 15;
+    int32 records_succeeded = 16;
+    int32 records_failed = 17;
+    int32 retry_attempt = 18;
+    double progress_pct = 19;
+    string created_at = 20;
+}
+
+message CancelExecutionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message CancelExecutionResponse {
+    Execution data = 1;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sched_job_definitions | -- |
+| V002 | sched_schedules | V001 |
+| V003 | sched_executions | V001 |
+| V004 | sched_dependencies | V001 |
+| V005 | sched_execution_log | V003 |
+
+---
+
+## 7. Business Rules
 
 1. **Singleton Enforcement**: Singleton jobs reject new execution if already running
 2. **Auto-Pause**: Schedules auto-paused after N consecutive failures (configurable)
@@ -224,7 +394,7 @@ CREATE INDEX idx_sched_log_exec ON sched_execution_log(execution_id, timestamp);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

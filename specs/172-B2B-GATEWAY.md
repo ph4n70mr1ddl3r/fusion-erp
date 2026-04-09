@@ -217,7 +217,144 @@ CREATE INDEX idx_b2b_error_type ON b2b_error_log(tenant_id, error_type, status);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.b2b_gateway.v1;
+
+service B2BGatewayService {
+    rpc GetPartner(GetPartnerRequest) returns (GetPartnerResponse);
+    rpc CreatePartner(CreatePartnerRequest) returns (CreatePartnerResponse);
+    rpc SendDocument(SendDocumentRequest) returns (SendDocumentResponse);
+    rpc ReceiveDocument(ReceiveDocumentRequest) returns (ReceiveDocumentResponse);
+    rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
+    rpc ResendTransaction(ResendTransactionRequest) returns (ResendTransactionResponse);
+}
+
+// Partner messages
+message GetPartnerRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetPartnerResponse {
+    Partner data = 1;
+}
+
+message Partner {
+    string id = 1;
+    string tenant_id = 2;
+    string partner_code = 3;
+    string partner_name = 4;
+    string partner_type = 5;
+    string partner_id = 6;
+    string communications = 7;
+    string certificate_id = 8;
+    string timezone = 9;
+    string document_types = 10;
+    string status = 11;
+    string onboarding_date = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message CreatePartnerRequest {
+    string tenant_id = 1;
+    string partner_code = 2;
+    string partner_name = 3;
+    string partner_type = 4;
+    string communications = 5;
+    string document_types = 6;
+}
+
+message CreatePartnerResponse {
+    Partner data = 1;
+}
+
+// Document send/receive messages
+message SendDocumentRequest {
+    string tenant_id = 1;
+    string partner_id = 2;
+    string document_type = 3;
+    string document_standard = 4;
+    string internal_document_id = 5;
+    string internal_document_type = 6;
+    string payload = 7;
+}
+
+message SendDocumentResponse {
+    Transaction transaction = 1;
+}
+
+message ReceiveDocumentRequest {
+    string tenant_id = 1;
+    string partner_id = 2;
+    string document_type = 3;
+    string document_standard = 4;
+    string raw_payload_path = 5;
+}
+
+message ReceiveDocumentResponse {
+    Transaction transaction = 1;
+}
+
+// Transaction messages
+message GetTransactionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTransactionResponse {
+    Transaction data = 1;
+}
+
+message Transaction {
+    string id = 1;
+    string tenant_id = 2;
+    string transaction_number = 3;
+    string partner_id = 4;
+    string document_type = 5;
+    string document_standard = 6;
+    string direction = 7;
+    string status = 8;
+    string raw_payload_path = 9;
+    string translated_payload_path = 10;
+    string internal_document_id = 11;
+    string internal_document_type = 12;
+    string validation_errors = 13;
+    string acknowledgment_status = 14;
+    int32 file_size_bytes = 15;
+    int32 retry_count = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message ResendTransactionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ResendTransactionResponse {
+    Transaction data = 1;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | b2b_partners | -- |
+| V002 | b2b_document_types | -- |
+| V003 | b2b_translation_maps | -- |
+| V004 | b2b_transactions | V001 |
+| V005 | b2b_error_log | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Partner Validation**: Inbound documents validated against partner profile and document type
 2. **Translation**: Documents translated from EDI format to internal JSON/XML before processing
@@ -229,7 +366,7 @@ CREATE INDEX idx_b2b_error_type ON b2b_error_log(tenant_id, error_type, status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

@@ -241,7 +241,178 @@ CREATE INDEX idx_tp_analytics_period ON tp_analytics(tenant_id, period DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.touchpoints.v1;
+
+service TouchpointsService {
+    rpc GetCheckin(GetCheckinRequest) returns (GetCheckinResponse);
+    rpc ScheduleCheckin(ScheduleCheckinRequest) returns (ScheduleCheckinResponse);
+    rpc CompleteCheckin(CompleteCheckinRequest) returns (CompleteCheckinResponse);
+    rpc SubmitFeedback(SubmitFeedbackRequest) returns (SubmitFeedbackResponse);
+    rpc CreateActionItem(CreateActionItemRequest) returns (CreateActionItemResponse);
+    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
+}
+
+// Check-in messages
+message GetCheckinRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCheckinResponse {
+    Checkin data = 1;
+}
+
+message Checkin {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string checkin_title = 4;
+    string employee_id = 5;
+    string manager_id = 6;
+    string scheduled_date = 7;
+    string scheduled_time = 8;
+    int32 duration_minutes = 9;
+    string recurrence = 10;
+    string status = 11;
+    string actual_date = 12;
+    int32 actual_duration_minutes = 13;
+    string meeting_url = 14;
+    string notes = 15;
+    string sentiment = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message ScheduleCheckinRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string checkin_title = 3;
+    string employee_id = 4;
+    string manager_id = 5;
+    string scheduled_date = 6;
+    string scheduled_time = 7;
+    int32 duration_minutes = 8;
+    string recurrence = 9;
+    string meeting_url = 10;
+}
+
+message ScheduleCheckinResponse {
+    Checkin data = 1;
+}
+
+message CompleteCheckinRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string notes = 3;
+    string sentiment = 4;
+    int32 actual_duration_minutes = 5;
+}
+
+message CompleteCheckinResponse {
+    Checkin data = 1;
+}
+
+// Feedback messages
+message SubmitFeedbackRequest {
+    string tenant_id = 1;
+    string checkin_id = 2;
+    string from_person_id = 3;
+    string to_person_id = 4;
+    string feedback_type = 5;
+    string category = 6;
+    string content = 7;
+    string linked_goal_id = 8;
+    string visibility = 9;
+    string sentiment = 10;
+    string tags = 11;
+}
+
+message SubmitFeedbackResponse {
+    Feedback data = 1;
+}
+
+message Feedback {
+    string id = 1;
+    string tenant_id = 2;
+    string checkin_id = 3;
+    string from_person_id = 4;
+    string to_person_id = 5;
+    string feedback_type = 6;
+    string category = 7;
+    string content = 8;
+    string visibility = 9;
+    string sentiment = 10;
+    int32 acknowledged = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Action Item messages
+message CreateActionItemRequest {
+    string tenant_id = 1;
+    string checkin_id = 2;
+    string title = 3;
+    string description = 4;
+    string assigned_to = 5;
+    string due_date = 6;
+    string priority = 7;
+}
+
+message CreateActionItemResponse {
+    ActionItem data = 1;
+}
+
+message ActionItem {
+    string id = 1;
+    string tenant_id = 2;
+    string checkin_id = 3;
+    string title = 4;
+    string description = 5;
+    string assigned_to = 6;
+    string due_date = 7;
+    string status = 8;
+    string priority = 9;
+    string completed_date = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+// Dashboard messages
+message GetDashboardRequest {
+    string tenant_id = 1;
+    string manager_id = 2;
+    string period = 3;
+}
+
+message GetDashboardResponse {
+    int32 total_checkins = 1;
+    int32 completed_checkins = 2;
+    int32 missed_checkins = 3;
+    int32 pending_actions = 4;
+    double avg_sentiment_score = 5;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | tp_templates | -- |
+| V002 | tp_scheduled_checkins | V001 |
+| V003 | tp_agenda_items | V002 |
+| V004 | tp_feedback | V002 |
+| V005 | tp_action_items | V002 |
+| V006 | tp_analytics | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Check-in Frequency**: Minimum monthly check-in enforced; managers alerted for missed check-ins
 2. **Agenda Collaboration**: Both manager and employee can add agenda items before the meeting
@@ -253,7 +424,7 @@ CREATE INDEX idx_tp_analytics_period ON tp_analytics(tenant_id, period DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

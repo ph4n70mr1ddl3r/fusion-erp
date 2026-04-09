@@ -218,7 +218,176 @@ CREATE INDEX idx_cg_demand_location ON cg_demand_sensing(location, sensed_week);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.consumer_goods.v1;
+
+service ConsumerGoodsService {
+    rpc GetBrand(GetBrandRequest) returns (GetBrandResponse);
+    rpc CreateBrand(CreateBrandRequest) returns (CreateBrandResponse);
+    rpc GetTradePromotion(GetTradePromotionRequest) returns (GetTradePromotionResponse);
+    rpc CreateTradePromotion(CreateTradePromotionRequest) returns (CreateTradePromotionResponse);
+    rpc GetDistributor(GetDistributorRequest) returns (GetDistributorResponse);
+    rpc GetDemandSensing(GetDemandSensingRequest) returns (GetDemandSensingResponse);
+}
+
+// Brand messages
+message GetBrandRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetBrandResponse {
+    CgBrand data = 1;
+}
+
+message CreateBrandRequest {
+    string tenant_id = 1;
+    string brand_code = 2;
+    string brand_name = 3;
+    string category = 4;
+    string sub_brands = 5;
+    string brand_manager_id = 6;
+    double market_share_target_pct = 7;
+    int64 revenue_target_cents = 8;
+}
+
+message CreateBrandResponse {
+    CgBrand data = 1;
+}
+
+message CgBrand {
+    string id = 1;
+    string tenant_id = 2;
+    string brand_code = 3;
+    string brand_name = 4;
+    string category = 5;
+    string sub_brands = 6;
+    string brand_manager_id = 7;
+    double market_share_target_pct = 8;
+    int64 revenue_target_cents = 9;
+    string status = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+// Trade promotion messages
+message GetTradePromotionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTradePromotionResponse {
+    CgTradePromotion data = 1;
+}
+
+message CreateTradePromotionRequest {
+    string tenant_id = 1;
+    string promotion_code = 2;
+    string promotion_name = 3;
+    string promotion_type = 4;
+    string brand_id = 5;
+    string start_date = 6;
+    string end_date = 7;
+    int64 funding_cents = 8;
+    double expected_lift_pct = 9;
+    string participating_retailers = 10;
+}
+
+message CreateTradePromotionResponse {
+    CgTradePromotion data = 1;
+}
+
+message CgTradePromotion {
+    string id = 1;
+    string tenant_id = 2;
+    string promotion_code = 3;
+    string promotion_name = 4;
+    string promotion_type = 5;
+    string brand_id = 6;
+    string start_date = 7;
+    string end_date = 8;
+    int64 funding_cents = 9;
+    double expected_lift_pct = 10;
+    double actual_lift_pct = 11;
+    double roi_pct = 12;
+    string participating_retailers = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Distributor messages
+message GetDistributorRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetDistributorResponse {
+    CgDistributor data = 1;
+}
+
+message CgDistributor {
+    string id = 1;
+    string tenant_id = 2;
+    string distributor_code = 3;
+    string distributor_name = 4;
+    string territory = 5;
+    string coverage_area = 6;
+    double performance_score = 7;
+    string settlement_terms = 8;
+    bool secondary_sales_tracking = 9;
+    string active_brands = 10;
+    string contact_info = 11;
+    string status = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Demand sensing messages
+message GetDemandSensingRequest {
+    string tenant_id = 1;
+    string sku = 2;
+    string location = 3;
+    string sensed_week = 4;
+}
+
+message GetDemandSensingResponse {
+    CgDemandSensing data = 1;
+}
+
+message CgDemandSensing {
+    string id = 1;
+    string tenant_id = 2;
+    string sku = 3;
+    string location = 4;
+    string sensed_week = 5;
+    double sensed_demand_qty = 6;
+    double confidence_score = 7;
+    string signals = 8;
+    double accuracy_pct = 9;
+    string model_version = 10;
+    string generated_at = 11;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | cg_brands | -- |
+| V002 | cg_trade_promotions | V001 |
+| V003 | cg_distributor_management | -- |
+| V004 | cg_market_basket_analysis | -- |
+| V005 | cg_demand_sensing | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Promotion Budget Control**: Trade promotion spend tracked against brand budget
 2. **ROI Measurement**: Promotion ROI calculated from lift vs funding investment
@@ -229,14 +398,19 @@ CREATE INDEX idx_cg_demand_location ON cg_demand_sensing(location, sensed_week);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Retail (192) | POS data and retail execution |
-| Inventory (34) | Stock levels for replenishment |
-| Order Management (32) | Distributor order processing |
-| Marketing (61) | Campaign and content |
-| Sales Automation (77) | Account and opportunity data |
-| BI Publisher (150) | Trade promotion reporting |
-| Fusion Data Intelligence (202) | AI demand sensing models |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| retail-service | `GetTransaction` | POS data and retail execution |
+| inventory-service | `GetStockLevel` | Stock levels for replenishment |
+| order-service | `CreateOrder` | Distributor order processing |
+| marketing-service | `GetCampaign` | Campaign and content |
+| sales-service | `GetAccount` | Account and opportunity data |
+| fdi-service | `RunModel` | AI demand sensing models |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| bi-publisher-service | `GetReportData` | Trade promotion reporting |

@@ -292,7 +292,206 @@ CREATE INDEX idx_pb_va_period ON pb_variance_analysis(period DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.planning_budgeting.v1;
+
+service PlanningBudgetingService {
+    rpc GetPlanCycle(GetPlanCycleRequest) returns (GetPlanCycleResponse);
+    rpc CreatePlanCycle(CreatePlanCycleRequest) returns (CreatePlanCycleResponse);
+    rpc GetBudgetVersion(GetBudgetVersionRequest) returns (GetBudgetVersionResponse);
+    rpc CreateBudgetVersion(CreateBudgetVersionRequest) returns (CreateBudgetVersionResponse);
+    rpc RunForecast(RunForecastRequest) returns (RunForecastResponse);
+    rpc GetVarianceAnalysis(GetVarianceAnalysisRequest) returns (GetVarianceAnalysisResponse);
+}
+
+// Plan cycle messages
+message GetPlanCycleRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetPlanCycleResponse {
+    PbPlanCycle data = 1;
+}
+
+message CreatePlanCycleRequest {
+    string tenant_id = 1;
+    string cycle_code = 2;
+    string cycle_name = 3;
+    string cycle_type = 4;
+    string description = 5;
+    int32 fiscal_year = 6;
+    string period_start = 7;
+    string period_end = 8;
+    string submission_deadline = 9;
+    string approval_deadline = 10;
+    string approval_hierarchy = 11;
+    string dimensions = 12;
+    string scenarios = 13;
+    string owner_id = 14;
+}
+
+message CreatePlanCycleResponse {
+    PbPlanCycle data = 1;
+}
+
+message PbPlanCycle {
+    string id = 1;
+    string tenant_id = 2;
+    string cycle_code = 3;
+    string cycle_name = 4;
+    string cycle_type = 5;
+    string description = 6;
+    int32 fiscal_year = 7;
+    string period_start = 8;
+    string period_end = 9;
+    string submission_deadline = 10;
+    string approval_deadline = 11;
+    string approval_hierarchy = 12;
+    string dimensions = 13;
+    string scenarios = 14;
+    int32 submitted_count = 15;
+    int32 approved_count = 16;
+    int32 total_contributors = 17;
+    string baseline_version_id = 18;
+    string owner_id = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+// Budget version messages
+message GetBudgetVersionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetBudgetVersionResponse {
+    PbBudgetVersion data = 1;
+}
+
+message CreateBudgetVersionRequest {
+    string tenant_id = 1;
+    string version_code = 2;
+    string version_name = 3;
+    string cycle_id = 4;
+    string scenario = 5;
+    string department = 6;
+    string account = 7;
+    string entity = 8;
+    string product_line = 9;
+    string geographic_region = 10;
+    string period = 11;
+    int64 amount_cents = 12;
+    string currency_code = 13;
+    int32 unit_quantity = 14;
+    string unit_of_measure = 15;
+    string line_description = 16;
+    string driver_name = 17;
+}
+
+message CreateBudgetVersionResponse {
+    PbBudgetVersion data = 1;
+}
+
+message PbBudgetVersion {
+    string id = 1;
+    string tenant_id = 2;
+    string version_code = 3;
+    string version_name = 4;
+    string cycle_id = 5;
+    string scenario = 6;
+    string department = 7;
+    string account = 8;
+    string entity = 9;
+    string product_line = 10;
+    string geographic_region = 11;
+    string period = 12;
+    int64 amount_cents = 13;
+    string currency_code = 14;
+    int32 unit_quantity = 15;
+    string unit_of_measure = 16;
+    string line_description = 17;
+    string driver_name = 18;
+    bool is_baseline = 19;
+    bool is_locked = 20;
+    string parent_version_id = 21;
+    string source_version_id = 22;
+    string approved_by = 23;
+    string approved_at = 24;
+    string created_at = 25;
+    string updated_at = 26;
+}
+
+// Forecast messages
+message RunForecastRequest {
+    string tenant_id = 1;
+    string model_id = 2;
+}
+
+message RunForecastResponse {
+    string model_id = 1;
+    string status = 2;
+    double accuracy_mape = 3;
+    double accuracy_mad = 4;
+    string run_at = 5;
+    int32 duration_ms = 6;
+}
+
+// Variance messages
+message GetVarianceAnalysisRequest {
+    string tenant_id = 1;
+    string cycle_id = 2;
+    string period = 3;
+    string department = 4;
+}
+
+message GetVarianceAnalysisResponse {
+    repeated PbVarianceAnalysis data = 1;
+}
+
+message PbVarianceAnalysis {
+    string id = 1;
+    string tenant_id = 2;
+    string cycle_id = 3;
+    string period = 4;
+    string department = 5;
+    string account = 6;
+    string entity = 7;
+    string product_line = 8;
+    string scenario = 9;
+    int64 budget_amount_cents = 10;
+    int64 actual_amount_cents = 11;
+    int64 variance_amount_cents = 12;
+    double variance_pct = 13;
+    bool favorable = 14;
+    string explanation = 15;
+    string corrective_action = 16;
+    string root_cause = 17;
+    string reported_by = 18;
+    string reported_at = 19;
+    string created_at = 20;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pb_plan_cycles | -- |
+| V002 | pb_budget_versions | V001 |
+| V003 | pb_forecast_models | -- |
+| V004 | pb_plan_assumptions | -- |
+| V005 | pb_variance_analysis | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Cycle Deadlines**: Budget submissions rejected after cycle submission deadline
 2. **Approval Hierarchy**: Budgets must follow configured multi-level approval chain
@@ -304,15 +503,20 @@ CREATE INDEX idx_pb_va_period ON pb_variance_analysis(period DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| General Ledger (06) | Actual financial data for variance analysis |
-| Workforce Planning (105) | Headcount and compensation planning inputs |
-| Revenue Management (76) | Revenue forecast integration |
-| Financial Consolidation (100) | Consolidated plan data |
-| Account Reconciliation (101) | Reconciled actuals for accuracy |
-| Profitability Management (88) | Profit plan targets and actuals |
-| Workflow (16) | Approval workflow orchestration |
-| Notification Center (165) | Deadline and threshold alerts |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| gl-service | `GetActuals` | Actual financial data for variance analysis |
+| workforce-service | `GetPlan` | Headcount and compensation planning inputs |
+| revenue-service | `GetForecast` | Revenue forecast integration |
+| consolidation-service | `GetData` | Consolidated plan data |
+| workflow-service | `SubmitApproval` | Approval workflow orchestration |
+| notification-service | `SendAlert` | Deadline and threshold alerts |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| reconciliation-service | `GetBudgetVersion` | Reconciled actuals for accuracy |
+| profitability-service | `GetBudgetVersion` / `GetVariance` | Profit plan targets and actuals |

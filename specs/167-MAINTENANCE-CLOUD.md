@@ -322,7 +322,202 @@ CREATE INDEX idx_mc_fail_severity ON mc_failure_records(tenant_id, failure_sever
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.maintenance.v1;
+
+service MaintenanceService {
+    rpc GetProductionAsset(GetProductionAssetRequest) returns (GetProductionAssetResponse);
+    rpc CreateWorkOrder(CreateWorkOrderRequest) returns (CreateWorkOrderResponse);
+    rpc UpdateWorkOrderStatus(UpdateWorkOrderStatusRequest) returns (UpdateWorkOrderStatusResponse);
+    rpc SubmitMeterReading(SubmitMeterReadingRequest) returns (SubmitMeterReadingResponse);
+    rpc GetMaintenanceProgram(GetMaintenanceProgramRequest) returns (GetMaintenanceProgramResponse);
+    rpc RecordFailure(RecordFailureRequest) returns (RecordFailureResponse);
+}
+
+// Production Asset messages
+message GetProductionAssetRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProductionAssetResponse {
+    ProductionAsset data = 1;
+}
+
+message ProductionAsset {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_code = 3;
+    string asset_name = 4;
+    string asset_type = 5;
+    string facility_id = 6;
+    string department_id = 7;
+    string work_center_id = 8;
+    string criticality = 9;
+    string current_condition = 10;
+    double condition_score = 11;
+    double total_runtime_hours = 12;
+    double total_downtime_hours = 13;
+    double mtbf_hours = 14;
+    double mttr_hours = 15;
+    double availability_pct = 16;
+    double oee_pct = 17;
+    int64 replacement_value_cents = 18;
+    string eam_asset_id = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+// Work Order messages
+message CreateWorkOrderRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    string program_id = 3;
+    string work_type = 4;
+    string description = 5;
+    string priority = 6;
+    string scheduled_start = 7;
+    string scheduled_end = 8;
+    int64 estimated_cost_cents = 9;
+}
+
+message CreateWorkOrderResponse {
+    WorkOrder data = 1;
+}
+
+message WorkOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string work_order_number = 3;
+    string asset_id = 4;
+    string program_id = 5;
+    string work_type = 6;
+    string description = 7;
+    string priority = 8;
+    string status = 9;
+    string assigned_technician_id = 10;
+    string scheduled_start = 11;
+    string scheduled_end = 12;
+    string actual_start = 13;
+    string actual_end = 14;
+    double downtime_hours = 15;
+    double estimated_hours = 16;
+    double actual_hours = 17;
+    int64 estimated_cost_cents = 18;
+    int64 actual_cost_cents = 19;
+    string currency_code = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+message UpdateWorkOrderStatusRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string status = 3;
+    string assigned_technician_id = 4;
+    string completion_notes = 5;
+}
+
+message UpdateWorkOrderStatusResponse {
+    WorkOrder data = 1;
+}
+
+// Meter Reading messages
+message SubmitMeterReadingRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    string meter_type = 3;
+    double reading_value = 4;
+    string unit = 5;
+    string reading_date = 6;
+    string reading_source = 7;
+}
+
+message SubmitMeterReadingResponse {
+    string id = 1;
+    double reading_value = 2;
+    string triggered_program_id = 3;
+}
+
+// Maintenance Program messages
+message GetMaintenanceProgramRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetMaintenanceProgramResponse {
+    MaintenanceProgram data = 1;
+}
+
+message MaintenanceProgram {
+    string id = 1;
+    string tenant_id = 2;
+    string program_code = 3;
+    string program_name = 4;
+    string strategy_type = 5;
+    string asset_id = 6;
+    string trigger_type = 7;
+    string trigger_config = 8;
+    double estimated_duration_hours = 9;
+    int64 estimated_cost_cents = 10;
+    string status = 11;
+    string next_due_date = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Failure Record messages
+message RecordFailureRequest {
+    string tenant_id = 1;
+    string work_order_id = 2;
+    string asset_id = 3;
+    string failure_date = 4;
+    string failure_type = 5;
+    string failure_severity = 6;
+    double downtime_hours = 7;
+    int64 repair_cost_cents = 8;
+    int64 production_loss_cents = 9;
+}
+
+message RecordFailureResponse {
+    FailureRecord data = 1;
+}
+
+message FailureRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string work_order_id = 3;
+    string asset_id = 4;
+    string failure_date = 5;
+    string failure_type = 6;
+    string failure_severity = 7;
+    double downtime_hours = 8;
+    int64 repair_cost_cents = 9;
+    int64 production_loss_cents = 10;
+    double rpn_score = 11;
+    string created_at = 12;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | mc_production_assets | -- |
+| V002 | mc_maintenance_programs | V001 |
+| V003 | mc_work_orders | V001 |
+| V004 | mc_wo_operations | V003 |
+| V005 | mc_meter_readings | V001 |
+| V006 | mc_failure_records | V003 |
+
+---
+
+## 7. Business Rules
 
 1. **PM Generation**: Preventive work orders auto-generated based on program trigger configuration
 2. **Emergency Priority**: EMERGENCY work orders bypass scheduling; immediate technician assignment
@@ -335,7 +530,7 @@ CREATE INDEX idx_mc_fail_severity ON mc_failure_records(tenant_id, failure_sever
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

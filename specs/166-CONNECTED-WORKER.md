@@ -267,7 +267,153 @@ CREATE INDEX idx_cw_shift_score ON cw_shift_safety(tenant_id, safety_score);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.connected_worker.v1;
+
+service ConnectedWorkerService {
+    rpc UpdateLocation(UpdateLocationRequest) returns (UpdateLocationResponse);
+    rpc GetWorkerLocation(GetWorkerLocationRequest) returns (GetWorkerLocationResponse);
+    rpc SubmitSensorReading(SubmitSensorReadingRequest) returns (SubmitSensorReadingResponse);
+    rpc CreateSafetyAlert(CreateSafetyAlertRequest) returns (CreateSafetyAlertResponse);
+    rpc AcknowledgeAlert(AcknowledgeAlertRequest) returns (AcknowledgeAlertResponse);
+    rpc GetZoneOccupancy(GetZoneOccupancyRequest) returns (GetZoneOccupancyResponse);
+}
+
+// Location messages
+message UpdateLocationRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+    string device_id = 3;
+    string zone_id = 4;
+    string zone_name = 5;
+    string facility_id = 6;
+    double latitude = 7;
+    double longitude = 8;
+    double altitude = 9;
+    int32 floor_level = 10;
+    double accuracy_meters = 11;
+    double speed_mps = 12;
+    double heading_degrees = 13;
+}
+
+message UpdateLocationResponse {
+    string id = 1;
+}
+
+message GetWorkerLocationRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+}
+
+message GetWorkerLocationResponse {
+    WorkerLocation location = 1;
+}
+
+message WorkerLocation {
+    string id = 1;
+    string worker_id = 2;
+    string device_id = 3;
+    string zone_id = 4;
+    string zone_name = 5;
+    string facility_id = 6;
+    double latitude = 7;
+    double longitude = 8;
+    double altitude = 9;
+    int32 floor_level = 10;
+    string timestamp = 11;
+}
+
+// Sensor messages
+message SubmitSensorReadingRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+    string device_id = 3;
+    string reading_type = 4;
+    double value = 5;
+    string unit = 6;
+    string alert_level = 7;
+}
+
+message SubmitSensorReadingResponse {
+    string id = 1;
+    string alert_level = 2;
+}
+
+// Safety Alert messages
+message CreateSafetyAlertRequest {
+    string tenant_id = 1;
+    string alert_type = 2;
+    string severity = 3;
+    string worker_id = 4;
+    string worker_name = 5;
+    string facility_id = 6;
+    string zone_id = 7;
+    string device_id = 8;
+    string description = 9;
+}
+
+message CreateSafetyAlertResponse {
+    SafetyAlert alert = 1;
+}
+
+message SafetyAlert {
+    string id = 1;
+    string tenant_id = 2;
+    string alert_type = 3;
+    string severity = 4;
+    string worker_id = 5;
+    string worker_name = 6;
+    string facility_id = 7;
+    string zone_id = 8;
+    string device_id = 9;
+    string description = 10;
+    string status = 11;
+    string created_at = 12;
+}
+
+message AcknowledgeAlertRequest {
+    string tenant_id = 1;
+    string alert_id = 2;
+    string acknowledged_by = 3;
+}
+
+message AcknowledgeAlertResponse {
+    SafetyAlert alert = 1;
+}
+
+// Zone Occupancy messages
+message GetZoneOccupancyRequest {
+    string tenant_id = 1;
+    string zone_id = 2;
+}
+
+message GetZoneOccupancyResponse {
+    string zone_id = 1;
+    string zone_name = 2;
+    int32 current_occupancy = 3;
+    int32 max_occupancy = 4;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | cw_worker_devices | -- |
+| V002 | cw_geofence_zones | -- |
+| V003 | cw_worker_locations | V001 |
+| V004 | cw_sensor_readings | V001 |
+| V005 | cw_safety_alerts | V001 |
+| V006 | cw_shift_safety | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Real-Time Monitoring**: Location updates processed within 10 seconds of receipt
 2. **Alert Escalation**: CRITICAL alerts auto-escalate to safety manager within 2 minutes
@@ -280,7 +426,7 @@ CREATE INDEX idx_cw_shift_score ON cw_shift_safety(tenant_id, safety_score);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

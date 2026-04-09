@@ -225,7 +225,165 @@ CREATE TABLE gl_goal_library (
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.goals.v1;
+
+service GoalsService {
+    rpc GetGoalPlan(GetGoalPlanRequest) returns (GetGoalPlanResponse);
+    rpc CreateGoalPlan(CreateGoalPlanRequest) returns (CreateGoalPlanResponse);
+    rpc GetGoal(GetGoalRequest) returns (GetGoalResponse);
+    rpc CreateGoal(CreateGoalRequest) returns (CreateGoalResponse);
+    rpc UpdateProgress(UpdateProgressRequest) returns (UpdateProgressResponse);
+    rpc GetGoalTree(GetGoalTreeRequest) returns (GetGoalTreeResponse);
+}
+
+// Goal Plan messages
+message GetGoalPlanRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetGoalPlanResponse {
+    GoalPlan data = 1;
+}
+
+message GoalPlan {
+    string id = 1;
+    string tenant_id = 2;
+    string plan_code = 3;
+    string plan_name = 4;
+    string plan_type = 5;
+    string period_start = 6;
+    string period_end = 7;
+    string status = 8;
+    int32 goal_count = 9;
+    double avg_completion_pct = 10;
+    string description = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message CreateGoalPlanRequest {
+    string tenant_id = 1;
+    string plan_code = 2;
+    string plan_name = 3;
+    string plan_type = 4;
+    string period_start = 5;
+    string period_end = 6;
+    string description = 7;
+}
+
+message CreateGoalPlanResponse {
+    GoalPlan data = 1;
+}
+
+// Goal messages
+message GetGoalRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetGoalResponse {
+    Goal data = 1;
+}
+
+message Goal {
+    string id = 1;
+    string tenant_id = 2;
+    string plan_id = 3;
+    string parent_goal_id = 4;
+    string goal_name = 5;
+    string goal_type = 6;
+    string description = 7;
+    string owner_type = 8;
+    string owner_id = 9;
+    double weight = 10;
+    string priority = 11;
+    string start_date = 12;
+    string target_date = 13;
+    double completion_pct = 14;
+    string status = 15;
+    string alignment_type = 16;
+    string linked_goal_ids = 17;
+    string category = 18;
+    string tags = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message CreateGoalRequest {
+    string tenant_id = 1;
+    string plan_id = 2;
+    string parent_goal_id = 3;
+    string goal_name = 4;
+    string goal_type = 5;
+    string description = 6;
+    string owner_type = 7;
+    string owner_id = 8;
+    double weight = 9;
+    string priority = 10;
+    string start_date = 11;
+    string target_date = 12;
+    string category = 13;
+}
+
+message CreateGoalResponse {
+    Goal data = 1;
+}
+
+// Progress messages
+message UpdateProgressRequest {
+    string tenant_id = 1;
+    string goal_id = 2;
+    string metric_id = 3;
+    string update_type = 4;
+    string new_value = 5;
+    string comment = 6;
+    string confidence_level = 7;
+    string updated_by = 8;
+}
+
+message UpdateProgressResponse {
+    string id = 1;
+    double completion_pct = 2;
+    string status = 3;
+}
+
+// Goal Tree messages
+message GetGoalTreeRequest {
+    string tenant_id = 1;
+    string goal_id = 2;
+}
+
+message GetGoalTreeResponse {
+    repeated GoalNode nodes = 1;
+}
+
+message GoalNode {
+    Goal goal = 1;
+    repeated GoalNode children = 2;
+    double alignment_weight = 3;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | gl_goal_plans | -- |
+| V002 | gl_goals | V001 |
+| V003 | gl_goal_metrics | V002 |
+| V004 | gl_progress_updates | V002 |
+| V005 | gl_goal_library | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Cascading**: Company goals cascade to departments → teams → individuals; alignment tracked
 2. **Weight Validation**: Sum of individual goal weights within a plan must equal 100%
@@ -237,7 +395,7 @@ CREATE TABLE gl_goal_library (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

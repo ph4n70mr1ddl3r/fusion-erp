@@ -225,7 +225,159 @@ CREATE TABLE nc_templates (
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.notification.v1;
+
+service NotificationService {
+    rpc GetNotification(GetNotificationRequest) returns (GetNotificationResponse);
+    rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse);
+    rpc SendBatchNotification(SendBatchNotificationRequest) returns (SendBatchNotificationResponse);
+    rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse);
+    rpc UpdateUserPreferences(UpdateUserPreferencesRequest) returns (UpdateUserPreferencesResponse);
+    rpc GetUnreadCount(GetUnreadCountRequest) returns (GetUnreadCountResponse);
+}
+
+// Notification messages
+message GetNotificationRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetNotificationResponse {
+    Notification data = 1;
+}
+
+message Notification {
+    string id = 1;
+    string tenant_id = 2;
+    string type_code = 3;
+    string recipient_id = 4;
+    string title = 5;
+    string body = 6;
+    string rich_body = 7;
+    string source_module = 8;
+    string source_id = 9;
+    string action_url = 10;
+    string action_label = 11;
+    string priority = 12;
+    string status = 13;
+    string channels_delivered = 14;
+    string group_key = 15;
+    string expires_at = 16;
+    string read_at = 17;
+    string acknowledged_at = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message SendNotificationRequest {
+    string tenant_id = 1;
+    string type_code = 2;
+    string recipient_id = 3;
+    string title = 4;
+    string body = 5;
+    string rich_body = 6;
+    string source_module = 7;
+    string source_id = 8;
+    string action_url = 9;
+    string action_label = 10;
+    string priority = 11;
+    string group_key = 12;
+}
+
+message SendNotificationResponse {
+    Notification data = 1;
+}
+
+message SendBatchNotificationRequest {
+    string tenant_id = 1;
+    string type_code = 2;
+    repeated string recipient_ids = 3;
+    string title = 4;
+    string body = 5;
+    string source_module = 6;
+    string priority = 7;
+}
+
+message SendBatchNotificationResponse {
+    int32 sent_count = 1;
+    repeated string notification_ids = 2;
+}
+
+// User Preference messages
+message GetUserPreferencesRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string type_code = 3;
+}
+
+message GetUserPreferencesResponse {
+    UserPreferences data = 1;
+}
+
+message UserPreferences {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string type_code = 4;
+    int32 channel_in_app = 5;
+    int32 channel_email = 6;
+    int32 channel_sms = 7;
+    int32 channel_push = 8;
+    int32 digest_enabled = 9;
+    string digest_frequency = 10;
+    string quiet_hours_start = 11;
+    string quiet_hours_end = 12;
+}
+
+message UpdateUserPreferencesRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string type_code = 3;
+    int32 channel_in_app = 4;
+    int32 channel_email = 5;
+    int32 channel_sms = 6;
+    int32 channel_push = 7;
+    int32 digest_enabled = 8;
+    string digest_frequency = 9;
+    string quiet_hours_start = 10;
+    string quiet_hours_end = 11;
+}
+
+message UpdateUserPreferencesResponse {
+    UserPreferences data = 1;
+}
+
+// Unread Count messages
+message GetUnreadCountRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+}
+
+message GetUnreadCountResponse {
+    int32 unread_count = 1;
+    int32 urgent_count = 2;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | nc_notification_types | -- |
+| V002 | nc_templates | -- |
+| V003 | nc_user_preferences | -- |
+| V004 | nc_notifications | V001 |
+| V005 | nc_delivery_log | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Preference Respect**: Notifications delivered only via channels enabled in user preferences
 2. **Quiet Hours**: No push/SMS during quiet hours; queued for delivery after quiet period
@@ -238,15 +390,19 @@ CREATE TABLE nc_templates (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| All Modules | Notification event source |
-| Workflow (16) | Approval and task notifications |
-| Digital Assistant (43) | Chat-based notifications |
-| Email/SMS Gateways | External delivery channels |
-| Push Notification Service | Mobile push delivery |
-| Mobile (46) | Mobile notification display |
-| Enterprise Search (164) | Notification search |
-| Auth & Security (05) | User identity for delivery |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| auth-service | `GetUserPreferences` | Resolve user identity and delivery preferences |
+| email-gateway | `SendEmail` | Deliver email notifications |
+| push-service | `SendPush` | Deliver mobile push notifications |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| All modules | `SendNotification` | Send notifications to users |
+| All modules | `SendBatchNotification` | Batch send to multiple recipients |
+| workflow-service | `SendApprovalNotification` | Deliver approval/task notifications |
+| digital-assistant-service | `GetNotifications` | Chat-based notification retrieval |

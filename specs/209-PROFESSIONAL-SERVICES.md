@@ -237,7 +237,334 @@ CREATE INDEX idx_ps_pa_practice ON ps_practice_analytics(practice_area, period D
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+
+package fusion.professional_services.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ── Service ──────────────────────────────────────────────────────────
+service ProfessionalServicesService {
+  // Engagements
+  rpc CreateEngagement(CreateEngagementRequest) returns (Engagement);
+  rpc GetEngagement(GetEngagementRequest) returns (Engagement);
+  rpc ListEngagements(ListEngagementsRequest) returns (ListEngagementsResponse);
+  rpc UpdateEngagement(UpdateEngagementRequest) returns (Engagement);
+
+  // Time & Expense
+  rpc SubmitTimeEntry(SubmitTimeEntryRequest) returns (TimeExpenseEntry);
+  rpc ApproveTimeEntry(ApproveTimeEntryRequest) returns (TimeExpenseEntry);
+
+  // Utilization
+  rpc GetResourceUtilization(GetResourceUtilizationRequest) returns (Utilization);
+  rpc ListTeamUtilization(ListTeamUtilizationRequest) returns (ListTeamUtilizationResponse);
+
+  // WIP Management
+  rpc GetEngagementWip(GetEngagementWipRequest) returns (ListWipResponse);
+  rpc GenerateInvoiceFromWip(GenerateInvoiceFromWipRequest) returns (GenerateInvoiceFromWipResponse);
+}
+
+// ── Enums ────────────────────────────────────────────────────────────
+enum EngagementType {
+  ENGAGEMENT_TYPE_UNSPECIFIED = 0;
+  ENGAGEMENT_TYPE_CONSULTING = 1;
+  ENGAGEMENT_TYPE_ADVISORY = 2;
+  ENGAGEMENT_TYPE_IMPLEMENTATION = 3;
+  ENGAGEMENT_TYPE_MANAGED_SERVICE = 4;
+  ENGAGEMENT_TYPE_AUDIT = 5;
+  ENGAGEMENT_TYPE_LEGAL = 6;
+}
+
+enum BillingMethod {
+  BILLING_METHOD_UNSPECIFIED = 0;
+  BILLING_METHOD_HOURLY = 1;
+  BILLING_METHOD_FIXED_FEE = 2;
+  BILLING_METHOD_RETAINER = 3;
+  BILLING_METHOD_MILESTONE = 4;
+  BILLING_METHOD_BLENDED = 5;
+}
+
+enum EngagementStage {
+  ENGAGEMENT_STAGE_UNSPECIFIED = 0;
+  ENGAGEMENT_STAGE_PIPELINE = 1;
+  ENGAGEMENT_STAGE_PROPOSAL = 2;
+  ENGAGEMENT_STAGE_NEGOTIATION = 3;
+  ENGAGEMENT_STAGE_WON = 4;
+  ENGAGEMENT_STAGE_ACTIVE = 5;
+  ENGAGEMENT_STAGE_COMPLETED = 6;
+  ENGAGEMENT_STAGE_LOST = 7;
+}
+
+enum EntryType {
+  ENTRY_TYPE_UNSPECIFIED = 0;
+  ENTRY_TYPE_BILLABLE = 1;
+  ENTRY_TYPE_NON_BILLABLE = 2;
+  ENTRY_TYPE_ADMIN = 3;
+  ENTRY_TYPE_BUSINESS_DEV = 4;
+  ENTRY_TYPE_TRAINING = 5;
+  ENTRY_TYPE_PTO = 6;
+}
+
+enum ExpenseType {
+  EXPENSE_TYPE_UNSPECIFIED = 0;
+  EXPENSE_TYPE_TRAVEL = 1;
+  EXPENSE_TYPE_MEALS = 2;
+  EXPENSE_TYPE_ACCOMMODATION = 3;
+  EXPENSE_TYPE_MATERIALS = 4;
+  EXPENSE_TYPE_OTHER = 5;
+}
+
+enum TimeEntryStatus {
+  TIME_ENTRY_STATUS_UNSPECIFIED = 0;
+  TIME_ENTRY_STATUS_DRAFT = 1;
+  TIME_ENTRY_STATUS_SUBMITTED = 2;
+  TIME_ENTRY_STATUS_APPROVED = 3;
+  TIME_ENTRY_STATUS_REJECTED = 4;
+  TIME_ENTRY_STATUS_INVOICED = 5;
+}
+
+enum WipStatus {
+  WIP_STATUS_UNSPECIFIED = 0;
+  WIP_STATUS_OPEN = 1;
+  WIP_STATUS_BILLED = 2;
+  WIP_STATUS_WRITTEN_OFF = 3;
+}
+
+// ── Common Messages ──────────────────────────────────────────────────
+message AuditInfo {
+  string created_at = 1;
+  string updated_at = 2;
+  string created_by = 3;
+  string updated_by = 4;
+  int32 version = 5;
+}
+
+// ── Engagement Messages ──────────────────────────────────────────────
+message Engagement {
+  string id = 1;
+  string tenant_id = 2;
+  string engagement_number = 3;
+  string engagement_name = 4;
+  string client_id = 5;
+  string client_name = 6;
+  string practice_area = 7;
+  EngagementType engagement_type = 8;
+  BillingMethod billing_method = 9;
+  int64 contract_value_cents = 10;
+  double budget_hours = 11;
+  int64 bill_rate_cents = 12;
+  int64 cost_rate_cents = 13;
+  string engagement_start = 14;
+  string engagement_end = 15;
+  string partner_id = 16;
+  string manager_id = 17;
+  double win_probability_pct = 18;
+  EngagementStage stage = 19;
+  AuditInfo audit = 20;
+}
+
+message CreateEngagementRequest {
+  string tenant_id = 1;
+  string engagement_number = 2;
+  string engagement_name = 3;
+  string client_id = 4;
+  string client_name = 5;
+  string practice_area = 6;
+  EngagementType engagement_type = 7;
+  BillingMethod billing_method = 8;
+  int64 contract_value_cents = 9;
+  double budget_hours = 10;
+  int64 bill_rate_cents = 11;
+  int64 cost_rate_cents = 12;
+  string engagement_start = 13;
+  string engagement_end = 14;
+  string partner_id = 15;
+  string manager_id = 16;
+  string user_id = 17;
+}
+
+message GetEngagementRequest {
+  string id = 1;
+  string tenant_id = 2;
+}
+
+message ListEngagementsRequest {
+  string tenant_id = 1;
+  EngagementStage stage = 2;
+  string client_id = 3;
+  string practice_area = 4;
+  string partner_id = 5;
+  int32 page_size = 6;
+  string page_token = 7;
+}
+
+message ListEngagementsResponse {
+  repeated Engagement engagements = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message UpdateEngagementRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string engagement_name = 3;
+  int64 contract_value_cents = 4;
+  double budget_hours = 5;
+  int64 bill_rate_cents = 6;
+  int64 cost_rate_cents = 7;
+  string engagement_end = 8;
+  double win_probability_pct = 9;
+  EngagementStage stage = 10;
+  string user_id = 11;
+}
+
+// ── Time & Expense Messages ──────────────────────────────────────────
+message TimeExpenseEntry {
+  string id = 1;
+  string tenant_id = 2;
+  string engagement_id = 3;
+  string resource_id = 4;
+  string entry_date = 5;
+  EntryType entry_type = 6;
+  double hours = 7;
+  int64 bill_rate_cents = 8;
+  int64 cost_rate_cents = 9;
+  int64 revenue_cents = 10;
+  int64 cost_cents = 11;
+  ExpenseType expense_type = 12;
+  int64 expense_amount_cents = 13;
+  bool expense_billable = 14;
+  string description = 15;
+  string approved_by = 16;
+  string approved_at = 17;
+  TimeEntryStatus status = 18;
+  AuditInfo audit = 19;
+}
+
+message SubmitTimeEntryRequest {
+  string tenant_id = 1;
+  string engagement_id = 2;
+  string resource_id = 3;
+  string entry_date = 4;
+  EntryType entry_type = 5;
+  double hours = 6;
+  int64 bill_rate_cents = 7;
+  int64 cost_rate_cents = 8;
+  ExpenseType expense_type = 9;
+  int64 expense_amount_cents = 10;
+  bool expense_billable = 11;
+  string description = 12;
+  string user_id = 13;
+}
+
+message ApproveTimeEntryRequest {
+  string id = 1;
+  string tenant_id = 2;
+  string approved_by = 3;
+}
+
+// ── Utilization Messages ─────────────────────────────────────────────
+message Utilization {
+  string id = 1;
+  string tenant_id = 2;
+  string resource_id = 3;
+  string period = 4;
+  double total_available_hours = 5;
+  double billable_hours = 6;
+  double non_billable_hours = 7;
+  double admin_hours = 8;
+  double biz_dev_hours = 9;
+  double training_hours = 10;
+  double pto_hours = 11;
+  double billable_utilization_pct = 12;
+  double total_utilization_pct = 13;
+  int64 revenue_cents = 14;
+  int64 cost_cents = 15;
+  double margin_pct = 16;
+  double target_utilization_pct = 17;
+  string created_at = 18;
+  string updated_at = 19;
+}
+
+message GetResourceUtilizationRequest {
+  string resource_id = 1;
+  string tenant_id = 2;
+  string period = 3;
+}
+
+message ListTeamUtilizationRequest {
+  string tenant_id = 1;
+  string practice_area = 2;
+  string period = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListTeamUtilizationResponse {
+  repeated Utilization utilizations = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+// ── WIP Messages ─────────────────────────────────────────────────────
+message WipEntry {
+  string id = 1;
+  string tenant_id = 2;
+  string engagement_id = 3;
+  string resource_id = 4;
+  string period = 5;
+  int64 unbilled_revenue_cents = 6;
+  int64 unbilled_cost_cents = 7;
+  int64 recognized_revenue_cents = 8;
+  int64 billed_amount_cents = 9;
+  int64 written_off_cents = 10;
+  int32 aging_days = 11;
+  WipStatus status = 12;
+  string created_at = 13;
+  string updated_at = 14;
+}
+
+message GetEngagementWipRequest {
+  string engagement_id = 1;
+  string tenant_id = 2;
+  WipStatus status = 3;
+}
+
+message ListWipResponse {
+  repeated WipEntry entries = 1;
+  int64 total_unbilled_cents = 2;
+}
+
+message GenerateInvoiceFromWipRequest {
+  string tenant_id = 1;
+  string engagement_id = 2;
+  repeated string wip_entry_ids = 3;
+  string user_id = 4;
+}
+
+message GenerateInvoiceFromWipResponse {
+  string invoice_id = 1;
+  int64 total_invoiced_cents = 2;
+  int32 entries_billed = 3;
+}
+```
+
+## 6. Migration Order
+
+| Order | Table | Depends On |
+|-------|-------|------------|
+| 1 | `ps_engagements` | — |
+| 2 | `ps_time_expense` | `ps_engagements` |
+| 3 | `ps_utilization` | — |
+| 4 | `ps_wip` | `ps_engagements` |
+| 5 | `ps_practice_analytics` | — |
+
+---
+
+## 7. Business Rules
 
 1. **Utilization Targets**: Individual utilization targets tracked; underutilization flagged weekly
 2. **WIP Aging**: Unbilled WIP exceeding 60 days flagged for review
@@ -248,7 +575,7 @@ CREATE INDEX idx_ps_pa_practice ON ps_practice_analytics(practice_area, period D
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
 | Service | Integration |
 |---------|-------------|

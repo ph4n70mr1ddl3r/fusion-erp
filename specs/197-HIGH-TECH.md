@@ -255,7 +255,218 @@ CREATE INDEX idx_ht_rma_disposition ON ht_rma_processing(disposition);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.high_tech.v1;
+
+service HighTechService {
+    rpc GetProductConfiguration(GetProductConfigurationRequest) returns (GetProductConfigurationResponse);
+    rpc GetComponentLifecycle(GetComponentLifecycleRequest) returns (GetComponentLifecycleResponse);
+    rpc CreateEco(CreateEcoRequest) returns (CreateEcoResponse);
+    rpc GetEco(GetEcoRequest) returns (GetEcoResponse);
+    rpc CreateCmOrder(CreateCmOrderRequest) returns (CreateCmOrderResponse);
+    rpc CreateRma(CreateRmaRequest) returns (CreateRmaResponse);
+}
+
+// Product configuration messages
+message GetProductConfigurationRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProductConfigurationResponse {
+    HtProductConfiguration data = 1;
+}
+
+message HtProductConfiguration {
+    string id = 1;
+    string tenant_id = 2;
+    string config_code = 3;
+    string base_product_id = 4;
+    string rules = 5;
+    string constraints = 6;
+    string compatible_options = 7;
+    string pricing_impact = 8;
+    string bom_mapping = 9;
+    string validation_rules = 10;
+    string effective_from = 11;
+    string effective_to = 12;
+    string status = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+// Component lifecycle messages
+message GetComponentLifecycleRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetComponentLifecycleResponse {
+    HtComponentLifecycle data = 1;
+}
+
+message HtComponentLifecycle {
+    string id = 1;
+    string tenant_id = 2;
+    string component_code = 3;
+    string component_name = 4;
+    string category = 5;
+    string supplier_id = 6;
+    string lifecycle_stage = 7;
+    string replacement_component_id = 8;
+    string last_time_buy_date = 9;
+    int32 inventory_on_hand = 10;
+    int32 lead_time_days = 11;
+    string risk_level = 12;
+    bool notification_sent = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// ECO messages
+message CreateEcoRequest {
+    string tenant_id = 1;
+    string eco_number = 2;
+    string eco_type = 3;
+    string title = 4;
+    string description = 5;
+    string affected_assemblies = 6;
+    string change_description = 7;
+    string impact_assessment = 8;
+    string approval_chain = 9;
+    string submitted_by = 10;
+}
+
+message CreateEcoResponse {
+    HtEcoRequest data = 1;
+}
+
+message GetEcoRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEcoResponse {
+    HtEcoRequest data = 1;
+}
+
+message HtEcoRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string eco_number = 3;
+    string eco_type = 4;
+    string title = 5;
+    string description = 6;
+    string affected_assemblies = 7;
+    string change_description = 8;
+    string impact_assessment = 9;
+    string approval_chain = 10;
+    string submitted_by = 11;
+    string submitted_at = 12;
+    string approved_by = 13;
+    string approved_at = 14;
+    string implementation_date = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+// Contract manufacturing messages
+message CreateCmOrderRequest {
+    string tenant_id = 1;
+    string order_number = 2;
+    string cm_partner_id = 3;
+    string bom = 4;
+    double yield_requirement_pct = 5;
+    string quality_specs = 6;
+    string ip_protection_rules = 7;
+    string production_start = 8;
+    string production_end = 9;
+    int32 quantity_ordered = 10;
+    int64 unit_cost_cents = 11;
+}
+
+message CreateCmOrderResponse {
+    HtContractManufacturing data = 1;
+}
+
+message HtContractManufacturing {
+    string id = 1;
+    string tenant_id = 2;
+    string order_number = 3;
+    string cm_partner_id = 4;
+    string bom = 5;
+    double yield_requirement_pct = 6;
+    string quality_specs = 7;
+    string ip_protection_rules = 8;
+    string production_start = 9;
+    string production_end = 10;
+    int32 quantity_ordered = 11;
+    int32 quantity_accepted = 12;
+    int32 quantity_rejected = 13;
+    int64 unit_cost_cents = 14;
+    int64 total_cost_cents = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+// RMA messages
+message CreateRmaRequest {
+    string tenant_id = 1;
+    string rma_number = 2;
+    string product_id = 3;
+    string customer_id = 4;
+    string defect_code = 5;
+    string defect_description = 6;
+    string disposition = 7;
+    string warranty_id = 8;
+}
+
+message CreateRmaResponse {
+    HtRmaProcessing data = 1;
+}
+
+message HtRmaProcessing {
+    string id = 1;
+    string tenant_id = 2;
+    string rma_number = 3;
+    string product_id = 4;
+    string customer_id = 5;
+    string defect_code = 6;
+    string defect_description = 7;
+    string defect_analysis = 8;
+    string disposition = 9;
+    string warranty_id = 10;
+    int64 repair_cost_cents = 11;
+    bool replacement_shipped = 12;
+    string processed_by = 13;
+    string processed_at = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ht_product_configurations | -- |
+| V002 | ht_component_lifecycle | -- |
+| V003 | ht_eco_requests | -- |
+| V004 | ht_contract_manufacturing | -- |
+| V005 | ht_rma_processing | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Configuration Validation**: All configuration rules and constraints validated before order acceptance
 2. **EOL Notifications**: Automatic alerts 90/60/30 days before last-time-buy date
@@ -266,13 +477,20 @@ CREATE INDEX idx_ht_rma_disposition ON ht_rma_processing(disposition);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Product Development (162) | Engineering BOM and change management |
-| Quality Management (136) | Quality specs and defect tracking |
-| Order Management (32) | Returns and RMAs |
-| Inventory (34) | Component availability and EOL |
-| Supplier Management (139) | Supplier and CM partner data |
-| Manufacturing (40) | Production order integration |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| product-development-service | `GetBOM` | Engineering BOM and change management |
+| quality-service | `GetSpec` / `GetDefect` | Quality specs and defect tracking |
+| order-service | `CreateReturn` | Returns and RMAs |
+| inventory-service | `GetStock` | Component availability and EOL |
+| supplier-service | `GetSupplier` | Supplier and CM partner data |
+| manufacturing-service | `CreateOrder` | Production order integration |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| order-service | `GetRma` | RMA status and tracking |
+| quality-service | `GetDefectAnalysis` | Defect analysis from RMA data |
