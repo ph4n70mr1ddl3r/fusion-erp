@@ -436,6 +436,181 @@ service RevenueManagementService {
     rpc GetDeferredRevenue(GetDeferredRevenueRequest) returns (GetDeferredRevenueResponse);
     rpc GetRevenueWaterfall(GetRevenueWaterfallRequest) returns (GetRevenueWaterfallResponse);
 }
+
+// Contract messages
+message CreateContractRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string contract_date = 3;
+    string start_date = 4;
+    string end_date = 5;
+    string description = 6;
+    int64 total_transaction_price_cents = 7;
+    string currency_code = 8;
+    string source_type = 9;
+    string source_id = 10;
+}
+
+message CreateContractResponse {
+    RevenueContract data = 1;
+}
+
+message GetContractRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetContractResponse {
+    RevenueContract data = 1;
+}
+
+message RevenueContract {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_number = 3;
+    string customer_id = 4;
+    string contract_date = 5;
+    string start_date = 6;
+    string end_date = 7;
+    string description = 8;
+    string status = 9;
+    int64 total_transaction_price_cents = 10;
+    int64 recognized_revenue_cents = 11;
+    int64 deferred_revenue_cents = 12;
+    string currency_code = 13;
+    string source_type = 14;
+    string source_id = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Performance Obligation messages
+message AddPerformanceObligationRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string pob_number = 3;
+    string description = 4;
+    string product_type = 5;
+    string recognition_method = 6;
+    string recognition_timing = 7;
+    int64 ssp_amount_cents = 8;
+    string ssp_method = 9;
+    int32 quantity = 10;
+    string unit_of_measure = 11;
+    string satisfaction_start_date = 12;
+    string satisfaction_end_date = 13;
+}
+
+message AddPerformanceObligationResponse {
+    PerformanceObligation data = 1;
+}
+
+message PerformanceObligation {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string pob_number = 4;
+    string description = 5;
+    string product_type = 6;
+    string recognition_method = 7;
+    string recognition_timing = 8;
+    int64 ssp_amount_cents = 9;
+    string ssp_method = 10;
+    int64 allocated_amount_cents = 11;
+    int32 quantity = 12;
+    string unit_of_measure = 13;
+    string satisfaction_start_date = 14;
+    string satisfaction_end_date = 15;
+    double satisfaction_percent_complete = 16;
+    int64 recognized_revenue_cents = 17;
+    int64 deferred_revenue_cents = 18;
+    string currency_code = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+// Allocation messages
+message AllocateTransactionPriceRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string allocation_method = 3;
+}
+
+message AllocateTransactionPriceResponse {
+    string contract_id = 1;
+    repeated AllocationResult allocations = 2;
+}
+
+message AllocationResult {
+    string pob_id = 1;
+    string pob_number = 2;
+    int64 ssp_amount_cents = 3;
+    int64 allocated_amount_cents = 4;
+}
+
+// Recognition messages
+message RunRecognitionRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+    repeated string contract_ids = 3;
+}
+
+message RunRecognitionResponse {
+    int32 contracts_processed = 1;
+    int32 obligations_processed = 2;
+    int64 total_recognized_cents = 3;
+    int32 entries_created = 4;
+}
+
+// Deferred Revenue messages
+message GetDeferredRevenueRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string period_name = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message GetDeferredRevenueResponse {
+    repeated DeferredRevenue items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message DeferredRevenue {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string pob_id = 4;
+    string period_name = 5;
+    int64 beginning_balance_cents = 6;
+    int64 additions_cents = 7;
+    int64 recognized_cents = 8;
+    int64 adjustments_cents = 9;
+    int64 ending_balance_cents = 10;
+    string currency_code = 11;
+}
+
+// Waterfall messages
+message GetRevenueWaterfallRequest {
+    string tenant_id = 1;
+    string period_from = 2;
+    string period_to = 3;
+    string currency_code = 4;
+}
+
+message GetRevenueWaterfallResponse {
+    repeated WaterfallEntry entries = 1;
+}
+
+message WaterfallEntry {
+    string period_name = 1;
+    int64 beginning_deferred_cents = 2;
+    int64 new_deferrals_cents = 3;
+    int64 recognized_cents = 4;
+    int64 ending_deferred_cents = 5;
+}
 ```
 
 ---

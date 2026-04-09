@@ -857,6 +857,327 @@ service ExpenseManagementService {
     rpc UploadReceipt(UploadReceiptRequest) returns (UploadReceiptResponse);
     rpc TriggerOcr(TriggerOcrRequest) returns (TriggerOcrResponse);
 }
+
+// Expense Report messages
+message GetExpenseReportRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetExpenseReportResponse {
+    ExpenseReport data = 1;
+}
+
+message ExpenseReport {
+    string id = 1;
+    string tenant_id = 2;
+    string report_number = 3;
+    string employee_id = 4;
+    string purpose = 5;
+    string description = 6;
+    string trip_from = 7;
+    string trip_to = 8;
+    string trip_start_date = 9;
+    string trip_end_date = 10;
+    string status = 11;
+    string policy_id = 12;
+    string policy_compliance_status = 13;
+    int64 total_cents = 14;
+    int64 reimbursable_cents = 15;
+    int64 non_reimbursable_cents = 16;
+    int64 cash_advance_cents = 17;
+    int64 amount_due_employee_cents = 18;
+    int32 line_count = 19;
+    string currency_code = 20;
+    string submitted_at = 21;
+    string manager_approved_by = 22;
+    string finance_approved_by = 23;
+    string rejection_reason = 24;
+    string gl_journal_id = 25;
+    string ap_invoice_id = 26;
+    string created_at = 27;
+    string updated_at = 28;
+}
+
+message CreateExpenseReportRequest {
+    string tenant_id = 1;
+    string employee_id = 2;
+    string purpose = 3;
+    string description = 4;
+    string policy_id = 5;
+    string currency_code = 6;
+    string trip_from = 7;
+    string trip_to = 8;
+    string trip_start_date = 9;
+    string trip_end_date = 10;
+}
+
+message CreateExpenseReportResponse {
+    ExpenseReport data = 1;
+}
+
+message SubmitExpenseReportRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message SubmitExpenseReportResponse {
+    string id = 1;
+    string status = 2;
+    string submitted_at = 3;
+}
+
+message ApproveExpenseReportRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string comments = 3;
+}
+
+message ApproveExpenseReportResponse {
+    string id = 1;
+    string status = 2;
+}
+
+message RejectExpenseReportRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string rejection_reason = 3;
+}
+
+message RejectExpenseReportResponse {
+    string id = 1;
+    string status = 2;
+}
+
+message GetExpenseReportByNumberRequest {
+    string tenant_id = 1;
+    string report_number = 2;
+}
+
+message GetExpenseReportByNumberResponse {
+    ExpenseReport data = 1;
+}
+
+// Expense Line messages
+message AddExpenseLineRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string category_id = 3;
+    string expense_type = 4;
+    string expense_date = 5;
+    string description = 6;
+    string merchant_name = 7;
+    int64 amount_cents = 8;
+    int64 tax_amount_cents = 9;
+    string currency_code = 10;
+    string project_id = 11;
+    string cost_center = 12;
+    string department = 13;
+}
+
+message AddExpenseLineResponse {
+    ExpenseReportLine data = 1;
+}
+
+message ExpenseReportLine {
+    string id = 1;
+    string tenant_id = 2;
+    string report_id = 3;
+    int32 line_number = 4;
+    string category_id = 5;
+    string expense_type = 6;
+    string expense_date = 7;
+    string description = 8;
+    string merchant_name = 9;
+    int64 amount_cents = 10;
+    int64 tax_amount_cents = 11;
+    int64 total_cents = 12;
+    int64 reimbursable_amount_cents = 13;
+    string currency_code = 14;
+    string policy_compliance_status = 15;
+    string policy_violation_reason = 16;
+    string project_id = 17;
+    string cost_center = 18;
+    string department = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message GetExpenseLinesByReportRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+}
+
+message GetExpenseLinesByReportResponse {
+    repeated ExpenseReportLine items = 1;
+    int32 total_count = 2;
+}
+
+// Policy Compliance messages
+message CheckPolicyComplianceRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+}
+
+message CheckPolicyComplianceResponse {
+    string report_id = 1;
+    string compliance_status = 2;
+    repeated string violations = 3;
+    int32 total_lines_checked = 4;
+    int32 violation_count = 5;
+}
+
+// Per Diem & Mileage messages
+message CalculatePerDiemRequest {
+    string tenant_id = 1;
+    string employee_id = 2;
+    string grade_band = 3;
+    string location_code = 4;
+    string trip_start_date = 5;
+    string trip_end_date = 6;
+}
+
+message CalculatePerDiemResponse {
+    int64 total_per_diem_cents = 1;
+    int32 total_days = 2;
+    int64 first_day_cents = 3;
+    int64 last_day_cents = 4;
+    int64 full_days_cents = 5;
+    int64 meal_deductions_cents = 6;
+    string currency_code = 7;
+}
+
+message CalculateMileageRequest {
+    string tenant_id = 1;
+    string from_location = 2;
+    string to_location = 3;
+    int32 round_trip = 4;
+    string vehicle_type = 5;
+    string expense_date = 6;
+}
+
+message CalculateMileageResponse {
+    double distance_miles = 1;
+    int64 mileage_amount_cents = 2;
+    int32 mileage_rate_per_mile_cents = 3;
+    string currency_code = 4;
+}
+
+// Corporate Card messages
+message ImportCardTransactionsRequest {
+    string tenant_id = 1;
+    string corporate_card_id = 2;
+    string import_batch_id = 3;
+    repeated CardTransactionInput transactions = 4;
+}
+
+message CardTransactionInput {
+    string transaction_date = 1;
+    string merchant_name = 2;
+    int64 amount_cents = 3;
+    string currency_code = 4;
+    string reference_number = 5;
+}
+
+message ImportCardTransactionsResponse {
+    string import_batch_id = 1;
+    int32 imported_count = 2;
+    int32 duplicate_count = 3;
+}
+
+message GetUnmatchedTransactionsRequest {
+    string tenant_id = 1;
+    string employee_id = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message GetUnmatchedTransactionsResponse {
+    repeated CardTransaction items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message CardTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string corporate_card_id = 3;
+    string employee_id = 4;
+    string transaction_date = 5;
+    string merchant_name = 6;
+    int64 amount_cents = 7;
+    string currency_code = 8;
+    string match_status = 9;
+    string created_at = 10;
+}
+
+message MatchTransactionRequest {
+    string tenant_id = 1;
+    string transaction_id = 2;
+    string report_line_id = 3;
+}
+
+message MatchTransactionResponse {
+    string transaction_id = 1;
+    string match_status = 2;
+    string matched_report_line_id = 3;
+}
+
+// Integration messages
+message GetEmployeeExpenseTotalRequest {
+    string tenant_id = 1;
+    string employee_id = 2;
+    string period_from = 3;
+    string period_to = 4;
+}
+
+message GetEmployeeExpenseTotalResponse {
+    string employee_id = 1;
+    int64 total_cents = 2;
+    int64 reimbursed_cents = 3;
+    int64 pending_cents = 4;
+    int32 report_count = 5;
+}
+
+message GetProjectExpensesRequest {
+    string tenant_id = 1;
+    string project_id = 2;
+    string period_from = 3;
+    string period_to = 4;
+}
+
+message GetProjectExpensesResponse {
+    string project_id = 1;
+    int64 total_cents = 2;
+    repeated ExpenseReportLine items = 3;
+    int32 total_count = 4;
+}
+
+// Receipt messages
+message UploadReceiptRequest {
+    string tenant_id = 1;
+    string report_line_id = 2;
+    string file_name = 3;
+    string file_path = 4;
+    int64 file_size_bytes = 5;
+    string file_type = 6;
+    string content_hash = 7;
+}
+
+message UploadReceiptResponse {
+    string receipt_id = 1;
+    string ocr_status = 2;
+}
+
+message TriggerOcrRequest {
+    string tenant_id = 1;
+    string receipt_id = 2;
+}
+
+message TriggerOcrResponse {
+    string receipt_id = 1;
+    string ocr_status = 2;
+}
 ```
 
 ---

@@ -506,6 +506,133 @@ service CollectionsCreditService {
     rpc GetAging(GetAgingRequest) returns (GetAgingResponse);
     rpc GetCustomerRisk(GetCustomerRiskRequest) returns (GetCustomerRiskResponse);
 }
+
+// Credit Check messages
+message CheckCreditRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    int64 order_amount_cents = 3;
+    string currency_code = 4;
+}
+
+message CheckCreditResponse {
+    string customer_id = 1;
+    int32 approved = 2;
+    int64 credit_limit_cents = 3;
+    int64 credit_used_cents = 4;
+    int64 credit_available_cents = 5;
+    string risk_category = 6;
+    string hold_status = 7;
+    string reason = 8;
+}
+
+// Credit Score messages
+message GetCreditScoreRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+}
+
+message GetCreditScoreResponse {
+    CreditScore data = 1;
+}
+
+message CreditScore {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_id = 3;
+    string score_date = 4;
+    double composite_score = 5;
+    double payment_history_score = 6;
+    double outstanding_balance_score = 7;
+    double overdue_score = 8;
+    double dispute_ratio_score = 9;
+    string risk_category = 10;
+    string score_factors = 11;
+    double previous_score = 12;
+    double score_change = 13;
+}
+
+// Credit Hold messages
+message PlaceCreditHoldRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string hold_type = 3;
+    string hold_reason = 4;
+    string trigger_document_type = 5;
+    string trigger_document_id = 6;
+    int64 total_overdue_cents = 7;
+    int64 credit_exceeded_by_cents = 8;
+}
+
+message PlaceCreditHoldResponse {
+    string id = 1;
+    string customer_id = 2;
+    string hold_type = 3;
+    string status = 4;
+}
+
+message ReleaseCreditHoldRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string release_reason = 3;
+}
+
+message ReleaseCreditHoldResponse {
+    string id = 1;
+    string customer_id = 2;
+    string status = 3;
+    string released_at = 4;
+}
+
+// Aging messages
+message GetAgingRequest {
+    string tenant_id = 1;
+    string as_of_date = 2;
+    string customer_id = 3;
+}
+
+message GetAgingResponse {
+    string as_of_date = 1;
+    repeated AgingLine lines = 2;
+    AgingSummary summary = 3;
+}
+
+message AgingLine {
+    string customer_id = 1;
+    string customer_name = 2;
+    string invoice_id = 3;
+    string invoice_number = 4;
+    int64 amount_cents = 5;
+    int32 days_overdue = 6;
+    string aging_bucket = 7;
+}
+
+message AgingSummary {
+    int64 current_cents = 1;
+    int64 bucket_1_30_cents = 2;
+    int64 bucket_31_60_cents = 3;
+    int64 bucket_61_90_cents = 4;
+    int64 bucket_91_120_cents = 5;
+    int64 bucket_120_plus_cents = 6;
+    int64 total_cents = 7;
+}
+
+// Risk messages
+message GetCustomerRiskRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+}
+
+message GetCustomerRiskResponse {
+    string customer_id = 1;
+    string risk_category = 2;
+    double composite_score = 3;
+    int64 outstanding_balance_cents = 4;
+    int64 overdue_balance_cents = 5;
+    int32 open_disputes = 6;
+    int32 broken_promises = 7;
+    string credit_hold_status = 8;
+}
 ```
 
 ---

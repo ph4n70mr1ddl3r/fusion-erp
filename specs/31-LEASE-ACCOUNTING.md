@@ -400,6 +400,157 @@ service LeaseAccountingService {
     rpc ProcessMonthEnd(ProcessMonthEndRequest) returns (ProcessMonthEndResponse);
     rpc GetLeaseDisclosures(GetLeaseDisclosuresRequest) returns (GetLeaseDisclosuresResponse);
 }
+
+// Lease messages
+message CreateLeaseRequest {
+    string tenant_id = 1;
+    string lease_name = 2;
+    string description = 3;
+    string lessee_entity = 4;
+    string lessor_id = 5;
+    string lessor_name = 6;
+    string role = 7;
+    string accounting_standard = 8;
+    string commencement_date = 9;
+    string end_date = 10;
+    int32 lease_term_months = 11;
+    int32 extension_option_months = 12;
+    double discount_rate = 13;
+    int64 total_lease_payments_cents = 14;
+    string currency_code = 15;
+    string payment_frequency = 16;
+    string asset_description = 17;
+    string asset_location = 18;
+    string asset_category_id = 19;
+}
+
+message CreateLeaseResponse {
+    Lease data = 1;
+}
+
+message GetLeaseRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetLeaseResponse {
+    Lease data = 1;
+}
+
+message Lease {
+    string id = 1;
+    string tenant_id = 2;
+    string lease_number = 3;
+    string lease_name = 4;
+    string description = 5;
+    string lessee_entity = 6;
+    string lessor_id = 7;
+    string lessor_name = 8;
+    string role = 9;
+    string accounting_standard = 10;
+    string classification = 11;
+    string classification_reason = 12;
+    string commencement_date = 13;
+    string end_date = 14;
+    int32 lease_term_months = 15;
+    int32 extension_option_months = 16;
+    int32 extension_option_exercised = 17;
+    int32 termination_option = 18;
+    double discount_rate = 19;
+    int64 total_lease_payments_cents = 20;
+    string currency_code = 21;
+    string payment_frequency = 22;
+    int64 initial_rou_asset_cents = 23;
+    int64 initial_lease_liability_cents = 24;
+    int64 current_rou_asset_cents = 25;
+    int64 current_rou_depreciation_cents = 26;
+    int64 current_rou_net_cents = 27;
+    int64 current_lease_liability_cents = 28;
+    int32 short_term_exemption = 29;
+    int32 low_value_exemption = 30;
+    string asset_description = 31;
+    string asset_location = 32;
+    string asset_category_id = 33;
+    string status = 34;
+    string created_at = 35;
+    string updated_at = 36;
+}
+
+// Classification messages
+message ClassifyLeaseRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string accounting_standard = 3;
+}
+
+message ClassifyLeaseResponse {
+    string id = 1;
+    string classification = 2;
+    string classification_reason = 3;
+    int64 initial_rou_asset_cents = 4;
+    int64 initial_lease_liability_cents = 5;
+}
+
+// Liability Schedule messages
+message GetLiabilityScheduleRequest {
+    string tenant_id = 1;
+    string lease_id = 2;
+}
+
+message LiabilityScheduleEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string lease_id = 3;
+    string period_date = 4;
+    int64 opening_balance_cents = 5;
+    int64 payment_cents = 6;
+    int64 interest_expense_cents = 7;
+    int64 principal_repayment_cents = 8;
+    int64 closing_balance_cents = 9;
+    string currency_code = 10;
+}
+
+// Month-End Processing messages
+message ProcessMonthEndRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+    repeated string lease_ids = 3;
+}
+
+message ProcessMonthEndResponse {
+    int32 leases_processed = 1;
+    int64 total_interest_cents = 2;
+    int64 total_depreciation_cents = 3;
+    int32 journal_entries_created = 4;
+}
+
+// Disclosure messages
+message GetLeaseDisclosuresRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+    string accounting_standard = 3;
+}
+
+message GetLeaseDisclosuresResponse {
+    string period_name = 1;
+    int64 total_rou_assets_cents = 2;
+    int64 total_lease_liabilities_cents = 3;
+    int64 total_interest_expense_cents = 4;
+    int64 total_depreciation_cents = 5;
+    int64 total_payments_cents = 6;
+    int32 operating_leases_count = 7;
+    int32 finance_leases_count = 8;
+    repeated LeaseDisclosureDetail details = 9;
+}
+
+message LeaseDisclosureDetail {
+    string lease_id = 1;
+    string lease_number = 2;
+    string classification = 3;
+    int64 rou_net_cents = 4;
+    int64 liability_cents = 5;
+    string currency_code = 6;
+}
 ```
 
 ---
