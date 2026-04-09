@@ -319,6 +319,231 @@ service PublicSectorService {
     rpc GetProgramPerformance(GetProgramPerformanceRequest) returns (GetProgramPerformanceResponse);
     rpc GetTransparencyData(GetTransparencyDataRequest) returns (GetTransparencyDataResponse);
 }
+
+// Entity messages
+message GovernmentEntity {
+    string id = 1;
+    string tenant_id = 2;
+    string entity_name = 3;
+    string entity_code = 4;
+    string entity_type = 5;
+    string parent_entity_id = 6;
+    string jurisdiction = 7;
+    int32 fiscal_year_start_month = 8;
+    int32 fund_accounting_enabled = 9;
+    string description = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message Fund {
+    string id = 1;
+    string tenant_id = 2;
+    string fund_code = 3;
+    string fund_name = 4;
+    string fund_type = 5;
+    string fund_category = 6;
+    string fund_group = 7;
+    int64 beginning_balance_cents = 8;
+    int64 current_budget_cents = 9;
+    int64 year_to_date_actual_cents = 10;
+    int64 encumbrance_cents = 11;
+    int64 available_balance_cents = 12;
+    string fiscal_year = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message Program {
+    string id = 1;
+    string tenant_id = 2;
+    string program_name = 3;
+    string program_code = 4;
+    string program_type = 5;
+    string department_id = 6;
+    string fund_id = 7;
+    string description = 8;
+    string objectives = 9;
+    string target_population = 10;
+    string performance_metrics = 11;
+    string start_date = 12;
+    string end_date = 13;
+    int64 total_budget_cents = 14;
+    int64 total_spent_cents = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message Constituent {
+    string id = 1;
+    string tenant_id = 2;
+    string constituent_type = 3;
+    string first_name = 4;
+    string last_name = 5;
+    string business_name = 6;
+    string email = 7;
+    string phone = 8;
+    string address_line1 = 9;
+    string address_line2 = 10;
+    string city = 11;
+    string state_province = 12;
+    string postal_code = 13;
+    string country = 14;
+    string district = 15;
+    string external_id = 16;
+    string registration_date = 17;
+    string preferred_language = 18;
+    string communication_preferences = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+message ServiceRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string request_number = 3;
+    string constituent_id = 4;
+    string service_type = 5;
+    string subject = 6;
+    string description = 7;
+    string location = 8;
+    string geo_coordinates = 9;
+    string assigned_department = 10;
+    string assigned_to = 11;
+    string priority = 12;
+    string status = 13;
+    string submission_date = 14;
+    string target_completion_date = 15;
+    string actual_completion_date = 16;
+    string resolution_notes = 17;
+    int32 satisfaction_rating = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message Appropriation {
+    string id = 1;
+    string tenant_id = 2;
+    string appropriation_code = 3;
+    string description = 4;
+    string fund_id = 5;
+    string program_id = 6;
+    string department_id = 7;
+    string fiscal_year = 8;
+    int64 original_amount_cents = 9;
+    int64 current_amount_cents = 10;
+    int64 spent_cents = 11;
+    int64 encumbered_cents = 12;
+    int64 available_cents = 13;
+    string authority_type = 14;
+    string legislation_reference = 15;
+    string effective_date = 16;
+    string expiration_date = 17;
+    string status = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+// Request/Response messages
+message CheckAppropriationBalanceRequest {
+    string tenant_id = 1;
+    string appropriation_id = 2;
+    int64 proposed_amount_cents = 3;
+}
+
+message CheckAppropriationBalanceResponse {
+    string appropriation_id = 1;
+    int64 current_amount_cents = 2;
+    int64 spent_cents = 3;
+    int64 encumbered_cents = 4;
+    int64 available_cents = 5;
+    bool sufficient_funds = 6;
+}
+
+message CreateConstituentCaseRequest {
+    string tenant_id = 1;
+    string constituent_id = 2;
+    string service_type = 3;
+    string subject = 4;
+    string description = 5;
+    string location = 6;
+    string geo_coordinates = 7;
+    string priority = 8;
+    string target_completion_date = 9;
+}
+
+message CreateConstituentCaseResponse {
+    ServiceRequest data = 1;
+}
+
+message GetFundBalanceRequest {
+    string tenant_id = 1;
+    string fund_id = 2;
+    string fiscal_year = 3;
+}
+
+message GetFundBalanceResponse {
+    string fund_id = 1;
+    string fund_code = 2;
+    string fund_name = 3;
+    string fund_type = 4;
+    int64 beginning_balance_cents = 5;
+    int64 current_budget_cents = 6;
+    int64 year_to_date_actual_cents = 7;
+    int64 encumbrance_cents = 8;
+    int64 available_balance_cents = 9;
+    string fiscal_year = 10;
+}
+
+message GetProgramPerformanceRequest {
+    string tenant_id = 1;
+    string program_id = 2;
+    string fiscal_year = 3;
+}
+
+message PerformanceMetric {
+    string name = 1;
+    double target = 2;
+    double actual = 3;
+    string unit = 4;
+    double pct_achieved = 5;
+}
+
+message GetProgramPerformanceResponse {
+    string program_id = 1;
+    string program_name = 2;
+    int64 total_budget_cents = 3;
+    int64 total_spent_cents = 4;
+    double budget_utilization_pct = 5;
+    repeated PerformanceMetric metrics = 6;
+}
+
+message GetTransparencyDataRequest {
+    string tenant_id = 1;
+    string data_type = 2;
+    string fiscal_year = 3;
+    string department_id = 4;
+    string program_id = 5;
+}
+
+message TransparencyEntry {
+    string category = 1;
+    string description = 2;
+    int64 amount_cents = 3;
+    string vendor_name = 4;
+    string date = 5;
+}
+
+message GetTransparencyDataResponse {
+    string fiscal_year = 1;
+    int64 total_budget_cents = 2;
+    int64 total_spent_cents = 3;
+    int64 total_encumbered_cents = 4;
+    repeated TransparencyEntry entries = 5;
+}
 ```
 
 ---

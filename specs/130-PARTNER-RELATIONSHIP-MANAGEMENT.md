@@ -328,6 +328,233 @@ service PartnerRelationshipService {
     rpc CheckConflict(CheckConflictRequest) returns (CheckConflictResponse);
     rpc EvaluateTier(EvaluateTierRequest) returns (EvaluateTierResponse);
 }
+
+// Entity messages
+message PrmPartner {
+    string id = 1;
+    string tenant_id = 2;
+    string partner_code = 3;
+    string company_name = 4;
+    string partner_type = 5;
+    string tier = 6;
+    string status = 7;
+    string primary_contact_name = 8;
+    string primary_contact_email = 9;
+    string primary_contact_phone = 10;
+    string address_line1 = 11;
+    string city = 12;
+    string state_province = 13;
+    string postal_code = 14;
+    string country = 15;
+    string website = 16;
+    string certifications = 17;
+    string specialization = 18;
+    string territory = 19;
+    string parent_partner_id = 20;
+    string contract_start_date = 21;
+    string contract_end_date = 22;
+    double discount_percentage = 23;
+    int64 credit_limit_cents = 24;
+    double performance_score = 25;
+    string created_at = 26;
+    string updated_at = 27;
+}
+
+message PrmPartnerContact {
+    string id = 1;
+    string tenant_id = 2;
+    string partner_id = 3;
+    string first_name = 4;
+    string last_name = 5;
+    string email = 6;
+    string phone = 7;
+    string title = 8;
+    string role = 9;
+    bool is_primary = 10;
+    bool portal_access_enabled = 11;
+    string portal_user_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message PrmDealRegistration {
+    string id = 1;
+    string tenant_id = 2;
+    string partner_id = 3;
+    string deal_name = 4;
+    string deal_code = 5;
+    string customer_company_name = 6;
+    string customer_contact_name = 7;
+    string customer_contact_email = 8;
+    string customer_country = 9;
+    int64 deal_value_cents = 10;
+    string currency_code = 11;
+    string products = 12;
+    string expected_close_date = 13;
+    string deal_stage = 14;
+    string status = 15;
+    string conflict_status = 16;
+    string competing_partners = 17;
+    string internal_owner_id = 18;
+    string registration_date = 19;
+    string approval_date = 20;
+    string rejection_reason = 21;
+    string protection_end_date = 22;
+    string notes = 23;
+    string created_at = 24;
+    string updated_at = 25;
+}
+
+message PrmLead {
+    string id = 1;
+    string tenant_id = 2;
+    string lead_source = 3;
+    string company_name = 4;
+    string contact_name = 5;
+    string contact_email = 6;
+    string contact_phone = 7;
+    string country = 8;
+    string industry = 9;
+    int64 estimated_value_cents = 10;
+    string currency_code = 11;
+    string description = 12;
+    string requirements = 13;
+    string assigned_partner_id = 14;
+    string assigned_date = 15;
+    string status = 16;
+    string partner_feedback = 17;
+    string conversion_date = 18;
+    string converted_deal_id = 19;
+    string expiration_date = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+message PrmPartnerMetrics {
+    string id = 1;
+    string tenant_id = 2;
+    string partner_id = 3;
+    string period = 4;
+    int32 deals_registered = 5;
+    int32 deals_won = 6;
+    double win_rate_pct = 7;
+    int64 revenue_cents = 8;
+    int64 pipeline_value_cents = 9;
+    int32 leads_received = 10;
+    int32 leads_converted = 11;
+    double lead_conversion_pct = 12;
+    int32 certifications_earned = 13;
+    int32 training_completed = 14;
+    double customer_satisfaction_avg = 15;
+    int32 support_tickets = 16;
+    double composite_score = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message PrmProgram {
+    string id = 1;
+    string tenant_id = 2;
+    string program_name = 3;
+    string description = 4;
+    string tier_requirements = 5;
+    string benefits = 6;
+    string status = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+// Request/Response messages
+message RegisterDealRequest {
+    string tenant_id = 1;
+    string partner_id = 2;
+    string deal_name = 3;
+    string customer_company_name = 4;
+    string customer_contact_name = 5;
+    string customer_contact_email = 6;
+    string customer_country = 7;
+    int64 deal_value_cents = 8;
+    string currency_code = 9;
+    string products = 10;
+    string expected_close_date = 11;
+    string notes = 12;
+}
+
+message RegisterDealResponse {
+    PrmDealRegistration data = 1;
+    bool conflict_detected = 2;
+}
+
+message ApproveDealRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string internal_owner_id = 3;
+    string protection_end_date = 4;
+}
+
+message ApproveDealResponse {
+    PrmDealRegistration data = 1;
+}
+
+message DistributeLeadRequest {
+    string tenant_id = 1;
+    string lead_id = 2;
+    string partner_id = 3;
+    repeated string criteria = 4;
+}
+
+message DistributeLeadResponse {
+    PrmLead data = 1;
+    string assigned_partner_id = 2;
+}
+
+message GetPartnerPerformanceRequest {
+    string tenant_id = 1;
+    string partner_id = 2;
+    string period = 3;
+}
+
+message GetPartnerPerformanceResponse {
+    PrmPartnerMetrics metrics = 1;
+    PrmPartner partner = 2;
+    repeated PrmPartnerMetrics history = 3;
+}
+
+message ConflictMatch {
+    string deal_id = 1;
+    string deal_name = 2;
+    string partner_id = 3;
+    string partner_name = 4;
+    string conflict_type = 5;
+    double match_score = 6;
+}
+
+message CheckConflictRequest {
+    string tenant_id = 1;
+    string customer_company_name = 2;
+    string products = 3;
+    string customer_country = 4;
+}
+
+message CheckConflictResponse {
+    bool has_conflict = 1;
+    repeated ConflictMatch conflicts = 2;
+}
+
+message EvaluateTierRequest {
+    string tenant_id = 1;
+    string partner_id = 2;
+    string program_id = 3;
+}
+
+message EvaluateTierResponse {
+    string partner_id = 1;
+    string current_tier = 2;
+    string recommended_tier = 3;
+    double composite_score = 4;
+    bool tier_changed = 5;
+    PrmPartnerMetrics latest_metrics = 6;
+}
 ```
 
 ---

@@ -312,6 +312,231 @@ service SupplyChainExecutionService {
     rpc ConsolidateShipments(ConsolidateShipmentsRequest) returns (ConsolidateShipmentsResponse);
     rpc GetShipmentByReference(GetShipmentByReferenceRequest) returns (GetShipmentByReferenceResponse);
 }
+
+// Entity messages
+message SceShipment {
+    string id = 1;
+    string tenant_id = 2;
+    string shipment_number = 3;
+    string shipment_type = 4;
+    string status = 5;
+    string origin_location_id = 6;
+    string destination_location_id = 7;
+    string carrier_id = 8;
+    string carrier_service_level = 9;
+    string mode_of_transport = 10;
+    string planned_ship_date = 11;
+    string actual_ship_date = 12;
+    string planned_delivery_date = 13;
+    string actual_delivery_date = 14;
+    double total_weight_kg = 15;
+    double total_volume_cbm = 16;
+    int32 total_package_count = 17;
+    int64 total_value_cents = 18;
+    string currency_code = 19;
+    int64 freight_cost_cents = 20;
+    string tracking_number = 21;
+    string tracking_url = 22;
+    string reference_type = 23;
+    string reference_id = 24;
+    string driver_name = 25;
+    string vehicle_id = 26;
+    string notes = 27;
+    string created_at = 28;
+    string updated_at = 29;
+}
+
+message SceShipmentLine {
+    string id = 1;
+    string tenant_id = 2;
+    string shipment_id = 3;
+    int32 line_number = 4;
+    string item_id = 5;
+    string item_description = 6;
+    double ordered_quantity = 7;
+    double shipped_quantity = 8;
+    double received_quantity = 9;
+    string uom = 10;
+    string lot_number = 11;
+    string serial_numbers = 12;
+    double weight_kg = 13;
+    double volume_cbm = 14;
+    int32 package_count = 15;
+    string reference_line_id = 16;
+    string source_location_id = 17;
+    string destination_location_id = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message SceTrackingEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string shipment_id = 3;
+    string event_type = 4;
+    string event_timestamp = 5;
+    string location_description = 6;
+    double latitude = 7;
+    double longitude = 8;
+    string carrier_event_code = 9;
+    string notes = 10;
+    string proof_document_id = 11;
+    string created_at = 12;
+}
+
+message SceProofOfDelivery {
+    string id = 1;
+    string tenant_id = 2;
+    string shipment_id = 3;
+    string delivery_date = 4;
+    string received_by_name = 5;
+    string received_by_signature = 6;
+    string received_by_title = 7;
+    string condition_at_delivery = 8;
+    string damage_notes = 9;
+    string damage_photos = 10;
+    string pod_document_id = 11;
+    string geo_location = 12;
+    string timestamp = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message SceNetworkNode {
+    string id = 1;
+    string tenant_id = 2;
+    string node_code = 3;
+    string node_name = 4;
+    string node_type = 5;
+    string address_line1 = 6;
+    string address_line2 = 7;
+    string city = 8;
+    string state_province = 9;
+    string postal_code = 10;
+    string country = 11;
+    double latitude = 12;
+    double longitude = 13;
+    string timezone = 14;
+    string operating_hours = 15;
+    string contact_name = 16;
+    string contact_phone = 17;
+    string contact_email = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+// Request/Response messages
+message ShipmentLineInput {
+    string item_id = 1;
+    string item_description = 2;
+    double ordered_quantity = 3;
+    string uom = 4;
+    string lot_number = 5;
+    double weight_kg = 6;
+    double volume_cbm = 7;
+    int32 package_count = 8;
+    string reference_line_id = 9;
+}
+
+message CreateShipmentRequest {
+    string tenant_id = 1;
+    string shipment_type = 2;
+    string origin_location_id = 3;
+    string destination_location_id = 4;
+    string carrier_id = 5;
+    string carrier_service_level = 6;
+    string mode_of_transport = 7;
+    string planned_ship_date = 8;
+    string planned_delivery_date = 9;
+    string currency_code = 10;
+    string reference_type = 11;
+    string reference_id = 12;
+    repeated ShipmentLineInput lines = 13;
+    string notes = 14;
+}
+
+message CreateShipmentResponse {
+    SceShipment data = 1;
+}
+
+message UpdateShipmentStatusRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string status = 3;
+    string actual_date = 4;
+    string notes = 5;
+}
+
+message UpdateShipmentStatusResponse {
+    SceShipment data = 1;
+}
+
+message GetTrackingInfoRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+}
+
+message GetTrackingInfoResponse {
+    SceShipment shipment = 1;
+    repeated SceTrackingEvent events = 2;
+    string estimated_delivery = 3;
+}
+
+message RecordTrackingEventRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+    string event_type = 3;
+    string event_timestamp = 4;
+    string location_description = 5;
+    double latitude = 6;
+    double longitude = 7;
+    string carrier_event_code = 8;
+    string notes = 9;
+}
+
+message RecordTrackingEventResponse {
+    SceTrackingEvent data = 1;
+}
+
+message RecordDeliveryRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+    string delivery_date = 3;
+    string received_by_name = 4;
+    string received_by_signature = 5;
+    string received_by_title = 6;
+    string condition_at_delivery = 7;
+    string damage_notes = 8;
+    string damage_photos = 9;
+    string geo_location = 10;
+}
+
+message RecordDeliveryResponse {
+    SceProofOfDelivery pod = 1;
+    SceShipment shipment = 2;
+}
+
+message ConsolidateShipmentsRequest {
+    string tenant_id = 1;
+    repeated string order_ids = 2;
+    string strategy = 3;
+}
+
+message ConsolidateShipmentsResponse {
+    repeated SceShipment planned_shipments = 1;
+    double utilization_pct = 2;
+    int32 shipments_saved = 3;
+}
+
+message GetShipmentByReferenceRequest {
+    string tenant_id = 1;
+    string reference_type = 2;
+    string reference_id = 3;
+}
+
+message GetShipmentByReferenceResponse {
+    repeated SceShipment shipments = 1;
+}
 ```
 
 ---

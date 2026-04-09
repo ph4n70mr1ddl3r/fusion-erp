@@ -341,6 +341,9 @@ CREATE INDEX idx_spending_line ON spending_against_contracts(contract_line_id);
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.contracts.v1;
+
 service ContractsService {
     rpc CreateContract(CreateContractRequest) returns (ContractResponse);
     rpc GetContract(GetContractRequest) returns (ContractDetailResponse);
@@ -360,6 +363,301 @@ service ContractsService {
     rpc CheckCompliance(CheckComplianceRequest) returns (ComplianceResponse);
 
     rpc RecordSpending(RecordSpendingRequest) returns (SpendingResponse);
+}
+
+// Entity messages
+
+message ContractType {
+    string id = 1;
+    string tenant_id = 2;
+    string type_code = 3;
+    string type_name = 4;
+    string type_category = 5;
+    string description = 6;
+    int32 default_duration_days = 7;
+    bool requires_approval = 8;
+    string approval_workflow_id = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message Contract {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_number = 3;
+    string contract_type_id = 4;
+    string contract_name = 5;
+    string supplier_id = 6;
+    string description = 7;
+    string status = 8;
+    string start_date = 9;
+    string end_date = 10;
+    int64 total_value = 11;
+    string currency = 12;
+    string payment_terms = 13;
+    string delivery_terms = 14;
+    string contract_owner_id = 15;
+    string department_id = 16;
+    string renewal_type = 17;
+    int32 auto_renewal_days = 18;
+    string parent_contract_id = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message ContractLine {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    int32 line_number = 4;
+    string item_id = 5;
+    string item_description = 6;
+    double quantity = 7;
+    string uom = 8;
+    int64 unit_price = 9;
+    int64 line_amount = 10;
+    string delivery_schedule = 11;
+    double minimum_order_qty = 12;
+    double maximum_order_qty = 13;
+    int32 lead_time_days = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message ContractTerm {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string clause_code = 4;
+    string clause_title = 5;
+    string clause_text = 6;
+    string clause_type = 7;
+    bool is_mandatory = 8;
+    string section_reference = 9;
+    int32 sort_order = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message ContractAmendment {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string amendment_number = 4;
+    string amendment_type = 5;
+    string description = 6;
+    string reason = 7;
+    string status = 8;
+    string old_value = 9;
+    string new_value = 10;
+    string effective_date = 11;
+    string approved_by = 12;
+    string approved_at = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message ContractRenewal {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    int32 renewal_number = 4;
+    string old_end_date = 5;
+    string new_end_date = 6;
+    int64 new_total_value = 7;
+    string status = 8;
+    string renewal_notes = 9;
+    string renewed_by = 10;
+    string renewed_at = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message ContractComplianceRule {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string rule_type = 4;
+    string rule_description = 5;
+    string threshold_value = 6;
+    string threshold_unit = 7;
+    bool is_blocking = 8;
+    string check_frequency = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message SpendingAgainstContract {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_id = 3;
+    string contract_line_id = 4;
+    string purchase_order_id = 5;
+    string po_line_id = 6;
+    int64 spent_amount = 7;
+    string spent_date = 8;
+    string invoice_reference = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+// Request/Response messages
+
+message CreateContractRequest {
+    string tenant_id = 1;
+    string contract_type_id = 2;
+    string contract_name = 3;
+    string supplier_id = 4;
+    string description = 5;
+    string start_date = 6;
+    string end_date = 7;
+    int64 total_value = 8;
+    string currency = 9;
+    string payment_terms = 10;
+    string delivery_terms = 11;
+    string contract_owner_id = 12;
+    string department_id = 13;
+    string renewal_type = 14;
+    int32 auto_renewal_days = 15;
+    string parent_contract_id = 16;
+}
+
+message ContractResponse {
+    Contract data = 1;
+}
+
+message GetContractRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ContractDetailResponse {
+    Contract data = 1;
+    repeated ContractLine lines = 2;
+    repeated ContractTerm terms = 3;
+}
+
+message ListContractsRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+    string status = 3;
+    string contract_type_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message ListContractsResponse {
+    repeated Contract items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message SubmitContractRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ApproveContractRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ActivateContractRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message AddContractLineRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string item_id = 3;
+    string item_description = 4;
+    double quantity = 5;
+    string uom = 6;
+    int64 unit_price = 7;
+    int64 line_amount = 8;
+    string delivery_schedule = 9;
+    double minimum_order_qty = 10;
+    double maximum_order_qty = 11;
+    int32 lead_time_days = 12;
+}
+
+message ContractLineResponse {
+    ContractLine data = 1;
+}
+
+message CreateAmendmentRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string amendment_type = 3;
+    string description = 4;
+    string reason = 5;
+    string old_value = 6;
+    string new_value = 7;
+    string effective_date = 8;
+}
+
+message AmendmentResponse {
+    ContractAmendment data = 1;
+}
+
+message ApproveAmendmentRequest {
+    string tenant_id = 1;
+    string amendment_id = 2;
+}
+
+message RenewContractRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string new_end_date = 3;
+    int64 new_total_value = 4;
+    string renewal_notes = 5;
+}
+
+message GetSpendingSummaryRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+}
+
+message SpendingSummaryResponse {
+    int64 total_value = 1;
+    int64 total_spent = 2;
+    int64 remaining = 3;
+    double spent_pct = 4;
+    repeated SpendingAgainstContract recent_spending = 5;
+}
+
+message CheckComplianceRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+}
+
+message ComplianceResponse {
+    bool is_compliant = 1;
+    repeated ComplianceViolation violations = 2;
+}
+
+message ComplianceViolation {
+    string rule_id = 1;
+    string rule_type = 2;
+    string rule_description = 3;
+    bool is_blocking = 4;
+    string details = 5;
+}
+
+message RecordSpendingRequest {
+    string tenant_id = 1;
+    string contract_id = 2;
+    string contract_line_id = 3;
+    string purchase_order_id = 4;
+    string po_line_id = 5;
+    int64 spent_amount = 6;
+    string spent_date = 7;
+    string invoice_reference = 8;
+}
+
+message SpendingResponse {
+    SpendingAgainstContract data = 1;
 }
 ```
 

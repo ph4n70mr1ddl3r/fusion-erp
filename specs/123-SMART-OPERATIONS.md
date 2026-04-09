@@ -314,6 +314,164 @@ service SmartOperationsService {
     rpc GetPredictions(GetPredictionsRequest) returns (GetPredictionsResponse);
     rpc RunAnomalyDetection(RunAnomalyDetectionRequest) returns (RunAnomalyDetectionResponse);
 }
+
+// Entity messages
+message SoEquipmentInstance {
+    string id = 1;
+    string tenant_id = 2;
+    string equipment_model_id = 3;
+    string equipment_name = 4;
+    string equipment_code = 5;
+    string location = 6;
+    string department = 7;
+    string production_line = 8;
+    string serial_number = 9;
+    string installation_date = 10;
+    string commissioning_date = 11;
+    string status = 12;
+    string operational_status = 13;
+    double current_runtime_hours = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message SoTelemetryReading {
+    string id = 1;
+    string tenant_id = 2;
+    string stream_id = 3;
+    string equipment_id = 4;
+    string reading_timestamp = 5;
+    double value = 6;
+    string quality = 7;
+    bool is_anomaly = 8;
+    double anomaly_score = 9;
+    string created_at = 10;
+}
+
+message SoOeeRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string equipment_id = 3;
+    string period_start = 4;
+    string period_end = 5;
+    double availability_pct = 6;
+    double performance_pct = 7;
+    double quality_pct = 8;
+    double oee_pct = 9;
+    int32 planned_production_minutes = 10;
+    int32 actual_production_minutes = 11;
+    int32 downtime_minutes = 12;
+    double ideal_cycle_time_seconds = 13;
+    int32 total_pieces = 14;
+    int32 good_pieces = 15;
+    int32 defect_pieces = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message SoPrediction {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string equipment_id = 4;
+    string prediction_type = 5;
+    double predicted_value = 6;
+    string predicted_date = 7;
+    double confidence_pct = 8;
+    string severity = 9;
+    string description = 10;
+    string recommended_action = 11;
+    string status = 12;
+    string acknowledged_by = 13;
+    string acknowledged_at = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Request/Response messages
+message TelemetryReadingInput {
+    string timestamp = 1;
+    double value = 2;
+}
+
+message IngestTelemetryRequest {
+    string tenant_id = 1;
+    string stream_id = 2;
+    string equipment_id = 3;
+    repeated TelemetryReadingInput readings = 4;
+}
+
+message IngestTelemetryResponse {
+    int32 accepted_count = 1;
+    int32 anomaly_count = 2;
+    repeated SoTelemetryReading anomalies = 3;
+}
+
+message GetEquipmentHealthRequest {
+    string tenant_id = 1;
+    string equipment_id = 2;
+}
+
+message HealthAnomaly {
+    string stream_id = 1;
+    string stream_name = 2;
+    double value = 3;
+    double anomaly_score = 4;
+    string reading_timestamp = 5;
+}
+
+message GetEquipmentHealthResponse {
+    SoEquipmentInstance equipment = 1;
+    double health_score = 2;
+    repeated HealthAnomaly anomalies = 3;
+    repeated SoPrediction predictions = 4;
+}
+
+message GetOEERequest {
+    string tenant_id = 1;
+    string equipment_id = 2;
+    string period_start = 3;
+    string period_end = 4;
+    string group_by = 5;
+}
+
+message GetOEEResponse {
+    repeated SoOeeRecord records = 1;
+    double overall_oee = 2;
+}
+
+message GetPredictionsRequest {
+    string tenant_id = 1;
+    string equipment_id = 2;
+    string severity = 3;
+    string status = 4;
+    int32 limit = 5;
+}
+
+message GetPredictionsResponse {
+    repeated SoPrediction predictions = 1;
+}
+
+message RunAnomalyDetectionRequest {
+    string tenant_id = 1;
+    string equipment_id = 2;
+    repeated string stream_ids = 3;
+    string analysis_window_start = 4;
+    string analysis_window_end = 5;
+}
+
+message AnomalyResult {
+    string stream_id = 1;
+    string reading_id = 2;
+    double value = 3;
+    double anomaly_score = 4;
+    string reading_timestamp = 5;
+}
+
+message RunAnomalyDetectionResponse {
+    repeated AnomalyResult anomalies = 1;
+    int32 total_readings_analyzed = 2;
+}
 ```
 
 ---

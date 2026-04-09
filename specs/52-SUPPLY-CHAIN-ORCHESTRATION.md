@@ -283,6 +283,9 @@ CREATE INDEX idx_compensation_instance ON compensation_actions(instance_id, stat
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.orchestration.v1;
+
 service OrchestrationService {
     rpc CreateProcess(CreateProcessRequest) returns (ProcessResponse);
     rpc GetProcess(GetProcessRequest) returns (ProcessResponse);
@@ -299,6 +302,225 @@ service OrchestrationService {
     rpc FailStepExecution(FailStepRequest) returns (StepExecutionResponse);
 
     rpc GetMonitoringDashboard(GetDashboardRequest) returns (DashboardResponse);
+}
+
+// Entity messages
+
+message OrchestrationProcess {
+    string id = 1;
+    string tenant_id = 2;
+    string process_code = 3;
+    string process_name = 4;
+    string process_type = 5;
+    string description = 6;
+    int32 version = 7;
+    bool is_default = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message OrchestrationStep {
+    string id = 1;
+    string tenant_id = 2;
+    string process_id = 3;
+    string step_code = 4;
+    string step_name = 5;
+    string step_type = 6;
+    string target_service = 7;
+    string target_operation = 8;
+    string input_mapping = 9;
+    string output_mapping = 10;
+    int32 timeout_seconds = 11;
+    int32 max_retries = 12;
+    int32 retry_delay_seconds = 13;
+    int32 sequence = 14;
+    string parent_step_id = 15;
+    string branch_condition = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message StepDependency {
+    string id = 1;
+    string tenant_id = 2;
+    string step_id = 3;
+    string depends_on_step_id = 4;
+    string condition_expression = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message ProcessInstance {
+    string id = 1;
+    string tenant_id = 2;
+    string instance_number = 3;
+    string process_id = 4;
+    string source_type = 5;
+    string source_id = 6;
+    string status = 7;
+    string started_at = 8;
+    string completed_at = 9;
+    string error_message = 10;
+    int32 total_steps = 11;
+    int32 completed_steps = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message StepExecution {
+    string id = 1;
+    string tenant_id = 2;
+    string instance_id = 3;
+    string step_id = 4;
+    int32 execution_sequence = 5;
+    string status = 6;
+    string input_data = 7;
+    string output_data = 8;
+    string error_message = 9;
+    string started_at = 10;
+    string completed_at = 11;
+    int32 retry_count = 12;
+    string target_service_response = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message TaskAssignment {
+    string id = 1;
+    string tenant_id = 2;
+    string step_execution_id = 3;
+    string assigned_service = 4;
+    string assigned_handler = 5;
+    int32 priority = 6;
+    string deadline = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+message CompensationAction {
+    string id = 1;
+    string tenant_id = 2;
+    string instance_id = 3;
+    string step_execution_id = 4;
+    string compensation_type = 5;
+    string target_service = 6;
+    string target_operation = 7;
+    string input_data = 8;
+    string status = 9;
+    string executed_at = 10;
+    string error_message = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Request/Response messages
+
+message CreateProcessRequest {
+    string tenant_id = 1;
+    string process_code = 2;
+    string process_name = 3;
+    string process_type = 4;
+    string description = 5;
+    bool is_default = 6;
+}
+
+message ProcessResponse {
+    OrchestrationProcess data = 1;
+    repeated OrchestrationStep steps = 2;
+}
+
+message GetProcessRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ListProcessesRequest {
+    string tenant_id = 1;
+    string process_type = 2;
+}
+
+message ListProcessesResponse {
+    repeated OrchestrationProcess items = 1;
+}
+
+message StartInstanceRequest {
+    string tenant_id = 1;
+    string process_id = 2;
+    string source_type = 3;
+    string source_id = 4;
+}
+
+message InstanceResponse {
+    ProcessInstance data = 1;
+    repeated StepExecution step_executions = 2;
+}
+
+message GetInstanceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ListInstancesRequest {
+    string tenant_id = 1;
+    string status = 2;
+    string source_type = 3;
+    string source_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message ListInstancesResponse {
+    repeated ProcessInstance items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message CancelInstanceRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string reason = 3;
+}
+
+message RetryInstanceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message CompensateInstanceRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string reason = 3;
+}
+
+message CompleteStepRequest {
+    string tenant_id = 1;
+    string instance_id = 2;
+    string step_execution_id = 3;
+    string output_data = 4;
+}
+
+message FailStepRequest {
+    string tenant_id = 1;
+    string instance_id = 2;
+    string step_execution_id = 3;
+    string error_message = 4;
+}
+
+message StepExecutionResponse {
+    StepExecution data = 1;
+}
+
+message GetDashboardRequest {
+    string tenant_id = 1;
+}
+
+message DashboardResponse {
+    int32 running_instances = 1;
+    int32 completed_instances = 2;
+    int32 failed_instances = 3;
+    int32 compensating_instances = 4;
+    double avg_completion_time_ms = 5;
+    repeated ProcessInstance recent_failures = 6;
 }
 ```
 

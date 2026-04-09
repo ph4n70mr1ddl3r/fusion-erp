@@ -330,6 +330,213 @@ service ProcessManufacturingService {
     rpc GetLotTraceability(GetLotTraceabilityRequest) returns (GetLotTraceabilityResponse);
     rpc ScaleFormula(ScaleFormulaRequest) returns (ScaleFormulaResponse);
 }
+
+// Entity messages
+message PmFormula {
+    string id = 1;
+    string tenant_id = 2;
+    string formula_code = 3;
+    string formula_name = 4;
+    string description = 5;
+    string formula_type = 6;
+    string status = 7;
+    double base_quantity = 8;
+    string base_uom = 9;
+    double yield_percentage = 10;
+    string instructions = 11;
+    int32 version_number = 12;
+    string effective_from = 13;
+    string effective_to = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message PmFormulaIngredient {
+    string id = 1;
+    string tenant_id = 2;
+    string formula_id = 3;
+    int32 line_number = 4;
+    string item_id = 5;
+    string ingredient_type = 6;
+    double quantity = 7;
+    string quantity_uom = 8;
+    double scrap_percentage = 9;
+    string substitute_group = 10;
+    int32 substitute_priority = 11;
+    double cost_allocation_pct = 12;
+    string storage_conditions = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message PmFormulaProduct {
+    string id = 1;
+    string tenant_id = 2;
+    string formula_id = 3;
+    string product_type = 4;
+    string item_id = 5;
+    double quantity = 6;
+    string quantity_uom = 7;
+    double yield_percentage = 8;
+    double cost_allocation_pct = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message PmRecipe {
+    string id = 1;
+    string tenant_id = 2;
+    string recipe_code = 3;
+    string recipe_name = 4;
+    string description = 5;
+    string formula_id = 6;
+    string routing_id = 7;
+    string equipment_class = 8;
+    double minimum_batch_size = 9;
+    double maximum_batch_size = 10;
+    string batch_uom = 11;
+    double standard_batch_size = 12;
+    int32 setup_time_minutes = 13;
+    double process_time_minutes = 14;
+    int32 cleanup_time_minutes = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message PmBatch {
+    string id = 1;
+    string tenant_id = 2;
+    string batch_number = 3;
+    string recipe_id = 4;
+    string formula_id = 5;
+    string work_order_id = 6;
+    double planned_quantity = 7;
+    double actual_quantity = 8;
+    string batch_uom = 9;
+    string status = 10;
+    string start_date = 11;
+    string end_date = 12;
+    string actual_start_date = 13;
+    string actual_end_date = 14;
+    string equipment_id = 15;
+    string operator_id = 16;
+    string lot_number = 17;
+    string parent_batch_id = 18;
+    string grade = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message PmBatchTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string batch_id = 3;
+    string transaction_type = 4;
+    string item_id = 5;
+    double quantity = 6;
+    string quantity_uom = 7;
+    string lot_number = 8;
+    string sublot_number = 9;
+    string storage_location = 10;
+    string transaction_date = 11;
+    string operator_id = 12;
+    string notes = 13;
+    string quality_sample_id = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message LotTraceNode {
+    string batch_id = 1;
+    string batch_number = 2;
+    string lot_number = 3;
+    string item_id = 4;
+    string transaction_type = 5;
+    double quantity = 6;
+    string transaction_date = 7;
+    repeated LotTraceNode children = 8;
+}
+
+// Request/Response messages
+message GetFormulaRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetFormulaResponse {
+    PmFormula data = 1;
+    repeated PmFormulaIngredient ingredients = 2;
+    repeated PmFormulaProduct products = 3;
+}
+
+message CreateBatchRequest {
+    string tenant_id = 1;
+    string recipe_id = 2;
+    double planned_quantity = 3;
+    string start_date = 4;
+    string equipment_id = 5;
+    string operator_id = 6;
+    string parent_batch_id = 7;
+}
+
+message CreateBatchResponse {
+    PmBatch data = 1;
+}
+
+message RecordBatchTransactionRequest {
+    string tenant_id = 1;
+    string batch_id = 2;
+    string transaction_type = 3;
+    string item_id = 4;
+    double quantity = 5;
+    string quantity_uom = 6;
+    string lot_number = 7;
+    string sublot_number = 8;
+    string storage_location = 9;
+    string operator_id = 10;
+    string notes = 11;
+}
+
+message RecordBatchTransactionResponse {
+    PmBatchTransaction data = 1;
+}
+
+message CompleteBatchRequest {
+    string tenant_id = 1;
+    string id = 2;
+    double actual_quantity = 3;
+    string actual_end_date = 4;
+    string grade = 5;
+}
+
+message CompleteBatchResponse {
+    PmBatch data = 1;
+    double yield_variance_pct = 2;
+}
+
+message GetLotTraceabilityRequest {
+    string tenant_id = 1;
+    string lot_number = 2;
+    string direction = 3;
+}
+
+message GetLotTraceabilityResponse {
+    repeated LotTraceNode trace_tree = 1;
+}
+
+message ScaleFormulaRequest {
+    string tenant_id = 1;
+    string formula_id = 2;
+    double target_quantity = 3;
+    string target_uom = 4;
+}
+
+message ScaleFormulaResponse {
+    repeated PmFormulaIngredient scaled_ingredients = 1;
+    repeated PmFormulaProduct scaled_products = 2;
+    double scaled_yield = 3;
+}
 ```
 
 ---

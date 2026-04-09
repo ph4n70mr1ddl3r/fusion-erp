@@ -328,6 +328,259 @@ service CommunicationsService {
     rpc GetSubscriptionUsage(GetSubscriptionUsageRequest) returns (GetSubscriptionUsageResponse);
     rpc CheckNetworkCapacity(CheckNetworkCapacityRequest) returns (CheckNetworkCapacityResponse);
 }
+
+// Entity messages
+message ServicePlan {
+    string id = 1;
+    string tenant_id = 2;
+    string plan_code = 3;
+    string plan_name = 4;
+    string plan_type = 5;
+    string description = 6;
+    int64 base_price_cents = 7;
+    string currency_code = 8;
+    string billing_cycle = 9;
+    int32 contract_duration_months = 10;
+    string included_allowances = 11;
+    string overage_rates = 12;
+    string features = 13;
+    string promotion_id = 14;
+    string effective_from = 15;
+    string effective_to = 16;
+    string status = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message Subscription {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_id = 3;
+    string subscription_number = 4;
+    string plan_id = 5;
+    string status = 6;
+    string start_date = 7;
+    string end_date = 8;
+    string contract_end_date = 9;
+    string phone_number = 10;
+    string sim_number = 11;
+    string device_id = 12;
+    string network_identifier = 13;
+    int32 auto_renew = 14;
+    string bundle_id = 15;
+    string activation_date = 16;
+    string cancellation_date = 17;
+    string cancellation_reason = 18;
+    string port_out_date = 19;
+    string last_billed_date = 20;
+    string next_bill_date = 21;
+    string created_at = 22;
+    string updated_at = 23;
+}
+
+message UsageRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string subscription_id = 3;
+    string usage_type = 4;
+    string usage_date = 5;
+    string start_time = 6;
+    string end_time = 7;
+    int64 duration_seconds = 8;
+    int64 volume_bytes = 9;
+    int32 quantity = 10;
+    string originating_number = 11;
+    string destination_number = 12;
+    string cell_tower_id = 13;
+    string network_type = 14;
+    string roaming_country = 15;
+    string roaming_network = 16;
+    int64 raw_charge_cents = 17;
+    int64 rated_charge_cents = 18;
+    int32 is_included = 19;
+    string mediation_source = 20;
+    string created_at = 21;
+}
+
+message BillingCycle {
+    string id = 1;
+    string tenant_id = 2;
+    string cycle_name = 3;
+    string period_start = 4;
+    string period_end = 5;
+    string billing_date = 6;
+    string due_date = 7;
+    string status = 8;
+    int32 total_subscriptions = 9;
+    int64 total_base_charges_cents = 10;
+    int64 total_usage_charges_cents = 11;
+    int64 total_discounts_cents = 12;
+    int64 total_taxes_cents = 13;
+    int64 total_amount_cents = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message NetworkAsset {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_code = 3;
+    string asset_name = 4;
+    string asset_type = 5;
+    string location = 6;
+    string geo_coordinates = 7;
+    string address = 8;
+    string parent_asset_id = 9;
+    string capacity = 10;
+    double utilized_capacity_pct = 11;
+    string status = 12;
+    string installation_date = 13;
+    string vendor = 14;
+    string model = 15;
+    string serial_number = 16;
+    string coverage_area = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message ServiceOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string order_number = 3;
+    string customer_id = 4;
+    string subscription_id = 5;
+    string order_type = 6;
+    string status = 7;
+    string requested_date = 8;
+    string scheduled_date = 9;
+    string completed_date = 10;
+    string assigned_team = 11;
+    string network_changes = 12;
+    string failure_reason = 13;
+    int32 retry_count = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Request/Response messages
+message UsageRecordInput {
+    string subscription_id = 1;
+    string usage_type = 2;
+    string usage_date = 3;
+    string start_time = 4;
+    string end_time = 5;
+    int64 duration_seconds = 6;
+    int64 volume_bytes = 7;
+    int32 quantity = 8;
+    string originating_number = 9;
+    string destination_number = 10;
+    string cell_tower_id = 11;
+    string network_type = 12;
+    string roaming_country = 13;
+    string roaming_network = 14;
+}
+
+message IngestUsageRequest {
+    string tenant_id = 1;
+    repeated UsageRecordInput records = 2;
+}
+
+message IngestUsageResponse {
+    int32 ingested_count = 1;
+    int32 failed_count = 2;
+    repeated string record_ids = 3;
+}
+
+message RateUsageRequest {
+    string tenant_id = 1;
+    string subscription_id = 2;
+    string period_start = 3;
+    string period_end = 4;
+}
+
+message UsageRating {
+    string usage_type = 1;
+    int64 included_quantity = 2;
+    int64 used_quantity = 3;
+    int64 overage_quantity = 4;
+    int64 included_charge_cents = 5;
+    int64 overage_charge_cents = 6;
+    int64 total_charge_cents = 7;
+}
+
+message RateUsageResponse {
+    string subscription_id = 1;
+    int64 total_base_charges_cents = 2;
+    int64 total_usage_charges_cents = 3;
+    int64 total_charges_cents = 4;
+    repeated UsageRating ratings = 5;
+}
+
+message RunBillingRequest {
+    string tenant_id = 1;
+    string billing_date = 2;
+}
+
+message RunBillingResponse {
+    string cycle_id = 1;
+    string cycle_name = 2;
+    int32 total_subscriptions = 3;
+    int64 total_amount_cents = 4;
+    string status = 5;
+}
+
+message ProvisionServiceRequest {
+    string tenant_id = 1;
+    string order_id = 2;
+    string subscription_id = 3;
+    string order_type = 4;
+    string scheduled_date = 5;
+}
+
+message ProvisionServiceResponse {
+    string order_id = 1;
+    string subscription_id = 2;
+    string status = 3;
+    string network_changes = 4;
+}
+
+message GetSubscriptionUsageRequest {
+    string tenant_id = 1;
+    string subscription_id = 2;
+    string from_date = 3;
+    string to_date = 4;
+    string usage_type = 5;
+}
+
+message GetSubscriptionUsageResponse {
+    string subscription_id = 1;
+    repeated UsageRecord records = 2;
+    int64 total_raw_charge_cents = 3;
+    int64 total_rated_charge_cents = 4;
+}
+
+message CheckNetworkCapacityRequest {
+    string tenant_id = 1;
+    string asset_type = 2;
+    string region = 3;
+    double utilization_threshold = 4;
+}
+
+message CapacityEntry {
+    string asset_id = 1;
+    string asset_code = 2;
+    string asset_name = 3;
+    string asset_type = 4;
+    double utilized_capacity_pct = 5;
+    string status = 6;
+    string location = 7;
+}
+
+message CheckNetworkCapacityResponse {
+    repeated CapacityEntry assets = 1;
+    int32 total_assets = 2;
+    int32 assets_above_threshold = 3;
+}
 ```
 
 ---

@@ -365,6 +365,9 @@ CREATE INDEX idx_catalog_items_catalog ON catalog_items(catalog_id, sort_order);
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.producthub.v1;
+
 service ProductHubService {
     rpc CreateProduct(CreateProductRequest) returns (ProductResponse);
     rpc GetProduct(GetProductRequest) returns (ProductResponse);
@@ -386,6 +389,293 @@ service ProductHubService {
 
     rpc PublishCatalog(PublishCatalogRequest) returns (CatalogResponse);
     rpc SyncToSystem(SyncToSystemRequest) returns (SyncResponse);
+}
+
+// Entity messages
+
+message ProductRegistration {
+    string id = 1;
+    string tenant_id = 2;
+    string product_code = 3;
+    string product_name = 4;
+    string product_type = 5;
+    string description = 6;
+    string brand = 7;
+    string manufacturer = 8;
+    string lifecycle_state = 9;
+    string primary_uom = 10;
+    string secondary_uom = 11;
+    double weight = 12;
+    string weight_uom = 13;
+    double volume = 14;
+    string volume_uom = 15;
+    string hazardous_class = 16;
+    string country_of_origin = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message ProductAttribute {
+    string id = 1;
+    string tenant_id = 2;
+    string attribute_code = 3;
+    string attribute_name = 4;
+    string attribute_type = 5;
+    string uom = 6;
+    bool is_required = 7;
+    bool is_searchable = 8;
+    bool is_comparable = 9;
+    string enum_values = 10;
+    string validation_rule = 11;
+    int32 display_sequence = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ProductAttributeValue {
+    string id = 1;
+    string tenant_id = 2;
+    string product_id = 3;
+    string attribute_id = 4;
+    string text_value = 5;
+    double number_value = 6;
+    string date_value = 7;
+    bool boolean_value = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message ProductCategory {
+    string id = 1;
+    string tenant_id = 2;
+    string category_code = 3;
+    string category_name = 4;
+    string parent_category_id = 5;
+    int32 category_level = 6;
+    string description = 7;
+    string image_url = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message ProductCategoryAssignment {
+    string id = 1;
+    string tenant_id = 2;
+    string product_id = 3;
+    string category_id = 4;
+    bool is_primary = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message ProductRelationship {
+    string id = 1;
+    string tenant_id = 2;
+    string source_product_id = 3;
+    string target_product_id = 4;
+    string relationship_type = 5;
+    double quantity = 6;
+    string effective_from = 7;
+    string effective_to = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message ProductCrossReference {
+    string id = 1;
+    string tenant_id = 2;
+    string product_id = 3;
+    string external_system = 4;
+    string external_code = 5;
+    string external_description = 6;
+    string external_uom = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+message CatalogPublishing {
+    string id = 1;
+    string tenant_id = 2;
+    string catalog_code = 3;
+    string catalog_name = 4;
+    string catalog_type = 5;
+    string status = 6;
+    string published_at = 7;
+    string published_by = 8;
+    int32 product_count = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+// Request/Response messages
+
+message CreateProductRequest {
+    string tenant_id = 1;
+    string product_code = 2;
+    string product_name = 3;
+    string product_type = 4;
+    string description = 5;
+    string brand = 6;
+    string manufacturer = 7;
+    string primary_uom = 8;
+    string secondary_uom = 9;
+    double weight = 10;
+    string weight_uom = 11;
+    double volume = 12;
+    string volume_uom = 13;
+    string hazardous_class = 14;
+    string country_of_origin = 15;
+}
+
+message ProductResponse {
+    ProductRegistration data = 1;
+}
+
+message GetProductRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ListProductsRequest {
+    string tenant_id = 1;
+    string product_type = 2;
+    string lifecycle_state = 3;
+    string category_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message ListProductsResponse {
+    repeated ProductRegistration items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message UpdateProductRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string product_name = 3;
+    string description = 4;
+    string brand = 5;
+    string manufacturer = 6;
+    double weight = 7;
+    double volume = 8;
+}
+
+message SearchProductsRequest {
+    string tenant_id = 1;
+    string query = 2;
+    string product_type = 3;
+    string lifecycle_state = 4;
+    string category_id = 5;
+    int32 page_size = 6;
+    string page_token = 7;
+}
+
+message SearchProductsResponse {
+    repeated ProductRegistration items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message BulkUpdateProductsRequest {
+    string tenant_id = 1;
+    repeated CreateProductRequest products = 2;
+}
+
+message BulkUpdateResponse {
+    int32 created = 1;
+    int32 updated = 2;
+    int32 failed = 3;
+    repeated string errors = 4;
+}
+
+message SetAttributeValuesRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+    repeated ProductAttributeValue values = 3;
+}
+
+message AttributeValuesResponse {
+    repeated ProductAttributeValue values = 1;
+}
+
+message GetAttributeValuesRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+}
+
+message GetCategoriesRequest {
+    string tenant_id = 1;
+    string parent_category_id = 2;
+}
+
+message CategoriesResponse {
+    repeated ProductCategory items = 1;
+}
+
+message AssignCategoryRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+    string category_id = 3;
+    bool is_primary = 4;
+}
+
+message CategoryAssignmentResponse {
+    ProductCategoryAssignment data = 1;
+}
+
+message CreateRelationshipRequest {
+    string tenant_id = 1;
+    string source_product_id = 2;
+    string target_product_id = 3;
+    string relationship_type = 4;
+    double quantity = 5;
+    string effective_from = 6;
+    string effective_to = 7;
+}
+
+message RelationshipResponse {
+    ProductRelationship data = 1;
+}
+
+message GetRelationshipsRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+    string relationship_type = 3;
+}
+
+message RelationshipsResponse {
+    repeated ProductRelationship items = 1;
+}
+
+message ChangeLifecycleStateRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+    string new_state = 3;
+    string reason = 4;
+}
+
+message PublishCatalogRequest {
+    string tenant_id = 1;
+    string catalog_id = 2;
+}
+
+message CatalogResponse {
+    CatalogPublishing data = 1;
+}
+
+message SyncToSystemRequest {
+    string tenant_id = 1;
+    string target_system = 2;
+    repeated string product_ids = 3;
+}
+
+message SyncResponse {
+    string target_system = 1;
+    int32 synced_count = 2;
+    int32 error_count = 3;
+    repeated string errors = 4;
 }
 ```
 

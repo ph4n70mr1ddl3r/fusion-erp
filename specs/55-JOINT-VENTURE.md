@@ -388,6 +388,9 @@ CREATE INDEX idx_cash_calls_jv ON jv_cash_calls(jv_id, status, due_date);
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.jv.v1;
+
 service JointVentureService {
     rpc CreateJointVenture(CreateJVRequest) returns (JVResponse);
     rpc GetJointVenture(GetJVRequest) returns (JVDetailResponse);
@@ -409,6 +412,313 @@ service JointVentureService {
     rpc RecordCashCallReceipt(RecordCashCallReceiptRequest) returns (CashCallResponse);
 
     rpc RecordOwnershipChange(OwnershipChangeRequest) returns (OwnershipChangeResponse);
+}
+
+// Entity messages
+
+message JointVenture {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_code = 3;
+    string jv_name = 4;
+    string jv_type = 5;
+    string operator_id = 6;
+    string status = 7;
+    string start_date = 8;
+    string end_date = 9;
+    string description = 10;
+    string accounting_method = 11;
+    string currency = 12;
+    string operator_gl_account = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message JVPartner {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string partner_id = 4;
+    string partner_role = 5;
+    double ownership_percentage = 6;
+    string interest_type = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+    string billing_contact = 10;
+    string billing_email = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message JVBillingCycle {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string cycle_name = 4;
+    string billing_frequency = 5;
+    string period_start = 6;
+    string period_end = 7;
+    string status = 8;
+    int64 total_costs = 9;
+    int64 total_revenues = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message JVCostPool {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string pool_code = 4;
+    string pool_name = 5;
+    string pool_type = 6;
+    string allocation_method = 7;
+    string gl_account_id = 8;
+    string description = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message JVDistribution {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string billing_cycle_id = 4;
+    string cost_pool_id = 5;
+    string partner_id = 6;
+    string distribution_type = 7;
+    int64 total_amount = 8;
+    double partner_share_pct = 9;
+    int64 partner_share_amount = 10;
+    string description = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message JVInvoice {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string billing_cycle_id = 4;
+    string partner_id = 5;
+    string invoice_number = 6;
+    string invoice_type = 7;
+    string invoice_date = 8;
+    string due_date = 9;
+    int64 amount = 10;
+    string currency = 11;
+    string status = 12;
+    string payment_reference = 13;
+    string paid_date = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message JVBillingRule {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string rule_name = 4;
+    string cost_pool_id = 5;
+    string rule_type = 6;
+    string calculation_method = 7;
+    double rate_or_amount = 8;
+    string effective_from = 9;
+    string effective_to = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message JVOwnershipChange {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string partner_id = 4;
+    string change_date = 5;
+    double old_percentage = 6;
+    double new_percentage = 7;
+    string transfer_from_partner_id = 8;
+    string transfer_to_partner_id = 9;
+    string reason = 10;
+    string approval_status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message JVCashCall {
+    string id = 1;
+    string tenant_id = 2;
+    string jv_id = 3;
+    string cash_call_number = 4;
+    string call_date = 5;
+    string due_date = 6;
+    int64 total_amount = 7;
+    string purpose = 8;
+    string status = 9;
+    int64 received_amount = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+// Request/Response messages
+
+message CreateJVRequest {
+    string tenant_id = 1;
+    string jv_code = 2;
+    string jv_name = 3;
+    string jv_type = 4;
+    string operator_id = 5;
+    string start_date = 6;
+    string end_date = 7;
+    string description = 8;
+    string accounting_method = 9;
+    string currency = 10;
+    string operator_gl_account = 11;
+}
+
+message JVResponse {
+    JointVenture data = 1;
+}
+
+message GetJVRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message JVDetailResponse {
+    JointVenture data = 1;
+    repeated JVPartner partners = 2;
+    repeated JVCostPool cost_pools = 3;
+}
+
+message ListJVsRequest {
+    string tenant_id = 1;
+    string status = 2;
+    string jv_type = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ListJVsResponse {
+    repeated JointVenture items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message AddPartnerRequest {
+    string tenant_id = 1;
+    string jv_id = 2;
+    string partner_id = 3;
+    string partner_role = 4;
+    double ownership_percentage = 5;
+    string interest_type = 6;
+    string effective_from = 7;
+    string effective_to = 8;
+    string billing_contact = 9;
+    string billing_email = 10;
+}
+
+message PartnerResponse {
+    JVPartner data = 1;
+}
+
+message UpdatePartnerRequest {
+    string tenant_id = 1;
+    string id = 2;
+    double ownership_percentage = 3;
+    string effective_to = 4;
+    string billing_contact = 5;
+    string billing_email = 6;
+}
+
+message CreateBillingCycleRequest {
+    string tenant_id = 1;
+    string jv_id = 2;
+    string cycle_name = 3;
+    string billing_frequency = 4;
+    string period_start = 5;
+    string period_end = 6;
+}
+
+message BillingCycleResponse {
+    JVBillingCycle data = 1;
+}
+
+message ProcessBillingCycleRequest {
+    string tenant_id = 1;
+    string cycle_id = 2;
+}
+
+message CalculateDistributionsRequest {
+    string tenant_id = 1;
+    string jv_id = 2;
+    string billing_cycle_id = 3;
+    string cost_pool_id = 4;
+}
+
+message DistributionsResponse {
+    repeated JVDistribution distributions = 1;
+}
+
+message GenerateInvoicesRequest {
+    string tenant_id = 1;
+    string jv_id = 2;
+    string billing_cycle_id = 3;
+}
+
+message InvoiceListResponse {
+    repeated JVInvoice invoices = 1;
+}
+
+message IssueInvoiceRequest {
+    string tenant_id = 1;
+    string invoice_id = 2;
+}
+
+message InvoiceResponse {
+    JVInvoice data = 1;
+}
+
+message RecordPaymentRequest {
+    string tenant_id = 1;
+    string invoice_id = 2;
+    int64 amount = 3;
+    string payment_reference = 4;
+    string paid_date = 5;
+}
+
+message IssueCashCallRequest {
+    string tenant_id = 1;
+    string jv_id = 2;
+    string call_date = 3;
+    string due_date = 4;
+    int64 total_amount = 5;
+    string purpose = 6;
+}
+
+message CashCallResponse {
+    JVCashCall data = 1;
+}
+
+message RecordCashCallReceiptRequest {
+    string tenant_id = 1;
+    string cash_call_id = 2;
+    int64 received_amount = 3;
+}
+
+message OwnershipChangeRequest {
+    string tenant_id = 1;
+    string jv_id = 2;
+    string partner_id = 3;
+    string change_date = 4;
+    double new_percentage = 5;
+    string transfer_from_partner_id = 6;
+    string transfer_to_partner_id = 7;
+    string reason = 8;
+}
+
+message OwnershipChangeResponse {
+    JVOwnershipChange data = 1;
 }
 ```
 

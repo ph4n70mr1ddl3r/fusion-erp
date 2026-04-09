@@ -341,6 +341,206 @@ service SourcingService {
     rpc ConvertToPO(ConvertToPORequest) returns (ConvertToPOResponse);
     rpc GetBidComparison(GetBidComparisonRequest) returns (GetBidComparisonResponse);
 }
+
+// Entity messages
+message SrcEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string event_number = 3;
+    string event_name = 4;
+    string description = 5;
+    string event_type = 6;
+    string status = 7;
+    string currency_code = 8;
+    string evaluation_method = 9;
+    string open_date = 10;
+    string close_date = 11;
+    string award_date = 12;
+    int64 total_estimated_value_cents = 13;
+    string buyer_id = 14;
+    string confidentiality = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message SrcLine {
+    string id = 1;
+    string tenant_id = 2;
+    string event_id = 3;
+    int32 line_number = 4;
+    string item_id = 5;
+    string item_description = 6;
+    string category_id = 7;
+    double quantity = 8;
+    string uom = 9;
+    int64 target_price_cents = 10;
+    string delivery_date = 11;
+    string delivery_location = 12;
+    string specifications = 13;
+    double evaluation_weight = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message SrcBid {
+    string id = 1;
+    string tenant_id = 2;
+    string event_id = 3;
+    string supplier_id = 4;
+    string line_id = 5;
+    int64 bid_price_cents = 6;
+    string currency_code = 7;
+    double proposed_quantity = 8;
+    string proposed_delivery_date = 9;
+    int32 lead_time_days = 10;
+    string validity_date = 11;
+    string payment_terms = 12;
+    int32 specifications_compliance = 13;
+    double technical_score = 14;
+    double total_score = 15;
+    int32 rank = 16;
+    bool is_recommended = 17;
+    string notes = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message SrcAward {
+    string id = 1;
+    string tenant_id = 2;
+    string event_id = 3;
+    string line_id = 4;
+    string supplier_id = 5;
+    double awarded_quantity = 6;
+    int64 awarded_price_cents = 7;
+    string currency_code = 8;
+    double award_percentage = 9;
+    string status = 10;
+    string award_justification = 11;
+    string purchase_order_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message SrcEvaluationCriterion {
+    string id = 1;
+    string tenant_id = 2;
+    string event_id = 3;
+    string criterion_name = 4;
+    string criterion_type = 5;
+    double weight_pct = 6;
+    string scoring_method = 7;
+    string scoring_formula = 8;
+    string description = 9;
+    double max_score = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+// Request/Response messages
+message CreateSourcingEventRequest {
+    string tenant_id = 1;
+    string event_name = 2;
+    string description = 3;
+    string event_type = 4;
+    string currency_code = 5;
+    string evaluation_method = 6;
+    string open_date = 7;
+    string close_date = 8;
+    int64 total_estimated_value_cents = 9;
+    string buyer_id = 10;
+    string confidentiality = 11;
+}
+
+message CreateSourcingEventResponse {
+    SrcEvent data = 1;
+}
+
+message BidLineInput {
+    string line_id = 1;
+    int64 bid_price_cents = 2;
+    double proposed_quantity = 3;
+    string proposed_delivery_date = 4;
+    int32 lead_time_days = 5;
+    string validity_date = 6;
+    string payment_terms = 7;
+    string notes = 8;
+}
+
+message SubmitBidRequest {
+    string tenant_id = 1;
+    string event_id = 2;
+    string supplier_id = 3;
+    repeated BidLineInput line_bids = 4;
+}
+
+message SubmitBidResponse {
+    repeated SrcBid bids = 1;
+}
+
+message EvaluateBidsRequest {
+    string tenant_id = 1;
+    string event_id = 2;
+    string evaluation_method = 3;
+}
+
+message ScoredBid {
+    string bid_id = 1;
+    string supplier_id = 2;
+    string line_id = 3;
+    double total_score = 4;
+    int32 rank = 5;
+    bool is_recommended = 6;
+}
+
+message EvaluateBidsResponse {
+    repeated ScoredBid scored_bids = 1;
+}
+
+message AwardInput {
+    string line_id = 1;
+    string supplier_id = 2;
+    double awarded_quantity = 3;
+    int64 awarded_price_cents = 4;
+    double award_percentage = 5;
+    string award_justification = 6;
+}
+
+message CreateAwardRequest {
+    string tenant_id = 1;
+    string event_id = 2;
+    repeated AwardInput awards = 3;
+}
+
+message CreateAwardResponse {
+    repeated SrcAward awards = 1;
+}
+
+message ConvertToPORequest {
+    string tenant_id = 1;
+    string award_id = 2;
+}
+
+message ConvertToPOResponse {
+    SrcAward award = 1;
+    string purchase_order_id = 2;
+}
+
+message GetBidComparisonRequest {
+    string tenant_id = 1;
+    string event_id = 2;
+}
+
+message BidComparisonRow {
+    string line_id = 1;
+    string item_description = 2;
+    repeated SrcBid bids = 3;
+}
+
+message GetBidComparisonResponse {
+    repeated BidComparisonRow rows = 1;
+    repeated SrcEvaluationCriterion criteria = 2;
+}
 ```
 
 ---

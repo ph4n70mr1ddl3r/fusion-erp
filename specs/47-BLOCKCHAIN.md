@@ -415,6 +415,202 @@ service ChainService {
     rpc VerifyCertification(VerifyCertificationRequest) returns (VerifyCertificationResponse);
     rpc TraceSupplyChain(TraceSupplyChainRequest) returns (TraceSupplyChainResponse);
 }
+
+// Entity messages
+
+message ChainNetwork {
+    string id = 1;
+    string tenant_id = 2;
+    string network_name = 3;
+    string network_type = 4;
+    string consensus_mechanism = 5;
+    string node_url = 6;
+    string chain_id = 7;
+    string credentials_encrypted = 8;
+    string config = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message ChainSmartContract {
+    string id = 1;
+    string tenant_id = 2;
+    string network_id = 3;
+    string contract_name = 4;
+    string contract_type = 5;
+    string abi = 6;
+    string bytecode_hash = 7;
+    string deployed_address = 8;
+    string deployed_by = 9;
+    string deployed_at = 10;
+    string version = 11;
+    string description = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ChainAsset {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_type = 3;
+    string asset_ref_type = 4;
+    string asset_ref_id = 5;
+    string token_id = 6;
+    string metadata = 7;
+    bool is_minted = 8;
+    string minted_at = 9;
+    string current_owner_did = 10;
+    string provenance_hash = 11;
+    string status = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ChainTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string network_id = 3;
+    string contract_id = 4;
+    string transaction_hash = 5;
+    int64 block_number = 6;
+    string from_address = 7;
+    string to_address = 8;
+    string transaction_type = 9;
+    string status = 10;
+    int64 gas_used = 11;
+    int64 gas_cost_cents = 12;
+    string submitted_at = 13;
+    string confirmed_at = 14;
+    string payload = 15;
+    string error_message = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message ChainProvenanceEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string chain_asset_id = 3;
+    string event_type = 4;
+    string event_data = 5;
+    string location = 6;
+    string actor_did = 7;
+    string timestamp_event = 8;
+    string evidence_hash = 9;
+    string verification_status = 10;
+    string verified_by = 11;
+    string verified_at = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ChainCertification {
+    string id = 1;
+    string tenant_id = 2;
+    string chain_asset_id = 3;
+    string certification_type = 4;
+    string certifying_body = 5;
+    string certificate_number = 6;
+    string issue_date = 7;
+    string expiry_date = 8;
+    bool is_valid = 9;
+    string revocation_reason = 10;
+    string blockchain_tx_id = 11;
+    string document_hash = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ChainSupplyChainLink {
+    string id = 1;
+    string tenant_id = 2;
+    string parent_asset_id = 3;
+    string child_asset_id = 4;
+    string relationship_type = 5;
+    double quantity_ratio = 6;
+    string linked_at = 7;
+    string linked_by = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message ChainVerificationRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string chain_asset_id = 3;
+    string requester_id = 4;
+    string request_type = 5;
+    string status = 6;
+    string response_data = 7;
+    string requested_at = 8;
+    string responded_at = 9;
+    string responder_id = 10;
+    string notes = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Request/Response messages
+
+message RegisterAssetRequest {
+    string tenant_id = 1;
+    string asset_type = 2;
+    string asset_ref_type = 3;
+    string asset_ref_id = 4;
+    string metadata = 5;
+    string provenance_hash = 6;
+}
+
+message RegisterAssetResponse {
+    ChainAsset data = 1;
+}
+
+message RecordProvenanceRequest {
+    string tenant_id = 1;
+    string chain_asset_id = 2;
+    string event_type = 3;
+    string event_data = 4;
+    string location = 5;
+    string actor_did = 6;
+    string timestamp_event = 7;
+    string evidence_hash = 8;
+}
+
+message RecordProvenanceResponse {
+    ChainProvenanceEvent data = 1;
+}
+
+message GetProvenanceHistoryRequest {
+    string tenant_id = 1;
+    string chain_asset_id = 2;
+}
+
+message GetProvenanceHistoryResponse {
+    repeated ChainProvenanceEvent events = 1;
+}
+
+message VerifyCertificationRequest {
+    string tenant_id = 1;
+    string certification_id = 2;
+    string document_hash = 3;
+}
+
+message VerifyCertificationResponse {
+    ChainCertification certification = 1;
+    bool is_valid = 2;
+    string verification_message = 3;
+}
+
+message TraceSupplyChainRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    int32 max_depth = 3;
+}
+
+message TraceSupplyChainResponse {
+    repeated ChainSupplyChainLink links = 1;
+    repeated ChainAsset assets = 2;
+}
 ```
 
 ---

@@ -286,6 +286,187 @@ service PayrollInterfaceService {
     rpc TestProviderConnection(TestProviderConnectionRequest) returns (TestProviderConnectionResponse);
     rpc GetFieldMappings(GetFieldMappingsRequest) returns (GetFieldMappingsResponse);
 }
+
+// Entity messages
+message PayrollProvider {
+    string id = 1;
+    string tenant_id = 2;
+    string provider_name = 3;
+    string provider_code = 4;
+    string provider_type = 5;
+    string country = 6;
+    string api_endpoint = 7;
+    string api_version = 8;
+    string authentication_type = 9;
+    string auth_config = 10;
+    string status = 11;
+    string last_connection_test = 12;
+    string connection_status = 13;
+    string support_contact = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message IntegrationTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string template_name = 3;
+    string template_code = 4;
+    string provider_id = 5;
+    string template_type = 6;
+    string data_format = 7;
+    string field_mapping = 8;
+    string transformation_rules = 9;
+    string file_naming_pattern = 10;
+    string delimiter = 11;
+    string encoding = 12;
+    int32 include_header = 13;
+    int32 batch_size = 14;
+    string schedule_cron = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message DataExchange {
+    string id = 1;
+    string tenant_id = 2;
+    string provider_id = 3;
+    string template_id = 4;
+    string exchange_type = 5;
+    string direction = 6;
+    string status = 7;
+    string period_start = 8;
+    string period_end = 9;
+    int32 record_count = 10;
+    int32 success_count = 11;
+    int32 error_count = 12;
+    string file_url = 13;
+    int64 file_size_bytes = 14;
+    string checksum = 15;
+    string initiated_by = 16;
+    string started_at = 17;
+    string completed_at = 18;
+    string error_details = 19;
+    int64 processing_time_ms = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+message FieldMapping {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string source_entity = 4;
+    string source_field = 5;
+    string target_field = 6;
+    string data_type = 7;
+    string transform_expression = 8;
+    string default_value = 9;
+    int32 is_required = 10;
+    string validation_rule = 11;
+    int32 sort_order = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message ExchangeError {
+    string id = 1;
+    string tenant_id = 2;
+    string exchange_id = 3;
+    int32 record_number = 4;
+    string record_data = 5;
+    string error_type = 6;
+    string error_message = 7;
+    string field_name = 8;
+    string resolution_status = 9;
+    string resolved_by = 10;
+    string resolved_at = 11;
+    string resolution_notes = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message PayrollConfirmation {
+    string id = 1;
+    string tenant_id = 2;
+    string provider_id = 3;
+    string exchange_id = 4;
+    string confirmation_type = 5;
+    string confirmation_date = 6;
+    string pay_period_start = 7;
+    string pay_period_end = 8;
+    int64 total_pay_cents = 9;
+    int32 total_employees = 10;
+    string confirmation_reference = 11;
+    string status = 12;
+    string discrepancy_notes = 13;
+    string verified_by = 14;
+    string verified_at = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Request/Response messages
+message InitiateExchangeRequest {
+    string tenant_id = 1;
+    string provider_id = 2;
+    string template_id = 3;
+    string period_start = 4;
+    string period_end = 5;
+}
+
+message InitiateExchangeResponse {
+    DataExchange data = 1;
+}
+
+message GetExchangeStatusRequest {
+    string tenant_id = 1;
+    string exchange_id = 2;
+}
+
+message GetExchangeStatusResponse {
+    DataExchange data = 1;
+    repeated ExchangeError errors = 2;
+}
+
+message ProcessConfirmationRequest {
+    string tenant_id = 1;
+    string provider_id = 2;
+    string confirmation_type = 3;
+    string confirmation_date = 4;
+    string pay_period_start = 5;
+    string pay_period_end = 6;
+    int64 total_pay_cents = 7;
+    int32 total_employees = 8;
+    string confirmation_reference = 9;
+    string exchange_id = 10;
+}
+
+message ProcessConfirmationResponse {
+    PayrollConfirmation data = 1;
+}
+
+message TestProviderConnectionRequest {
+    string tenant_id = 1;
+    string provider_id = 2;
+}
+
+message TestProviderConnectionResponse {
+    string provider_id = 1;
+    string connection_status = 2;
+    string tested_at = 3;
+    string error_message = 4;
+}
+
+message GetFieldMappingsRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+}
+
+message GetFieldMappingsResponse {
+    repeated FieldMapping mappings = 1;
+}
 ```
 
 ---

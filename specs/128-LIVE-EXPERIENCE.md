@@ -278,6 +278,167 @@ service LiveExperienceService {
     rpc StreamCoBrowseEvents(stream CoBrowseEvent) returns (stream CoBrowseEvent);
     rpc GetRecording(GetRecordingRequest) returns (GetRecordingResponse);
 }
+
+// Entity messages
+message LeSession {
+    string id = 1;
+    string tenant_id = 2;
+    string session_code = 3;
+    string session_type = 4;
+    string status = 5;
+    string agent_id = 6;
+    string customer_id = 7;
+    string customer_name = 8;
+    string customer_email = 9;
+    string channel = 10;
+    string request_id = 11;
+    string case_id = 12;
+    string start_time = 13;
+    string end_time = 14;
+    int32 duration_seconds = 15;
+    bool recording_enabled = 16;
+    string recording_url = 17;
+    string resolution_notes = 18;
+    string outcome = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message LeParticipant {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string participant_type = 4;
+    string user_id = 5;
+    string display_name = 6;
+    string join_time = 7;
+    string leave_time = 8;
+    string connection_status = 9;
+    string device_type = 10;
+    string browser = 11;
+    string ip_address = 12;
+    string geo_location = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message LeCobrowseEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string event_type = 4;
+    string url = 5;
+    string element_selector = 6;
+    string event_data = 7;
+    string screenshot_url = 8;
+    string participant_id = 9;
+    string event_timestamp = 10;
+    string created_at = 11;
+}
+
+message LeAnnotation {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string participant_id = 4;
+    string annotation_type = 5;
+    string target_url = 6;
+    string target_element = 7;
+    double position_x = 8;
+    double position_y = 9;
+    double width = 10;
+    double height = 11;
+    string color = 12;
+    string text_content = 13;
+    string page_screenshot_url = 14;
+    string annotation_timestamp = 15;
+    string created_at = 16;
+}
+
+message LeRecording {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string recording_type = 4;
+    string file_url = 5;
+    int64 file_size_bytes = 6;
+    int32 duration_seconds = 7;
+    string format = 8;
+    string started_at = 9;
+    string ended_at = 10;
+    string transcript_text = 11;
+    bool consent_obtained = 12;
+    string retention_until = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message LePrivacyRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string rule_type = 4;
+    string selector = 5;
+    string description = 6;
+    int32 priority = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+// Request/Response messages
+message CreateSessionRequest {
+    string tenant_id = 1;
+    string agent_id = 2;
+    string session_type = 3;
+    string customer_id = 4;
+    string customer_name = 5;
+    string customer_email = 6;
+    string channel = 7;
+    string request_id = 8;
+    string case_id = 9;
+    bool recording_enabled = 10;
+}
+
+message CreateSessionResponse {
+    LeSession data = 1;
+    string join_url = 2;
+}
+
+message JoinSessionRequest {
+    string tenant_id = 1;
+    string session_code = 2;
+    string customer_name = 3;
+    string customer_email = 4;
+    string device_type = 5;
+}
+
+message JoinSessionResponse {
+    LeSession session = 1;
+    string websocket_url = 2;
+    repeated LePrivacyRule privacy_rules = 3;
+}
+
+message EndSessionRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string outcome = 3;
+    string resolution_notes = 4;
+}
+
+message EndSessionResponse {
+    LeSession data = 1;
+    int32 duration_seconds = 2;
+}
+
+message GetRecordingRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetRecordingResponse {
+    LeRecording data = 1;
+    string download_url = 2;
+}
 ```
 
 ---

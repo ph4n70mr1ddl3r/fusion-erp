@@ -276,6 +276,188 @@ service DocumentIOService {
     rpc ApproveDocument(ApproveDocumentRequest) returns (ApproveDocumentResponse);
     rpc GetDocumentStatus(GetDocumentStatusRequest) returns (GetDocumentStatusResponse);
 }
+
+// Entity messages
+message DocumentTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string template_name = 3;
+    string template_code = 4;
+    string document_type = 5;
+    string description = 6;
+    string extraction_schema = 7;
+    string classification_rules = 8;
+    string validation_rules = 9;
+    string supported_formats = 10;
+    string language = 11;
+    string country = 12;
+    int32 processing_priority = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message Document {
+    string id = 1;
+    string tenant_id = 2;
+    string document_number = 3;
+    string source_type = 4;
+    string source_reference = 5;
+    string file_name = 6;
+    string file_url = 7;
+    int64 file_size_bytes = 8;
+    string file_type = 9;
+    string file_hash = 10;
+    string document_type = 11;
+    string template_id = 12;
+    string language = 13;
+    int32 page_count = 14;
+    string status = 15;
+    string extracted_data = 16;
+    double extraction_confidence = 17;
+    string classified_by = 18;
+    string reviewed_by = 19;
+    string reviewed_at = 20;
+    string error_message = 21;
+    string reference_type = 22;
+    string reference_id = 23;
+    int64 processing_time_ms = 24;
+    string created_at = 25;
+    string updated_at = 26;
+}
+
+message ExtractionField {
+    string id = 1;
+    string tenant_id = 2;
+    string document_id = 3;
+    string field_name = 4;
+    string field_value = 5;
+    string field_type = 6;
+    double confidence = 7;
+    string bounding_box = 8;
+    int32 source_page = 9;
+    int32 is_edited = 10;
+    string original_value = 11;
+    string edited_by = 12;
+    string edited_at = 13;
+    string validation_status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message GeneratedDocument {
+    string id = 1;
+    string tenant_id = 2;
+    string generation_template_id = 3;
+    string target_document_type = 4;
+    string target_format = 5;
+    string source_data = 6;
+    string source_reference_type = 7;
+    string source_reference_id = 8;
+    string file_url = 9;
+    int64 file_size_bytes = 10;
+    string language = 11;
+    string status = 12;
+    string generated_at = 13;
+    string delivery_method = 14;
+    string delivery_status = 15;
+    string delivered_at = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message ProcessingQueueEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string document_id = 3;
+    string processing_step = 4;
+    int32 priority = 5;
+    string status = 6;
+    int32 retry_count = 7;
+    int32 max_retries = 8;
+    string error_message = 9;
+    string started_at = 10;
+    string completed_at = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Request/Response messages
+message IngestDocumentRequest {
+    string tenant_id = 1;
+    string file_url = 2;
+    string file_name = 3;
+    string source_type = 4;
+    string source_reference = 5;
+    string document_type = 6;
+    string template_id = 7;
+}
+
+message IngestDocumentResponse {
+    Document data = 1;
+}
+
+message GetExtractedDataRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+}
+
+message GetExtractedDataResponse {
+    string document_id = 1;
+    string document_type = 2;
+    double extraction_confidence = 3;
+    repeated ExtractionField fields = 4;
+}
+
+message ClassifyDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+}
+
+message ClassifyDocumentResponse {
+    string document_id = 1;
+    string document_type = 2;
+    string template_id = 3;
+    double confidence = 4;
+    string classified_by = 5;
+}
+
+message GenerateDocumentRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string source_data = 3;
+    string target_format = 4;
+    string language = 5;
+    string source_reference_type = 6;
+    string source_reference_id = 7;
+}
+
+message GenerateDocumentResponse {
+    GeneratedDocument data = 1;
+}
+
+message ApproveDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+    string reviewed_by = 3;
+    string reference_type = 4;
+    string reference_id = 5;
+}
+
+message ApproveDocumentResponse {
+    Document data = 1;
+}
+
+message GetDocumentStatusRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+}
+
+message GetDocumentStatusResponse {
+    Document data = 1;
+    repeated ProcessingQueueEntry queue_entries = 2;
+    repeated ExtractionField extracted_fields = 3;
+}
 ```
 
 ---

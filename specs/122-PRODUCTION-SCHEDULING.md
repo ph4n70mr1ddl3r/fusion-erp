@@ -319,6 +319,180 @@ service ProductionSchedulingService {
     rpc UpdateOperationStatus(UpdateOperationStatusRequest) returns (UpdateOperationStatusResponse);
     rpc Reschedule(RescheduleRequest) returns (RescheduleResponse);
 }
+
+// Entity messages
+message PsResource {
+    string id = 1;
+    string tenant_id = 2;
+    string resource_code = 3;
+    string resource_name = 4;
+    string resource_type = 5;
+    string department = 6;
+    string description = 7;
+    double capacity_per_hour = 8;
+    string capacity_uom = 9;
+    double efficiency_percentage = 10;
+    double utilization_target_pct = 11;
+    int64 cost_per_hour_cents = 12;
+    bool is_bottleneck = 13;
+    string schedule_group = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message PsScheduleOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string order_type = 3;
+    string order_id = 4;
+    string item_id = 5;
+    double quantity = 6;
+    string uom = 7;
+    int32 priority = 8;
+    string due_date = 9;
+    string routing_id = 10;
+    int32 estimated_duration_minutes = 11;
+    string status = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message PsScheduleOperation {
+    string id = 1;
+    string tenant_id = 2;
+    string schedule_order_id = 3;
+    int32 operation_number = 4;
+    string operation_name = 5;
+    string resource_id = 6;
+    string planned_start = 7;
+    string planned_end = 8;
+    string actual_start = 9;
+    string actual_end = 10;
+    int32 setup_minutes = 11;
+    int32 run_time_minutes = 12;
+    int32 queue_minutes = 13;
+    int32 move_minutes = 14;
+    string status = 15;
+    string predecessor_operation_id = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message PsScheduleRun {
+    string id = 1;
+    string tenant_id = 2;
+    string run_name = 3;
+    string scheduling_method = 4;
+    string planning_horizon_start = 5;
+    string planning_horizon_end = 6;
+    int32 total_orders = 7;
+    int32 scheduled_orders = 8;
+    int32 unscheduled_orders = 9;
+    int32 total_tardiness_minutes = 10;
+    double resource_utilization_pct = 11;
+    int32 makespan_minutes = 12;
+    string status = 13;
+    int32 schedule_version = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Request/Response messages
+message GetResourceCapacityRequest {
+    string tenant_id = 1;
+    string resource_id = 2;
+    string date_from = 3;
+    string date_to = 4;
+}
+
+message CapacitySlot {
+    string date = 1;
+    double available_hours = 2;
+    double scheduled_hours = 3;
+    double remaining_hours = 4;
+    double utilization_pct = 5;
+}
+
+message GetResourceCapacityResponse {
+    string resource_id = 1;
+    repeated CapacitySlot slots = 2;
+}
+
+message RunScheduleRequest {
+    string tenant_id = 1;
+    string scheduling_method = 2;
+    string planning_horizon_start = 3;
+    string planning_horizon_end = 4;
+    repeated string resource_ids = 5;
+    bool consider_downtime = 6;
+    string optimize_for = 7;
+}
+
+message RunScheduleResponse {
+    PsScheduleRun run = 1;
+}
+
+message GetScheduleResultRequest {
+    string tenant_id = 1;
+    string run_id = 2;
+}
+
+message GetScheduleResultResponse {
+    PsScheduleRun run = 1;
+    repeated PsScheduleOrder orders = 2;
+    repeated PsScheduleOperation operations = 3;
+}
+
+message GanttOperation {
+    string operation_id = 1;
+    string order_id = 2;
+    string operation_name = 3;
+    string resource_id = 4;
+    string planned_start = 5;
+    string planned_end = 6;
+    string status = 7;
+    string color_code = 8;
+}
+
+message GetGanttDataRequest {
+    string tenant_id = 1;
+    string date_from = 2;
+    string date_to = 3;
+    string resource_id = 4;
+    string view = 5;
+}
+
+message GetGanttDataResponse {
+    repeated PsResource resources = 1;
+    repeated GanttOperation operations = 2;
+    string now_line = 3;
+}
+
+message UpdateOperationStatusRequest {
+    string tenant_id = 1;
+    string operation_id = 2;
+    string status = 3;
+    string actual_start = 4;
+    string actual_end = 5;
+}
+
+message UpdateOperationStatusResponse {
+    PsScheduleOperation data = 1;
+}
+
+message RescheduleRequest {
+    string tenant_id = 1;
+    string reason = 2;
+    repeated string affected_order_ids = 3;
+    string scheduling_method = 4;
+    string planning_horizon_start = 5;
+    string planning_horizon_end = 6;
+}
+
+message RescheduleResponse {
+    PsScheduleRun run = 1;
+    repeated PsScheduleOperation updated_operations = 2;
+}
 ```
 
 ---

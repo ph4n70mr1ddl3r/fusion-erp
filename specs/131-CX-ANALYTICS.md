@@ -310,6 +310,223 @@ service CXAnalyticsService {
     rpc ComputeCLVBatch(ComputeCLVBatchRequest) returns (ComputeCLVBatchResponse);
     rpc GetChurnRisk(GetChurnRiskRequest) returns (GetChurnRiskResponse);
 }
+
+// Entity messages
+message JourneyMap {
+    string id = 1;
+    string tenant_id = 2;
+    string journey_name = 3;
+    string description = 4;
+    string journey_type = 5;
+    string touchpoints = 6;
+    string milestones = 7;
+    string status = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message JourneyEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_id = 3;
+    string journey_map_id = 4;
+    string session_id = 5;
+    string touchpoint_channel = 6;
+    string touchpoint_action = 7;
+    string touchpoint_detail = 8;
+    string timestamp = 9;
+    int32 duration_seconds = 10;
+    double sentiment_score = 11;
+    string emotion = 12;
+    int32 conversion_event = 13;
+    int64 revenue_impact_cents = 14;
+    string source_system = 15;
+    string source_event_id = 16;
+    string metadata = 17;
+    string created_at = 18;
+}
+
+message SentimentResult {
+    string id = 1;
+    string tenant_id = 2;
+    string source_type = 3;
+    string source_id = 4;
+    string customer_id = 5;
+    string overall_sentiment = 6;
+    double sentiment_score = 7;
+    string emotion = 8;
+    string topics = 9;
+    string topic_sentiments = 10;
+    string keywords = 11;
+    string language = 12;
+    string analyzed_at = 13;
+    string model_version = 14;
+    string created_at = 15;
+}
+
+message CLVModel {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_id = 3;
+    int64 clv_historical_cents = 4;
+    int64 clv_predicted_cents = 5;
+    double clv_prediction_confidence = 6;
+    int64 average_order_value_cents = 7;
+    double purchase_frequency = 8;
+    int32 customer_age_days = 9;
+    double churn_probability = 10;
+    string segment = 11;
+    string cohort = 12;
+    string model_version = 13;
+    string computed_at = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message Survey {
+    string id = 1;
+    string tenant_id = 2;
+    string survey_name = 3;
+    string survey_type = 4;
+    string trigger_event = 5;
+    int32 trigger_delay_hours = 6;
+    string questions = 7;
+    string channels = 8;
+    string status = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message SurveyResponse {
+    string id = 1;
+    string tenant_id = 2;
+    string survey_id = 3;
+    string customer_id = 4;
+    string trigger_event = 5;
+    string trigger_reference_id = 6;
+    string responses = 7;
+    int32 nps_score = 8;
+    double csat_score = 9;
+    string overall_sentiment = 10;
+    string completed_at = 11;
+    string response_channel = 12;
+    string created_at = 13;
+}
+
+message Dashboard {
+    string id = 1;
+    string tenant_id = 2;
+    string dashboard_name = 3;
+    string dashboard_type = 4;
+    string description = 5;
+    string widgets = 6;
+    string filters = 7;
+    int32 refresh_interval_seconds = 8;
+    int32 is_shared = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+// Request/Response messages
+message IngestJourneyEventRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string journey_map_id = 3;
+    string session_id = 4;
+    string touchpoint_channel = 5;
+    string touchpoint_action = 6;
+    string touchpoint_detail = 7;
+    string timestamp = 8;
+    int32 duration_seconds = 9;
+    double sentiment_score = 10;
+    string emotion = 11;
+    int32 conversion_event = 12;
+    int64 revenue_impact_cents = 13;
+    string source_system = 14;
+    string source_event_id = 15;
+    string metadata = 16;
+}
+
+message IngestJourneyEventResponse {
+    JourneyEvent data = 1;
+}
+
+message AnalyzeSentimentRequest {
+    string tenant_id = 1;
+    string text = 2;
+    string source_type = 3;
+    string source_id = 4;
+    string customer_id = 5;
+    string language = 6;
+}
+
+message AnalyzeSentimentResponse {
+    SentimentResult data = 1;
+}
+
+message GetCustomerCLVRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+}
+
+message GetCustomerCLVResponse {
+    CLVModel data = 1;
+}
+
+message GetJourneyAnalysisRequest {
+    string tenant_id = 1;
+    string journey_map_id = 2;
+    string customer_id = 3;
+    string from_date = 4;
+    string to_date = 5;
+}
+
+message GetJourneyAnalysisResponse {
+    string journey_map_id = 1;
+    string journey_type = 2;
+    repeated JourneyStepAnalysis steps = 3;
+    double overall_conversion_rate = 4;
+    double average_duration_seconds = 5;
+}
+
+message JourneyStepAnalysis {
+    int32 step = 1;
+    string channel = 2;
+    string action = 3;
+    int32 entered_count = 4;
+    int32 completed_count = 5;
+    double drop_off_rate = 6;
+    int64 avg_duration_seconds = 7;
+}
+
+message ComputeCLVBatchRequest {
+    string tenant_id = 1;
+    repeated string customer_ids = 2;
+    string segment = 3;
+}
+
+message ComputeCLVBatchResponse {
+    int32 computed_count = 1;
+    repeated CLVModel results = 2;
+}
+
+message GetChurnRiskRequest {
+    string tenant_id = 1;
+    double min_probability = 2;
+    string segment = 3;
+}
+
+message GetChurnRiskResponse {
+    repeated ChurnRiskEntry entries = 1;
+}
+
+message ChurnRiskEntry {
+    string customer_id = 1;
+    double churn_probability = 2;
+    string segment = 3;
+    int64 clv_predicted_cents = 4;
+    int64 clv_historical_cents = 5;
+}
 ```
 
 ---

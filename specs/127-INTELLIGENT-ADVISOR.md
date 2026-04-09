@@ -278,6 +278,190 @@ service IntelligentAdvisorService {
     rpc GetModelSchema(GetModelSchemaRequest) returns (GetModelSchemaResponse);
     rpc ValidateModel(ValidateModelRequest) returns (ValidateModelResponse);
 }
+
+// Entity messages
+message IaPolicyModel {
+    string id = 1;
+    string tenant_id = 2;
+    string model_name = 3;
+    string model_code = 4;
+    string description = 5;
+    int32 version_number = 6;
+    string status = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+    string goal = 10;
+    string input_schema = 11;
+    string output_schema = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message IaRule {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string rule_name = 4;
+    string rule_type = 5;
+    string description = 6;
+    int32 priority = 7;
+    string condition_expression = 8;
+    string conclusion = 9;
+    string rule_body = 10;
+    bool is_active = 11;
+    string dependencies = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message IaDecisionTable {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string table_name = 4;
+    string description = 5;
+    string input_columns = 6;
+    string output_columns = 7;
+    string rules_json = 8;
+    string default_outputs = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message IaInterview {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string interview_name = 4;
+    string description = 5;
+    string screens = 6;
+    string branding = 7;
+    string welcome_message = 8;
+    string completion_message = 9;
+    string status = 10;
+    string locale = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message IaScreen {
+    string id = 1;
+    string tenant_id = 2;
+    string interview_id = 3;
+    int32 screen_number = 4;
+    string screen_title = 5;
+    string screen_type = 6;
+    string fields = 7;
+    string navigation_rule = 8;
+    string help_text = 9;
+    bool is_optional = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message IaDetermination {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string interview_id = 4;
+    string determination_type = 5;
+    string input_data = 6;
+    string output_data = 7;
+    string conclusions = 8;
+    string rules_fired = 9;
+    string decision_table_matches = 10;
+    int32 execution_time_ms = 11;
+    bool is_conclusive = 12;
+    string session_id = 13;
+    string user_id = 14;
+    string reference_type = 15;
+    string reference_id = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+// Request/Response messages
+message DetermineRequest {
+    string tenant_id = 1;
+    string model_code = 2;
+    string input_data = 3;
+    string determination_type = 4;
+    string reference_type = 5;
+    string reference_id = 6;
+}
+
+message DetermineResponse {
+    IaDetermination data = 1;
+}
+
+message StartInterviewRequest {
+    string tenant_id = 1;
+    string interview_id = 2;
+    string user_id = 3;
+}
+
+message InterviewScreen {
+    string screen_id = 1;
+    int32 screen_number = 2;
+    string screen_title = 3;
+    string screen_type = 4;
+    string fields = 5;
+    string help_text = 6;
+    string navigation_rule = 7;
+    double progress_pct = 8;
+}
+
+message StartInterviewResponse {
+    string session_id = 1;
+    InterviewScreen first_screen = 2;
+}
+
+message AdvanceInterviewRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string interview_id = 3;
+    string screen_data = 4;
+    string action = 5;
+}
+
+message AdvanceInterviewResponse {
+    string session_id = 1;
+    InterviewScreen next_screen = 2;
+    IaDetermination determination = 3;
+    bool is_complete = 4;
+}
+
+message GetModelSchemaRequest {
+    string tenant_id = 1;
+    string model_id = 2;
+}
+
+message GetModelSchemaResponse {
+    string model_id = 1;
+    string model_name = 2;
+    string input_schema = 3;
+    string output_schema = 4;
+    string goal = 5;
+}
+
+message ValidateModelRequest {
+    string tenant_id = 1;
+    string model_id = 2;
+}
+
+message ValidationIssue {
+    string issue_type = 1;
+    string rule_id = 2;
+    string rule_name = 3;
+    string description = 4;
+    string severity = 5;
+}
+
+message ValidateModelResponse {
+    bool is_valid = 1;
+    repeated ValidationIssue issues = 2;
+    int32 rules_validated = 3;
+}
 ```
 
 ---

@@ -326,6 +326,9 @@ CREATE INDEX idx_trans_logs_level ON transformation_logs(tenant_id, log_level);
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.accounthub.v1;
+
 service AccountingHubService {
     rpc RegisterSourceSystem(RegisterSourceSystemRequest) returns (SourceSystemResponse);
     rpc ListSourceSystems(ListSourceSystemsRequest) returns (ListSourceSystemsResponse);
@@ -345,6 +348,263 @@ service AccountingHubService {
     rpc PostToGl(PostToGlRequest) returns (PostToGlResponse);
 
     rpc GetTransformationLogs(GetTransformationLogsRequest) returns (TransformationLogsResponse);
+}
+
+// Entity messages
+
+message SourceSystem {
+    string id = 1;
+    string tenant_id = 2;
+    string system_code = 3;
+    string system_name = 4;
+    string system_type = 5;
+    string connection_config = 6;
+    string authentication_type = 7;
+    string last_sync_at = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message SourceEventType {
+    string id = 1;
+    string tenant_id = 2;
+    string source_system_id = 3;
+    string event_type_code = 4;
+    string event_type_name = 5;
+    string event_category = 6;
+    string description = 7;
+    string payload_schema = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message AccountingRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_code = 3;
+    string rule_name = 4;
+    string source_event_type_id = 5;
+    int32 priority = 6;
+    string condition_expression = 7;
+    string journal_batch_description = 8;
+    string gl_ledger_id = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message AccountingRuleLine {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    int32 line_number = 4;
+    string debit_credit = 5;
+    string account_segment_mapping = 6;
+    string amount_source = 7;
+    string amount_expression = 8;
+    string description_template = 9;
+    string dimension_mapping = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message SourceTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string source_system_id = 3;
+    string source_event_type_id = 4;
+    string transaction_ref = 5;
+    string transaction_date = 6;
+    string raw_payload = 7;
+    string status = 8;
+    string error_message = 9;
+    int32 processing_time_ms = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message JournalBatch {
+    string id = 1;
+    string tenant_id = 2;
+    string batch_number = 3;
+    string source_transaction_id = 4;
+    string rule_id = 5;
+    string ledger_id = 6;
+    string batch_status = 7;
+    int64 total_debits = 8;
+    int64 total_credits = 9;
+    int32 line_count = 10;
+    bool posted_to_gl = 11;
+    string gl_journal_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message JournalBatchLine {
+    string id = 1;
+    string tenant_id = 2;
+    string batch_id = 3;
+    int32 line_number = 4;
+    string account_code = 5;
+    string debit_credit = 6;
+    int64 amount = 7;
+    string description = 8;
+    string dimension1 = 9;
+    string dimension2 = 10;
+    string dimension3 = 11;
+    string dimension4 = 12;
+    string source_line_ref = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message TransformationLog {
+    string id = 1;
+    string tenant_id = 2;
+    string source_transaction_id = 3;
+    string rule_id = 4;
+    string batch_id = 5;
+    string log_level = 6;
+    string message = 7;
+    string field_name = 8;
+    string field_value = 9;
+    string transformed_value = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+// Request/Response messages
+
+message RegisterSourceSystemRequest {
+    string tenant_id = 1;
+    string system_code = 2;
+    string system_name = 3;
+    string system_type = 4;
+    string connection_config = 5;
+    string authentication_type = 6;
+}
+
+message SourceSystemResponse {
+    SourceSystem data = 1;
+}
+
+message ListSourceSystemsRequest {
+    string tenant_id = 1;
+    string system_type = 2;
+}
+
+message ListSourceSystemsResponse {
+    repeated SourceSystem items = 1;
+}
+
+message DefineEventTypeRequest {
+    string tenant_id = 1;
+    string source_system_id = 2;
+    string event_type_code = 3;
+    string event_type_name = 4;
+    string event_category = 5;
+    string description = 6;
+    string payload_schema = 7;
+}
+
+message EventTypeResponse {
+    SourceEventType data = 1;
+}
+
+message ListEventTypesRequest {
+    string tenant_id = 1;
+    string source_system_id = 2;
+}
+
+message ListEventTypesResponse {
+    repeated SourceEventType items = 1;
+}
+
+message CreateAccountingRuleRequest {
+    string tenant_id = 1;
+    string rule_code = 2;
+    string rule_name = 3;
+    string source_event_type_id = 4;
+    int32 priority = 5;
+    string condition_expression = 6;
+    string journal_batch_description = 7;
+    string gl_ledger_id = 8;
+    repeated AccountingRuleLine lines = 9;
+}
+
+message AccountingRuleResponse {
+    AccountingRule data = 1;
+    repeated AccountingRuleLine lines = 2;
+}
+
+message GetAccountingRuleRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message SubmitTransactionRequest {
+    string tenant_id = 1;
+    string source_system_id = 2;
+    string source_event_type_id = 3;
+    string transaction_ref = 4;
+    string transaction_date = 5;
+    string raw_payload = 6;
+}
+
+message TransactionResponse {
+    SourceTransaction data = 1;
+    JournalBatch batch = 2;
+}
+
+message SubmitBatchTransactionsRequest {
+    string tenant_id = 1;
+    repeated SubmitTransactionRequest transactions = 2;
+}
+
+message BatchSubmitResponse {
+    repeated TransactionResponse results = 1;
+    int32 succeeded = 2;
+    int32 failed = 3;
+}
+
+message ReprocessTransactionRequest {
+    string tenant_id = 1;
+    string transaction_id = 2;
+}
+
+message GetJournalBatchRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message JournalBatchResponse {
+    JournalBatch data = 1;
+    repeated JournalBatchLine lines = 2;
+}
+
+message ApproveJournalBatchRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message PostToGlRequest {
+    string tenant_id = 1;
+    string batch_id = 2;
+}
+
+message PostToGlResponse {
+    string batch_id = 1;
+    string gl_journal_id = 2;
+    string status = 3;
+}
+
+message GetTransformationLogsRequest {
+    string tenant_id = 1;
+    string source_transaction_id = 2;
+    string log_level = 3;
+}
+
+message TransformationLogsResponse {
+    repeated TransformationLog items = 1;
 }
 ```
 

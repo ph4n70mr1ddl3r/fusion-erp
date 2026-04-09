@@ -413,6 +413,283 @@ service HigherEducationService {
     rpc CalculateGPA(CalculateGPARequest) returns (CalculateGPAResponse);
     rpc DisburseFinancialAid(DisburseFinancialAidRequest) returns (DisburseFinancialAidResponse);
 }
+
+// Entity messages
+message Institution {
+    string id = 1;
+    string tenant_id = 2;
+    string institution_name = 3;
+    string institution_code = 4;
+    string institution_type = 5;
+    string accreditation = 6;
+    string address_line1 = 7;
+    string city = 8;
+    string state_province = 9;
+    string postal_code = 10;
+    string country = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message College {
+    string id = 1;
+    string tenant_id = 2;
+    string institution_id = 3;
+    string college_name = 4;
+    string college_code = 5;
+    string dean_name = 6;
+    string created_at = 7;
+    string updated_at = 8;
+}
+
+message Department {
+    string id = 1;
+    string tenant_id = 2;
+    string college_id = 3;
+    string department_name = 4;
+    string department_code = 5;
+    string chair_name = 6;
+    string created_at = 7;
+    string updated_at = 8;
+}
+
+message AcademicPeriod {
+    string id = 1;
+    string tenant_id = 2;
+    string period_name = 3;
+    string period_code = 4;
+    string period_type = 5;
+    string academic_year = 6;
+    string start_date = 7;
+    string end_date = 8;
+    string registration_start = 9;
+    string registration_end = 10;
+    string add_drop_deadline = 11;
+    string withdrawal_deadline = 12;
+    string final_exam_start = 13;
+    string final_exam_end = 14;
+    string grading_deadline = 15;
+    string status = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message Program {
+    string id = 1;
+    string tenant_id = 2;
+    string program_name = 3;
+    string program_code = 4;
+    string degree_level = 5;
+    string department_id = 6;
+    double total_credits_required = 7;
+    double min_gpa_required = 8;
+    string description = 9;
+    string learning_outcomes = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message Course {
+    string id = 1;
+    string tenant_id = 2;
+    string course_code = 3;
+    string course_name = 4;
+    string description = 5;
+    string department_id = 6;
+    double credits = 7;
+    int32 contact_hours = 8;
+    string prerequisites = 9;
+    string corequisites = 10;
+    string course_level = 11;
+    string delivery_mode = 12;
+    int32 max_enrollment = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message Student {
+    string id = 1;
+    string tenant_id = 2;
+    string student_id_number = 3;
+    string first_name = 4;
+    string last_name = 5;
+    string email = 6;
+    string phone = 7;
+    string date_of_birth = 8;
+    string gender = 9;
+    string address_line1 = 10;
+    string city = 11;
+    string state_province = 12;
+    string postal_code = 13;
+    string country = 14;
+    string program_id = 15;
+    string admission_date = 16;
+    string expected_graduation = 17;
+    string enrollment_status = 18;
+    string academic_standing = 19;
+    double cumulative_gpa = 20;
+    double cumulative_credits = 21;
+    string advisor_id = 22;
+    string cohort_year = 23;
+    string created_at = 24;
+    string updated_at = 25;
+}
+
+message CourseOffering {
+    string id = 1;
+    string tenant_id = 2;
+    string course_id = 3;
+    string period_id = 4;
+    string section_number = 5;
+    string instructor_id = 6;
+    string schedule_days = 7;
+    string start_time = 8;
+    string end_time = 9;
+    string location = 10;
+    int32 current_enrollment = 11;
+    int32 max_enrollment = 12;
+    int32 waitlist_count = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message Enrollment {
+    string id = 1;
+    string tenant_id = 2;
+    string student_id = 3;
+    string offering_id = 4;
+    string enrollment_date = 5;
+    string status = 6;
+    string final_grade = 7;
+    double grade_points = 8;
+    double credits_earned = 9;
+    string last_attendance_date = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message FinancialAid {
+    string id = 1;
+    string tenant_id = 2;
+    string student_id = 3;
+    string aid_type = 4;
+    string aid_name = 5;
+    int64 award_amount_cents = 6;
+    int64 disbursed_amount_cents = 7;
+    string academic_year = 8;
+    string period_id = 9;
+    string status = 10;
+    string eligibility_criteria = 11;
+    string renewal_requirements = 12;
+    string funding_source = 13;
+    string external_award_id = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Request/Response messages
+message TranscriptEntry {
+    string course_code = 1;
+    string course_name = 2;
+    string period_name = 3;
+    string final_grade = 4;
+    double grade_points = 5;
+    double credits_earned = 6;
+}
+
+message GetStudentTranscriptRequest {
+    string tenant_id = 1;
+    string student_id = 2;
+}
+
+message GetStudentTranscriptResponse {
+    string student_id = 1;
+    string student_name = 2;
+    string program_name = 3;
+    double cumulative_gpa = 4;
+    double cumulative_credits = 5;
+    repeated TranscriptEntry entries = 6;
+}
+
+message RegisterForCoursesRequest {
+    string tenant_id = 1;
+    string student_id = 2;
+    repeated string offering_ids = 3;
+}
+
+message RegisterForCoursesResponse {
+    repeated Enrollment enrollments = 1;
+    repeated string waitlisted_offering_ids = 2;
+    repeated string errors = 3;
+}
+
+message DegreeRequirement {
+    string requirement_type = 1;
+    string description = 2;
+    double required_credits = 3;
+    double completed_credits = 4;
+    string status = 5;
+}
+
+message GetDegreeAuditRequest {
+    string tenant_id = 1;
+    string student_id = 2;
+    string program_id = 3;
+}
+
+message GetDegreeAuditResponse {
+    string student_id = 1;
+    string program_name = 2;
+    double total_credits_required = 3;
+    double total_credits_completed = 4;
+    double cumulative_gpa = 5;
+    double min_gpa_required = 6;
+    repeated DegreeRequirement requirements = 7;
+    string graduation_eligible = 8;
+}
+
+message CheckPrerequisitesRequest {
+    string tenant_id = 1;
+    string student_id = 2;
+    string course_id = 3;
+}
+
+message CheckPrerequisitesResponse {
+    string course_id = 1;
+    string course_name = 2;
+    bool eligible = 3;
+    repeated string missing_prerequisites = 4;
+    repeated string missing_corequisites = 5;
+}
+
+message CalculateGPARequest {
+    string tenant_id = 1;
+    string student_id = 2;
+    string period_id = 3;
+}
+
+message CalculateGPAResponse {
+    string student_id = 1;
+    double period_gpa = 2;
+    double cumulative_gpa = 3;
+    double period_credits = 4;
+    double cumulative_credits = 5;
+    string academic_standing = 6;
+}
+
+message DisburseFinancialAidRequest {
+    string tenant_id = 1;
+    string aid_id = 2;
+    int64 disbursement_amount_cents = 3;
+    string disbursement_date = 4;
+}
+
+message DisburseFinancialAidResponse {
+    FinancialAid data = 1;
+}
 ```
 
 ---

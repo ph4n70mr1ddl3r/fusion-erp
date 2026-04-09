@@ -306,6 +306,220 @@ service DesklessWorkforceService {
     rpc GetWorkerStatus(GetWorkerStatusRequest) returns (GetWorkerStatusResponse);
     rpc AcknowledgeAnnouncement(AcknowledgeAnnouncementRequest) returns (AcknowledgeAnnouncementResponse);
 }
+
+// Entity messages
+message QuickAction {
+    string id = 1;
+    string tenant_id = 2;
+    string action_code = 3;
+    string action_name = 4;
+    string action_type = 5;
+    string description = 6;
+    string icon = 7;
+    int32 display_order = 8;
+    int32 is_available_offline = 9;
+    string required_fields = 10;
+    string applicable_roles = 11;
+    string status = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message TimeEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string worker_id = 3;
+    string entry_type = 4;
+    string timestamp = 5;
+    string geo_location = 6;
+    string location_name = 7;
+    string photo_url = 8;
+    string device_id = 9;
+    int32 offline_entry = 10;
+    string synced_at = 11;
+    string notes = 12;
+    string approval_status = 13;
+    string approved_by = 14;
+    string approved_at = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message ShiftSwap {
+    string id = 1;
+    string tenant_id = 2;
+    string requester_id = 3;
+    string shift_date = 4;
+    string shift_start = 5;
+    string shift_end = 6;
+    string requester_shift_id = 7;
+    string cover_worker_id = 8;
+    string cover_shift_id = 9;
+    string reason = 10;
+    string status = 11;
+    int32 manager_approval_required = 12;
+    string approved_by = 13;
+    string approved_at = 14;
+    string rejection_reason = 15;
+    string expires_at = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message Announcement {
+    string id = 1;
+    string tenant_id = 2;
+    string title = 3;
+    string content = 4;
+    string announcement_type = 5;
+    int32 priority = 6;
+    string target_audience = 7;
+    int32 requires_acknowledgement = 8;
+    string acknowledgement_deadline = 9;
+    string attachment_ids = 10;
+    string published_at = 11;
+    string expires_at = 12;
+    string status = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message AnnouncementAck {
+    string id = 1;
+    string tenant_id = 2;
+    string announcement_id = 3;
+    string worker_id = 4;
+    string acknowledged_at = 5;
+    string geo_location = 6;
+    string device_id = 7;
+    string created_at = 8;
+}
+
+message Checklist {
+    string id = 1;
+    string tenant_id = 2;
+    string checklist_name = 3;
+    string checklist_type = 4;
+    string items = 5;
+    string applicable_roles = 6;
+    string applicable_locations = 7;
+    string frequency = 8;
+    int32 is_active = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message ChecklistCompletion {
+    string id = 1;
+    string tenant_id = 2;
+    string checklist_id = 3;
+    string worker_id = 4;
+    string location_id = 5;
+    string shift_date = 6;
+    string responses = 7;
+    double completion_pct = 8;
+    string started_at = 9;
+    string completed_at = 10;
+    string geo_location = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Request/Response messages
+message ClockInRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+    string timestamp = 3;
+    string geo_location = 4;
+    string location_name = 5;
+    string photo_url = 6;
+    string device_id = 7;
+    string notes = 8;
+}
+
+message ClockInResponse {
+    TimeEntry data = 1;
+}
+
+message ClockOutRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+    string timestamp = 3;
+    string geo_location = 4;
+    string photo_url = 5;
+    string device_id = 6;
+    string notes = 7;
+}
+
+message ClockOutResponse {
+    TimeEntry data = 1;
+    int64 shift_duration_seconds = 2;
+}
+
+message OfflineEntry {
+    string entry_type = 1;
+    string timestamp = 2;
+    string geo_location = 3;
+    string location_name = 4;
+    string photo_url = 5;
+    string device_id = 6;
+    string notes = 7;
+}
+
+message SyncOfflineRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+    repeated OfflineEntry entries = 3;
+}
+
+message SyncOfflineResponse {
+    int32 synced_count = 1;
+    int32 failed_count = 2;
+    repeated string synced_entry_ids = 3;
+}
+
+message ShiftSwapRequest {
+    string tenant_id = 1;
+    string requester_id = 2;
+    string shift_date = 3;
+    string shift_start = 4;
+    string shift_end = 5;
+    string requester_shift_id = 6;
+    string cover_worker_id = 7;
+    string cover_shift_id = 8;
+    string reason = 9;
+    string expires_at = 10;
+}
+
+message ShiftSwapResponse {
+    ShiftSwap data = 1;
+}
+
+message GetWorkerStatusRequest {
+    string tenant_id = 1;
+    string worker_id = 2;
+}
+
+message GetWorkerStatusResponse {
+    string worker_id = 1;
+    string clock_status = 2;
+    string current_shift_start = 3;
+    double today_hours = 4;
+    string current_location = 5;
+    string approval_status = 6;
+}
+
+message AcknowledgeAnnouncementRequest {
+    string tenant_id = 1;
+    string announcement_id = 2;
+    string worker_id = 3;
+    string geo_location = 4;
+    string device_id = 5;
+}
+
+message AcknowledgeAnnouncementResponse {
+    AnnouncementAck data = 1;
+}
 ```
 
 ---

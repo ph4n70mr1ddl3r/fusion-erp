@@ -341,6 +341,9 @@ CREATE INDEX idx_variance_tenant_type ON variance_analysis(tenant_id, variance_t
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.costing.v1;
+
 service CostingService {
     rpc GetCostType(GetCostTypeRequest) returns (CostTypeResponse);
     rpc ListCostTypes(ListCostTypesRequest) returns (ListCostTypesResponse);
@@ -359,6 +362,270 @@ service CostingService {
     rpc GetVarianceSummary(GetVarianceSummaryRequest) returns (VarianceSummaryResponse);
 
     rpc SimulateCostChange(SimulateCostChangeRequest) returns (SimulationResponse);
+}
+
+// Entity messages
+
+message CostType {
+    string id = 1;
+    string tenant_id = 2;
+    string type_code = 3;
+    string type_name = 4;
+    string costing_method = 5;
+    string description = 6;
+    bool is_default = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message CostElement {
+    string id = 1;
+    string tenant_id = 2;
+    string element_code = 3;
+    string element_name = 4;
+    string element_type = 5;
+    string gl_account_id = 6;
+    string description = 7;
+    bool is_absorbed = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message ItemCost {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    string cost_type_id = 5;
+    string cost_element_id = 6;
+    int64 cost_amount = 7;
+    string cost_date = 8;
+    string effective_from = 9;
+    string effective_to = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message CostRollup {
+    string id = 1;
+    string tenant_id = 2;
+    string rollup_number = 3;
+    string cost_type_id = 4;
+    string rollup_date = 5;
+    string status = 6;
+    int32 total_items_processed = 7;
+    int32 total_items_failed = 8;
+    string completed_at = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message CostRollupLine {
+    string id = 1;
+    string tenant_id = 2;
+    string rollup_id = 3;
+    string item_id = 4;
+    int32 bom_level = 5;
+    string cost_element_id = 6;
+    int64 previous_cost = 7;
+    int64 new_cost = 8;
+    int64 cost_change = 9;
+    double cost_change_pct = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message OverheadRate {
+    string id = 1;
+    string tenant_id = 2;
+    string rate_name = 3;
+    string cost_element_id = 4;
+    string overhead_type = 5;
+    string rate_basis = 6;
+    double rate_value = 7;
+    string item_category_id = 8;
+    string department_id = 9;
+    string effective_from = 10;
+    string effective_to = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message CostTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string transaction_number = 3;
+    string transaction_type = 4;
+    string item_id = 5;
+    string warehouse_id = 6;
+    double quantity = 7;
+    int64 unit_cost = 8;
+    int64 total_cost = 9;
+    string source_type = 10;
+    string source_id = 11;
+    string transaction_date = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message VarianceRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    string period_start = 5;
+    string period_end = 6;
+    string variance_type = 7;
+    int64 standard_cost = 8;
+    int64 actual_cost = 9;
+    int64 variance_amount = 10;
+    double variance_pct = 11;
+    double standard_quantity = 12;
+    double actual_quantity = 13;
+    int64 standard_rate = 14;
+    int64 actual_rate = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Request/Response messages
+
+message GetCostTypeRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message CostTypeResponse {
+    CostType data = 1;
+}
+
+message ListCostTypesRequest {
+    string tenant_id = 1;
+    string costing_method = 2;
+}
+
+message ListCostTypesResponse {
+    repeated CostType items = 1;
+}
+
+message CreateCostTypeRequest {
+    string tenant_id = 1;
+    string type_code = 2;
+    string type_name = 3;
+    string costing_method = 4;
+    string description = 5;
+    bool is_default = 6;
+    string effective_from = 7;
+}
+
+message GetItemCostRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string cost_type_id = 3;
+}
+
+message ItemCostResponse {
+    repeated ItemCost items = 1;
+}
+
+message ListItemCostsRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string warehouse_id = 3;
+}
+
+message ListItemCostsResponse {
+    repeated ItemCost items = 1;
+}
+
+message CalculateItemCostRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string cost_type_id = 3;
+    string warehouse_id = 4;
+}
+
+message CalculateItemCostResponse {
+    string item_id = 1;
+    int64 total_cost = 2;
+    repeated ItemCost cost_elements = 3;
+}
+
+message InitiateRollupRequest {
+    string tenant_id = 1;
+    string cost_type_id = 2;
+    string rollup_date = 3;
+}
+
+message RollupResponse {
+    CostRollup data = 1;
+    repeated CostRollupLine lines = 2;
+}
+
+message GetRollupStatusRequest {
+    string tenant_id = 1;
+    string rollup_id = 2;
+}
+
+message RecordCostTransactionRequest {
+    string tenant_id = 1;
+    string transaction_type = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    double quantity = 5;
+    int64 unit_cost = 6;
+    int64 total_cost = 7;
+    string source_type = 8;
+    string source_id = 9;
+    string transaction_date = 10;
+}
+
+message CostTransactionResponse {
+    CostTransaction data = 1;
+}
+
+message CalculateVariancesRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string period_start = 3;
+    string period_end = 4;
+    string variance_type = 5;
+}
+
+message VarianceListResponse {
+    repeated VarianceRecord items = 1;
+}
+
+message GetVarianceSummaryRequest {
+    string tenant_id = 1;
+    string period_start = 2;
+    string period_end = 3;
+}
+
+message VarianceSummaryResponse {
+    int64 total_standard_cost = 1;
+    int64 total_actual_cost = 2;
+    int64 total_variance = 3;
+    double variance_pct = 4;
+    repeated VarianceRecord items = 5;
+}
+
+message SimulateCostChangeRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string cost_element_id = 3;
+    int64 new_cost_amount = 4;
+}
+
+message SimulationResponse {
+    string item_id = 1;
+    int64 current_cost = 2;
+    int64 simulated_cost = 3;
+    int64 cost_impact = 4;
+    double change_pct = 5;
+    repeated CostRollupLine affected_items = 6;
 }
 ```
 

@@ -295,6 +295,209 @@ service ServiceCenterService {
     rpc SupervisorAction(SupervisorActionRequest) returns (SupervisorActionResponse);
     rpc StreamAgentEvents(StreamAgentEventsRequest) returns (stream AgentEvent);
 }
+
+// Entity messages
+message ScWorkspace {
+    string id = 1;
+    string tenant_id = 2;
+    string workspace_name = 3;
+    string workspace_type = 4;
+    string description = 5;
+    string layout_config = 6;
+    string default_channels = 7;
+    string skill_requirements = 8;
+    int32 max_concurrent_cases = 9;
+    bool auto_accept = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message ScAgentProfile {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string display_name = 4;
+    string workspace_id = 5;
+    string skills = 6;
+    string proficiency_levels = 7;
+    string language_skills = 8;
+    string status = 9;
+    string status_since = 10;
+    int32 current_case_count = 11;
+    int32 max_case_capacity = 12;
+    int32 average_handle_time_seconds = 13;
+    string channels_active = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message ScQueue {
+    string id = 1;
+    string tenant_id = 2;
+    string queue_name = 3;
+    string queue_type = 4;
+    string description = 5;
+    string routing_strategy = 6;
+    int32 priority = 7;
+    int32 max_wait_seconds = 8;
+    string overflow_queue_id = 9;
+    int32 sla_response_seconds = 10;
+    int32 sla_resolution_seconds = 11;
+    string skill_requirements = 12;
+    bool is_active = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message ScQueueItem {
+    string id = 1;
+    string tenant_id = 2;
+    string queue_id = 3;
+    string item_type = 4;
+    string reference_id = 5;
+    string customer_id = 6;
+    string customer_priority = 7;
+    string skill_requirements = 8;
+    string enqueued_at = 9;
+    string assigned_at = 10;
+    string assigned_agent_id = 11;
+    int32 wait_time_seconds = 12;
+    string status = 13;
+    double priority_score = 14;
+    int32 retry_count = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message ScInteraction {
+    string id = 1;
+    string tenant_id = 2;
+    string case_id = 3;
+    string customer_id = 4;
+    string agent_id = 5;
+    string channel = 6;
+    string direction = 7;
+    string subject = 8;
+    string content = 9;
+    string content_type = 10;
+    string attachments = 11;
+    string status = 12;
+    string priority = 13;
+    string handling_agent_id = 14;
+    string start_time = 15;
+    string end_time = 16;
+    int32 handle_time_seconds = 17;
+    string wrap_up_notes = 18;
+    string wrap_up_codes = 19;
+    double sentiment_score = 20;
+    string tags = 21;
+    string created_at = 22;
+    string updated_at = 23;
+}
+
+message AgentEvent {
+    string event_id = 1;
+    string tenant_id = 2;
+    string agent_id = 3;
+    string event_type = 4;
+    string timestamp = 5;
+    string payload = 6;
+}
+
+// Request/Response messages
+message EnqueueItemRequest {
+    string tenant_id = 1;
+    string queue_id = 2;
+    string item_type = 3;
+    string reference_id = 4;
+    string customer_id = 5;
+    string customer_priority = 6;
+    string skill_requirements = 7;
+}
+
+message EnqueueItemResponse {
+    ScQueueItem data = 1;
+    int32 estimated_wait_seconds = 2;
+    int32 queue_position = 3;
+}
+
+message DequeueItemRequest {
+    string tenant_id = 1;
+    string agent_id = 2;
+    string queue_id = 3;
+}
+
+message DequeueItemResponse {
+    ScQueueItem data = 1;
+    ScInteraction interaction = 2;
+}
+
+message UpdateAgentStatusRequest {
+    string tenant_id = 1;
+    string agent_id = 2;
+    string status = 3;
+    string channels_active = 4;
+}
+
+message UpdateAgentStatusResponse {
+    ScAgentProfile data = 1;
+}
+
+message GetRealtimeDashboardRequest {
+    string tenant_id = 1;
+    string workspace_id = 2;
+    repeated string queue_ids = 3;
+}
+
+message QueueStats {
+    string queue_id = 1;
+    string queue_name = 2;
+    int32 waiting_count = 3;
+    int32 avg_wait_seconds = 4;
+    int32 agents_available = 5;
+    int32 agents_busy = 6;
+    int32 sla_breach_count = 7;
+}
+
+message AgentState {
+    string agent_id = 1;
+    string display_name = 2;
+    string status = 3;
+    int32 active_cases = 4;
+    int32 avg_handle_time_seconds = 5;
+    string current_channel = 6;
+}
+
+message GetRealtimeDashboardResponse {
+    repeated QueueStats queue_stats = 1;
+    repeated AgentState agent_states = 2;
+    int32 total_waiting = 3;
+    int32 total_agents_available = 4;
+    double overall_sla_pct = 5;
+}
+
+message SupervisorActionRequest {
+    string tenant_id = 1;
+    string supervisor_id = 2;
+    string action_type = 3;
+    string interaction_id = 4;
+    string agent_id = 5;
+    string queue_item_id = 6;
+    string notes = 7;
+}
+
+message SupervisorActionResponse {
+    bool success = 1;
+    string message = 2;
+    ScInteraction interaction = 3;
+}
+
+message StreamAgentEventsRequest {
+    string tenant_id = 1;
+    string agent_id = 2;
+    string event_types = 3;
+}
 ```
 
 ---

@@ -554,6 +554,216 @@ service SupplierPortalService {
     rpc GetScorecard(GetScorecardRequest) returns (GetScorecardResponse);
     rpc ValidateCatalogItem(ValidateCatalogItemRequest) returns (ValidateCatalogItemResponse);
 }
+
+// Entity messages
+
+message SupplierPortalUser {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string username = 4;
+    string email = 5;
+    string display_name = 6;
+    string role = 7;
+    string last_login = 8;
+    string invitation_token = 9;
+    string invitation_expiry = 10;
+    string invited_by = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message SupplierRegistration {
+    string id = 1;
+    string tenant_id = 2;
+    string company_name = 3;
+    string tax_id = 4;
+    string registration_type = 5;
+    string status = 6;
+    string business_type = 7;
+    int32 year_established = 8;
+    int64 annual_revenue_cents = 9;
+    int32 employee_count = 10;
+    string certifications = 11;
+    string insurance_info = 12;
+    string submitted_at = 13;
+    string reviewed_by = 14;
+    string reviewed_at = 15;
+    string review_notes = 16;
+    string rejection_reason = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message SupplierQualification {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string qualification_type = 4;
+    string status = 5;
+    string questionnaire_data = 6;
+    double score = 7;
+    string assessor_id = 8;
+    string assessment_date = 9;
+    string expiry_date = 10;
+    string notes = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message SupplierSourcingEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string event_number = 3;
+    string event_type = 4;
+    string title = 5;
+    string description = 6;
+    string category_id = 7;
+    string buyer_id = 8;
+    string status = 9;
+    string publish_date = 10;
+    string close_date = 11;
+    string award_date = 12;
+    string currency_code = 13;
+    bool is_sealed = 14;
+    bool allow_reverse_auction = 15;
+    string evaluation_criteria = 16;
+    string terms_and_conditions = 17;
+    string attachments = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message SupplierBid {
+    string id = 1;
+    string tenant_id = 2;
+    string event_id = 3;
+    string supplier_id = 4;
+    string bid_number = 5;
+    string status = 6;
+    int64 total_amount_cents = 7;
+    string currency_code = 8;
+    string delivery_terms = 9;
+    string valid_until = 10;
+    string submitted_at = 11;
+    string notes = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message SupplierScorecard {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string period = 4;
+    double quality_score = 5;
+    double delivery_score = 6;
+    double cost_score = 7;
+    double responsiveness_score = 8;
+    double overall_score = 9;
+    string rating = 10;
+    double on_time_delivery_percent = 11;
+    double defect_rate_ppm = 12;
+    double invoice_accuracy_percent = 13;
+    int64 total_spend_cents = 14;
+    string review_notes = 15;
+    string reviewed_by = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message SupplierCatalogItem {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string item_id = 4;
+    string supplier_sku = 5;
+    string item_name = 6;
+    string description = 7;
+    string category_id = 8;
+    int64 unit_price_cents = 9;
+    string currency_code = 10;
+    string uom = 11;
+    int32 lead_time_days = 12;
+    int32 minimum_order_quantity = 13;
+    bool is_contract_pricing = 14;
+    string contract_id = 15;
+    string punchout_url = 16;
+    string effective_from = 17;
+    string effective_to = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message SupplierInvoiceSubmission {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string po_number = 4;
+    string invoice_number = 5;
+    string invoice_date = 6;
+    int64 invoice_amount_cents = 7;
+    string currency_code = 8;
+    int64 tax_amount_cents = 9;
+    string status = 10;
+    bool po_matched = 11;
+    string rejection_reason = 12;
+    string ap_invoice_id = 13;
+    string document_id = 14;
+    string notes = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Request/Response messages
+
+message GetSupplierProfileRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+}
+
+message GetSupplierProfileResponse {
+    SupplierPortalUser user = 1;
+    SupplierScorecard scorecard = 2;
+}
+
+message SubmitBidRequest {
+    string tenant_id = 1;
+    string event_id = 2;
+    string supplier_id = 3;
+    int64 total_amount_cents = 4;
+    string currency_code = 5;
+    string delivery_terms = 6;
+    string valid_until = 7;
+    string notes = 8;
+}
+
+message SubmitBidResponse {
+    SupplierBid data = 1;
+}
+
+message GetScorecardRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+    string period = 3;
+}
+
+message GetScorecardResponse {
+    SupplierScorecard data = 1;
+}
+
+message ValidateCatalogItemRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+    string supplier_sku = 3;
+    string effective_date = 4;
+}
+
+message ValidateCatalogItemResponse {
+    bool valid = 1;
+    SupplierCatalogItem catalog_item = 2;
+    string validation_message = 3;
+}
 ```
 
 ---

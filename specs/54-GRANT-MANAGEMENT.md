@@ -390,6 +390,9 @@ CREATE INDEX idx_grant_closeout_status ON grant_closeout(tenant_id, closeout_sta
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.grant.v1;
+
 service GrantService {
     rpc CreateGrant(CreateGrantRequest) returns (GrantResponse);
     rpc GetGrant(GetGrantRequest) returns (GrantDetailResponse);
@@ -409,6 +412,324 @@ service GrantService {
 
     rpc CheckCompliance(CheckComplianceRequest) returns (ComplianceResponse);
     rpc InitiateCloseout(InitiateCloseoutRequest) returns (CloseoutResponse);
+}
+
+// Entity messages
+
+message GrantProgram {
+    string id = 1;
+    string tenant_id = 2;
+    string program_code = 3;
+    string program_name = 4;
+    string funding_agency = 5;
+    string cfda_number = 6;
+    string program_type = 7;
+    string description = 8;
+    int64 total_funding_available = 9;
+    string application_deadline = 10;
+    string award_start_date = 11;
+    string award_end_date = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message Grant {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_number = 3;
+    string program_id = 4;
+    string grant_title = 5;
+    string principal_investigator_id = 6;
+    string department_id = 7;
+    string status = 8;
+    int64 award_amount = 9;
+    string award_date = 10;
+    string start_date = 11;
+    string end_date = 12;
+    bool cost_sharing_required = 13;
+    int64 cost_sharing_amount = 14;
+    double indirect_cost_rate = 15;
+    string reporting_frequency = 16;
+    string compliance_framework = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message GrantBudget {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_id = 3;
+    string budget_period = 4;
+    string budget_category = 5;
+    int64 budget_amount = 6;
+    string description = 7;
+    string gl_account_id = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message GrantExpenditure {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_id = 3;
+    string expenditure_number = 4;
+    string expenditure_date = 5;
+    string budget_category = 6;
+    string description = 7;
+    int64 amount = 8;
+    string vendor_id = 9;
+    string invoice_reference = 10;
+    bool is_cost_sharing = 11;
+    string project_id = 12;
+    string task_id = 13;
+    string gl_journal_id = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message GrantBilling {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_id = 3;
+    string billing_number = 4;
+    string billing_period_start = 5;
+    string billing_period_end = 6;
+    int64 total_expenditures = 7;
+    int64 total_indirect_costs = 8;
+    int64 total_billed = 9;
+    string status = 10;
+    string submitted_date = 11;
+    string paid_date = 12;
+    string payment_reference = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+message CostSharingCommitment {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_id = 3;
+    string source_type = 4;
+    int64 committed_amount = 5;
+    int64 contributed_amount = 6;
+    string description = 7;
+    string contributed_date = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message IndirectCostRate {
+    string id = 1;
+    string tenant_id = 2;
+    string rate_name = 3;
+    string rate_type = 4;
+    string fiscal_year = 5;
+    double rate_percentage = 6;
+    string base_type = 7;
+    string negotiated_with = 8;
+    string effective_from = 9;
+    string effective_to = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message GrantReport {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_id = 3;
+    string report_type = 4;
+    string reporting_period_start = 5;
+    string reporting_period_end = 6;
+    string status = 7;
+    string report_data = 8;
+    string submitted_date = 9;
+    string due_date = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message GrantCloseout {
+    string id = 1;
+    string tenant_id = 2;
+    string grant_id = 3;
+    string closeout_type = 4;
+    string closeout_status = 5;
+    int64 final_expenditure_total = 6;
+    int64 final_drawdown_amount = 7;
+    int64 unobligated_balance = 8;
+    string property_disposition = 9;
+    bool final_report_submitted = 10;
+    string closeout_date = 11;
+    string notes = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Request/Response messages
+
+message CreateGrantRequest {
+    string tenant_id = 1;
+    string program_id = 2;
+    string grant_title = 3;
+    string principal_investigator_id = 4;
+    string department_id = 5;
+    int64 award_amount = 6;
+    string start_date = 7;
+    string end_date = 8;
+    bool cost_sharing_required = 9;
+    int64 cost_sharing_amount = 10;
+    double indirect_cost_rate = 11;
+    string reporting_frequency = 12;
+    string compliance_framework = 13;
+}
+
+message GrantResponse {
+    Grant data = 1;
+}
+
+message GetGrantRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GrantDetailResponse {
+    Grant data = 1;
+    repeated GrantBudget budgets = 2;
+    GrantCloseout closeout = 3;
+}
+
+message ListGrantsRequest {
+    string tenant_id = 1;
+    string status = 2;
+    string principal_investigator_id = 3;
+    string program_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message ListGrantsResponse {
+    repeated Grant items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message CreateBudgetLineRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+    string budget_period = 3;
+    string budget_category = 4;
+    int64 budget_amount = 5;
+    string description = 6;
+    string gl_account_id = 7;
+}
+
+message BudgetLineResponse {
+    GrantBudget data = 1;
+}
+
+message GetBudgetSummaryRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+}
+
+message BudgetSummaryResponse {
+    int64 total_budget = 1;
+    int64 total_spent = 2;
+    int64 remaining = 3;
+    double burn_rate_pct = 4;
+    repeated GrantBudget budget_lines = 5;
+}
+
+message RecordExpenditureRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+    string expenditure_date = 3;
+    string budget_category = 4;
+    string description = 5;
+    int64 amount = 6;
+    string vendor_id = 7;
+    string invoice_reference = 8;
+    bool is_cost_sharing = 9;
+    string project_id = 10;
+    string task_id = 11;
+}
+
+message ExpenditureResponse {
+    GrantExpenditure data = 1;
+}
+
+message ListExpendituresRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+    string budget_category = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ListExpendituresResponse {
+    repeated GrantExpenditure items = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message GenerateBillingRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+    string billing_period_start = 3;
+    string billing_period_end = 4;
+}
+
+message BillingResponse {
+    GrantBilling data = 1;
+}
+
+message SubmitBillingRequest {
+    string tenant_id = 1;
+    string billing_id = 2;
+}
+
+message GenerateReportRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+    string report_type = 3;
+    string reporting_period_start = 4;
+    string reporting_period_end = 5;
+}
+
+message ReportResponse {
+    GrantReport data = 1;
+}
+
+message SubmitReportRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+}
+
+message CheckComplianceRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+}
+
+message ComplianceResponse {
+    bool is_compliant = 1;
+    repeated ComplianceIssue issues = 2;
+}
+
+message ComplianceIssue {
+    string issue_type = 1;
+    string description = 2;
+    string severity = 3;
+}
+
+message InitiateCloseoutRequest {
+    string tenant_id = 1;
+    string grant_id = 2;
+    string closeout_type = 3;
+    string notes = 4;
+}
+
+message CloseoutResponse {
+    GrantCloseout data = 1;
 }
 ```
 

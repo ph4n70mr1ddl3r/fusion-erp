@@ -287,6 +287,183 @@ service AIAgentsService {
     rpc GetAgentMemory(GetAgentMemoryRequest) returns (GetAgentMemoryResponse);
     rpc TriggerAgent(TriggerAgentRequest) returns (TriggerAgentResponse);
 }
+
+// Entity messages
+message AgentDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string agent_name = 3;
+    string agent_code = 4;
+    string agent_type = 5;
+    string description = 6;
+    string capabilities = 7;
+    string domain_context = 8;
+    string system_prompt = 9;
+    string model_config = 10;
+    string tool_definitions = 11;
+    string autonomy_level = 12;
+    int32 max_actions_per_run = 13;
+    int32 timeout_seconds = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message AgentRun {
+    string id = 1;
+    string tenant_id = 2;
+    string agent_id = 3;
+    string run_type = 4;
+    string trigger_event = 5;
+    string trigger_data = 6;
+    string status = 7;
+    string started_at = 8;
+    string completed_at = 9;
+    int64 total_tokens_used = 10;
+    int32 total_actions = 11;
+    int32 approved_actions = 12;
+    int32 rejected_actions = 13;
+    int32 autonomous_actions = 14;
+    string summary = 15;
+    string error_message = 16;
+    int64 execution_cost_cents = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message AgentAction {
+    string id = 1;
+    string tenant_id = 2;
+    string run_id = 3;
+    string action_type = 4;
+    string target_service = 5;
+    string target_endpoint = 6;
+    string action_payload = 7;
+    string action_reasoning = 8;
+    string status = 9;
+    string approved_by = 10;
+    string approved_at = 11;
+    string rejection_reason = 12;
+    string execution_result = 13;
+    int64 execution_time_ms = 14;
+    int32 sequence_number = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message AgentMemory {
+    string id = 1;
+    string tenant_id = 2;
+    string agent_id = 3;
+    string memory_type = 4;
+    string key = 5;
+    string value = 6;
+    string source_run_id = 7;
+    double relevance_score = 8;
+    int32 access_count = 9;
+    string last_accessed_at = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message AgentSchedule {
+    string id = 1;
+    string tenant_id = 2;
+    string agent_id = 3;
+    string schedule_name = 4;
+    string cron_expression = 5;
+    string run_parameters = 6;
+    int32 is_active = 7;
+    string last_run_at = 8;
+    string next_run_at = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message ApprovalQueueEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string run_id = 3;
+    string action_id = 4;
+    string agent_id = 5;
+    string approval_type = 6;
+    string assigned_approver_id = 7;
+    string summary = 8;
+    string risk_level = 9;
+    string status = 10;
+    string decided_by = 11;
+    string decided_at = 12;
+    string decision_notes = 13;
+    string expires_at = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Request/Response messages
+message ExecuteAgentRequest {
+    string tenant_id = 1;
+    string agent_code = 2;
+    string trigger_data = 3;
+    string run_type = 4;
+}
+
+message ExecuteAgentResponse {
+    AgentRun data = 1;
+}
+
+message GetRunStatusRequest {
+    string tenant_id = 1;
+    string run_id = 2;
+}
+
+message GetRunStatusResponse {
+    AgentRun data = 1;
+    repeated AgentAction actions = 2;
+}
+
+message ApproveActionRequest {
+    string tenant_id = 1;
+    string action_id = 2;
+    string approved_by = 3;
+    string decision_notes = 4;
+}
+
+message ApproveActionResponse {
+    AgentAction data = 1;
+}
+
+message RejectActionRequest {
+    string tenant_id = 1;
+    string action_id = 2;
+    string rejected_by = 3;
+    string rejection_reason = 4;
+}
+
+message RejectActionResponse {
+    AgentAction data = 1;
+}
+
+message GetAgentMemoryRequest {
+    string tenant_id = 1;
+    string agent_id = 2;
+    string memory_type = 3;
+    int32 limit = 4;
+}
+
+message GetAgentMemoryResponse {
+    repeated AgentMemory memories = 1;
+}
+
+message TriggerAgentRequest {
+    string tenant_id = 1;
+    string agent_code = 2;
+    string trigger_event = 3;
+    string trigger_data = 4;
+}
+
+message TriggerAgentResponse {
+    AgentRun data = 1;
+}
 ```
 
 ---

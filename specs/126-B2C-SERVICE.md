@@ -296,6 +296,181 @@ service B2CService {
     rpc ClassifyRequest(ClassifyRequestRequest) returns (ClassifyRequestResponse);
     rpc CheckSLA(CheckSLARequest) returns (CheckSLAResponse);
 }
+
+// Entity messages
+message B2cRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string request_number = 3;
+    string customer_id = 4;
+    string channel = 5;
+    string request_type = 6;
+    string subject = 7;
+    string description = 8;
+    string priority = 9;
+    string status = 10;
+    string category_id = 11;
+    string subcategory_id = 12;
+    string product_id = 13;
+    string order_id = 14;
+    string order_line_id = 15;
+    string assigned_agent_id = 16;
+    string assigned_team = 17;
+    string sla_policy_id = 18;
+    string sla_due_date = 19;
+    string first_response_date = 20;
+    string resolution_date = 21;
+    string close_date = 22;
+    int32 customer_satisfaction_score = 23;
+    string resolution_method = 24;
+    string created_at = 25;
+    string updated_at = 26;
+}
+
+message B2cRequestThread {
+    string id = 1;
+    string tenant_id = 2;
+    string request_id = 3;
+    string message_type = 4;
+    string sender_id = 5;
+    string sender_name = 6;
+    string content = 7;
+    string content_type = 8;
+    string attachments = 9;
+    bool is_internal_note = 10;
+    string channel = 11;
+    string metadata = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message B2cKnowledgeGuide {
+    string id = 1;
+    string tenant_id = 2;
+    string guide_title = 3;
+    string guide_type = 4;
+    string category_id = 5;
+    string trigger_keywords = 6;
+    string content = 7;
+    string applicable_channels = 8;
+    string applicable_request_types = 9;
+    bool is_customer_visible = 10;
+    bool is_agent_visible = 11;
+    int32 view_count = 12;
+    int32 helpful_count = 13;
+    int32 not_helpful_count = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message B2cChatSession {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string customer_id = 4;
+    string customer_name = 5;
+    string customer_email = 6;
+    string channel = 7;
+    string agent_id = 8;
+    string bot_id = 9;
+    string status = 10;
+    string queue_name = 11;
+    int32 wait_time_seconds = 12;
+    int32 handle_time_seconds = 13;
+    string resolution_status = 14;
+    int32 satisfaction_score = 15;
+    string tags = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+// Request/Response messages
+message CreateRequestRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string channel = 3;
+    string request_type = 4;
+    string subject = 5;
+    string description = 6;
+    string priority = 7;
+    string category_id = 8;
+    string product_id = 9;
+    string order_id = 10;
+    string order_line_id = 11;
+}
+
+message CreateRequestResponse {
+    B2cRequest data = 1;
+}
+
+message SendMessageRequest {
+    string tenant_id = 1;
+    string request_id = 2;
+    string message_type = 3;
+    string content = 4;
+    string content_type = 5;
+    string attachments = 6;
+    bool is_internal_note = 7;
+}
+
+message SendMessageResponse {
+    B2cRequestThread data = 1;
+}
+
+message GetSuggestedGuidesRequest {
+    string tenant_id = 1;
+    string request_id = 2;
+    string request_type = 3;
+    string keywords = 4;
+    int32 limit = 5;
+}
+
+message GetSuggestedGuidesResponse {
+    repeated B2cKnowledgeGuide guides = 1;
+    repeated double confidence_scores = 2;
+}
+
+message ClassifyRequestRequest {
+    string tenant_id = 1;
+    string request_id = 2;
+    string subject = 3;
+    string description = 4;
+    string channel = 5;
+}
+
+message ClassificationResult {
+    string request_type = 1;
+    string category_id = 2;
+    string subcategory_id = 3;
+    string priority = 4;
+    double confidence = 5;
+}
+
+message ClassifyRequestResponse {
+    repeated ClassificationResult classifications = 1;
+}
+
+message CheckSLARequest {
+    string tenant_id = 1;
+    string request_id = 2;
+    string priority = 3;
+    string request_type = 4;
+}
+
+message SLAStatus {
+    string sla_policy_id = 1;
+    string response_due_date = 2;
+    string resolution_due_date = 3;
+    bool is_response_breached = 4;
+    bool is_resolution_breached = 5;
+    int32 response_remaining_seconds = 6;
+    int32 resolution_remaining_seconds = 7;
+}
+
+message CheckSLAResponse {
+    SLAStatus sla_status = 1;
+}
 ```
 
 ---

@@ -331,6 +331,191 @@ service SelfServiceProcurementService {
     rpc CheckoutCart(CheckoutCartRequest) returns (CheckoutCartResponse);
     rpc ValidateBuyingPolicies(ValidatePoliciesRequest) returns (ValidatePoliciesResponse);
 }
+
+// Entity messages
+message SspCatalog {
+    string id = 1;
+    string tenant_id = 2;
+    string catalog_name = 3;
+    string catalog_code = 4;
+    string description = 5;
+    string catalog_type = 6;
+    string supplier_id = 7;
+    string status = 8;
+    string effective_from = 9;
+    string effective_to = 10;
+    string locale = 11;
+    string currency_code = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message SspCatalogItem {
+    string id = 1;
+    string tenant_id = 2;
+    string catalog_id = 3;
+    string item_number = 4;
+    string item_name = 5;
+    string description = 6;
+    string category_id = 7;
+    string supplier_id = 8;
+    string supplier_item_code = 9;
+    string unit_of_measure = 10;
+    int64 unit_price_cents = 11;
+    string currency_code = 12;
+    int32 lead_time_days = 13;
+    string image_url = 14;
+    string punchout_url = 15;
+    string keywords = 16;
+    string specifications = 17;
+    int32 minimum_order_qty = 18;
+    int32 maximum_order_qty = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+message SspCart {
+    string id = 1;
+    string tenant_id = 2;
+    string requester_id = 3;
+    string cart_name = 4;
+    string status = 5;
+    string currency_code = 6;
+    int64 total_amount_cents = 7;
+    int32 item_count = 8;
+    string delivery_address = 9;
+    string delivery_date = 10;
+    string notes = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message SspCartLine {
+    string id = 1;
+    string tenant_id = 2;
+    string cart_id = 3;
+    string catalog_item_id = 4;
+    string item_number = 5;
+    string item_name = 6;
+    string description = 7;
+    string supplier_id = 8;
+    int32 quantity = 9;
+    string unit_of_measure = 10;
+    int64 unit_price_cents = 11;
+    int64 line_total_cents = 12;
+    string currency_code = 13;
+    string delivery_date = 14;
+    string charge_account_id = 15;
+    string project_id = 16;
+    string notes = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message SspBuyingPolicy {
+    string id = 1;
+    string tenant_id = 2;
+    string policy_name = 3;
+    string description = 4;
+    string policy_type = 5;
+    string condition_json = 6;
+    string action_json = 7;
+    int32 priority = 8;
+    string effective_from = 9;
+    string effective_to = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message PurchaseHistory {
+    string id = 1;
+    string tenant_id = 2;
+    string requester_id = 3;
+    string catalog_item_id = 4;
+    string item_number = 5;
+    string item_name = 6;
+    int32 purchase_count = 7;
+    string last_purchased_at = 8;
+    int32 average_quantity = 9;
+    int64 average_price_cents = 10;
+    int32 frequency_days = 11;
+    string supplier_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Request/Response messages
+message GetCatalogItemsRequest {
+    string tenant_id = 1;
+    string catalog_id = 2;
+    string category_id = 3;
+    int32 limit = 4;
+    string cursor = 5;
+}
+
+message GetCatalogItemsResponse {
+    repeated SspCatalogItem items = 1;
+    string next_cursor = 2;
+}
+
+message SearchItemsRequest {
+    string tenant_id = 1;
+    string query = 2;
+    string catalog_id = 3;
+    string category_id = 4;
+    int32 limit = 5;
+    string sort = 6;
+}
+
+message SearchItemsResponse {
+    repeated SspCatalogItem items = 1;
+    int32 total_count = 2;
+}
+
+message GetSuggestionsRequest {
+    string tenant_id = 1;
+    string requester_id = 2;
+    string suggestion_type = 3;
+    int32 limit = 4;
+}
+
+message GetSuggestionsResponse {
+    repeated SspCatalogItem items = 1;
+    repeated PurchaseHistory history = 2;
+}
+
+message CheckoutCartRequest {
+    string tenant_id = 1;
+    string cart_id = 2;
+    string delivery_address = 3;
+    string delivery_date = 4;
+    string notes = 5;
+}
+
+message CheckoutCartResponse {
+    string requisition_id = 1;
+    string requisition_number = 2;
+    SspCart cart = 3;
+}
+
+message ValidatePoliciesRequest {
+    string tenant_id = 1;
+    string cart_id = 2;
+    string requester_id = 3;
+}
+
+message PolicyViolation {
+    string policy_id = 1;
+    string policy_name = 2;
+    string policy_type = 3;
+    string violation_detail = 4;
+    bool is_enforced = 5;
+}
+
+message ValidatePoliciesResponse {
+    bool is_valid = 1;
+    repeated PolicyViolation violations = 2;
+}
 ```
 
 ---

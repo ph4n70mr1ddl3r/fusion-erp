@@ -349,6 +349,181 @@ service MobileService {
     rpc SendPushNotification(SendPushNotificationRequest) returns (SendPushNotificationResponse);
     rpc ProcessBarcodeScan(ProcessBarcodeScanRequest) returns (ProcessBarcodeScanResponse);
 }
+
+// Entity messages
+
+message MobileDeviceRegistration {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string device_token = 4;
+    string platform = 5;
+    string device_model = 6;
+    string os_version = 7;
+    string app_version = 8;
+    string language = 9;
+    string timezone = 10;
+    string registered_at = 11;
+    string last_active_at = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message MobilePushToken {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string device_id = 4;
+    string push_token = 5;
+    string platform = 6;
+    string bundle_id = 7;
+    string registered_at = 8;
+    string invalidated_at = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message MobileOfflineQueueItem {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string device_id = 4;
+    string action_type = 5;
+    string target_service = 6;
+    string target_endpoint = 7;
+    string http_method = 8;
+    string payload = 9;
+    string status = 10;
+    int32 sync_attempts = 11;
+    string last_attempt_at = 12;
+    string conflict_resolution = 13;
+    int32 server_version = 14;
+    string created_offline_at = 15;
+    string synced_at = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+message MobileScreenConfig {
+    string id = 1;
+    string tenant_id = 2;
+    string screen_name = 3;
+    string screen_type = 4;
+    string layout_config = 5;
+    string filters = 6;
+    string sort_config = 7;
+    string actions = 8;
+    bool is_offline_capable = 9;
+    int32 cache_ttl_seconds = 10;
+    bool requires_auth = 11;
+    string role_permissions = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message MobileSyncAudit {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string device_id = 4;
+    string sync_type = 5;
+    string entities_synced = 6;
+    int32 records_pushed = 7;
+    int32 records_pulled = 8;
+    int32 conflicts_count = 9;
+    int32 duration_ms = 10;
+    string started_at = 11;
+    string completed_at = 12;
+    string status = 13;
+    string error_message = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message MobileBarcodeScan {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string device_id = 4;
+    string scan_type = 5;
+    string scan_value = 6;
+    string scan_context = 7;
+    string entity_type = 8;
+    string entity_id = 9;
+    double latitude = 10;
+    double longitude = 11;
+    string scanned_at = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Request/Response messages
+
+message RegisterDeviceRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string device_token = 3;
+    string platform = 4;
+    string device_model = 5;
+    string os_version = 6;
+    string app_version = 7;
+    string language = 8;
+    string timezone = 9;
+}
+
+message RegisterDeviceResponse {
+    MobileDeviceRegistration data = 1;
+}
+
+message SyncRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string device_id = 3;
+    string sync_type = 4;
+    string payload = 5;
+}
+
+message SyncResponse {
+    string tenant_id = 1;
+    string status = 2;
+    string sync_data = 3;
+    int32 records_processed = 4;
+    int32 conflicts = 5;
+    string server_version = 6;
+}
+
+message SendPushNotificationRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string title = 3;
+    string body = 4;
+    string data_payload = 5;
+    string priority = 6;
+}
+
+message SendPushNotificationResponse {
+    bool success = 1;
+    string message_id = 2;
+    string platform = 3;
+}
+
+message ProcessBarcodeScanRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string device_id = 3;
+    string scan_type = 4;
+    string scan_value = 5;
+    string scan_context = 6;
+    double latitude = 7;
+    double longitude = 8;
+}
+
+message ProcessBarcodeScanResponse {
+    MobileBarcodeScan scan = 1;
+    string entity_type = 2;
+    string entity_id = 3;
+    string resolved_data = 4;
+}
 ```
 
 ---

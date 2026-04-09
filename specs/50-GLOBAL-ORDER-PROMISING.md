@@ -297,6 +297,9 @@ CREATE INDEX idx_allocation_details_rule ON allocation_details(rule_id, priority
 ## 5. gRPC Service Definition
 
 ```protobuf
+syntax = "proto3";
+package fusion.promising.v1;
+
 service PromisingService {
     rpc CheckAvailability(CheckAvailabilityRequest) returns (AvailabilityResponse);
     rpc PromiseDeliveryDate(PromiseRequest) returns (PromisingResultResponse);
@@ -307,6 +310,219 @@ service PromisingService {
     rpc RefreshAvailability(RefreshAvailabilityRequest) returns (RefreshAvailabilityResponse);
     rpc CreateScenario(CreateScenarioRequest) returns (ScenarioResponse);
     rpc GetScenario(GetScenarioRequest) returns (ScenarioResponse);
+}
+
+// Entity messages
+
+message PromisingRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string rule_type = 4;
+    string item_category_id = 5;
+    string channel = 6;
+    string warehouse_id = 7;
+    string promising_method = 8;
+    int32 lead_time_days = 9;
+    int32 safety_stock_offset = 10;
+    bool include_planned_orders = 11;
+    bool include_purchase_orders = 12;
+    bool include_work_orders = 13;
+    bool include_transfers = 14;
+    bool partial_shipment_allowed = 15;
+    int32 priority = 16;
+    bool is_default = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+message AvailabilityBucket {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    string bucket_date = 5;
+    string bucket_type = 6;
+    double quantity = 7;
+    string source_reference = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message SupplyDemand {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    string record_type = 5;
+    string source_type = 6;
+    string source_id = 7;
+    double quantity = 8;
+    string date_required = 9;
+    string date_promised = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message PromisingResult {
+    string id = 1;
+    string tenant_id = 2;
+    string request_number = 3;
+    string item_id = 4;
+    string warehouse_id = 5;
+    double requested_quantity = 6;
+    string requested_date = 7;
+    double promised_quantity = 8;
+    string promised_date = 9;
+    string promising_method = 10;
+    string rule_id = 11;
+    string status = 12;
+    string confidence_level = 13;
+    string substitution_item_id = 14;
+    string allocation_references = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message SubstitutionRule {
+    string id = 1;
+    string tenant_id = 2;
+    string primary_item_id = 3;
+    string substitute_item_id = 4;
+    int32 priority = 5;
+    string substitution_type = 6;
+    double quantity_ratio = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+message AllocationRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string item_id = 4;
+    string item_category_id = 5;
+    string allocation_method = 6;
+    double total_available_quantity = 7;
+    int32 priority = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}
+
+message AllocationDetail {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    string channel = 4;
+    string customer_id = 5;
+    string customer_group = 6;
+    double allocated_pct = 7;
+    double allocated_quantity = 8;
+    int32 priority = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+// Request/Response messages
+
+message CheckAvailabilityRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string warehouse_id = 3;
+    double quantity = 4;
+    string requested_date = 5;
+    string rule_type = 6;
+}
+
+message AvailabilityResponse {
+    string item_id = 1;
+    string warehouse_id = 2;
+    double available_quantity = 3;
+    string available_date = 4;
+    repeated AvailabilityBucket buckets = 5;
+}
+
+message PromiseRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string warehouse_id = 3;
+    double requested_quantity = 4;
+    string requested_date = 5;
+    string rule_id = 6;
+    bool allow_substitution = 7;
+}
+
+message PromisingResultResponse {
+    PromisingResult data = 1;
+}
+
+message BatchPromiseRequest {
+    string tenant_id = 1;
+    repeated PromiseRequest lines = 2;
+}
+
+message BatchPromiseResponse {
+    repeated PromisingResult results = 1;
+}
+
+message ValidatePromiseRequest {
+    string tenant_id = 1;
+    string result_id = 2;
+}
+
+message ValidatePromiseResponse {
+    bool is_valid = 1;
+    PromisingResult data = 2;
+    string validation_message = 3;
+}
+
+message CancelPromiseRequest {
+    string tenant_id = 1;
+    string result_id = 2;
+    string reason = 3;
+}
+
+message CancelPromiseResponse {
+    string result_id = 1;
+    string status = 2;
+}
+
+message GetPromisingResultRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message RefreshAvailabilityRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string warehouse_id = 3;
+}
+
+message RefreshAvailabilityResponse {
+    int32 buckets_updated = 1;
+    string refreshed_at = 2;
+}
+
+message CreateScenarioRequest {
+    string tenant_id = 1;
+    string name = 2;
+    repeated PromiseRequest lines = 3;
+    string description = 4;
+}
+
+message ScenarioResponse {
+    string scenario_id = 1;
+    string name = 2;
+    repeated PromisingResult results = 3;
+    string status = 4;
+}
+
+message GetScenarioRequest {
+    string tenant_id = 1;
+    string scenario_id = 2;
 }
 ```
 
