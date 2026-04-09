@@ -427,6 +427,198 @@ service AiService {
 }
 ```
 
+```protobuf
+message ExecuteAgentRequest {
+    string tenant_id = 1;
+    string agent_id = 2;
+    string input_data = 3;
+    string source_service = 4;
+    string correlation_id = 5;
+}
+
+message ExecuteAgentResponse {
+    string inference_id = 1;
+    string output_data = 2;
+    double confidence_score = 3;
+    int32 execution_time_ms = 4;
+    string status = 5;
+}
+
+message RecognizeDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+    string document_type = 3;
+    string ocr_engine = 4;
+}
+
+message RecognizeDocumentResponse {
+    string recognition_id = 1;
+    string extracted_fields = 2;
+    double confidence_score = 3;
+    int32 requires_review = 4;
+    int32 processing_time_ms = 5;
+}
+
+message DetectAnomaliesRequest {
+    string tenant_id = 1;
+    string entity_type = 2;
+    string entity_id = 3;
+    string anomaly_type = 4;
+    string scan_parameters = 5;
+}
+
+message DetectAnomaliesResponse {
+    repeated AnomalyDetection anomalies = 1;
+    int32 total_scanned = 2;
+    int32 anomalies_found = 3;
+}
+
+message GetForecastRequest {
+    string tenant_id = 1;
+    string forecast_type = 2;
+    string period_start = 3;
+    string period_end = 4;
+    string model_method = 5;
+}
+
+message GetForecastResponse {
+    repeated ForecastResult results = 1;
+    string forecast_model_id = 2;
+    double accuracy_mape = 3;
+    double accuracy_rmse = 4;
+}
+
+message NaturalLanguageQueryRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string query_text = 3;
+}
+
+message NaturalLanguageQueryResponse {
+    string query_id = 1;
+    string interpreted_intent = 2;
+    string generated_sql = 3;
+    string result_summary = 4;
+    string result_data = 5;
+}
+
+message AiAgentDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string agent_name = 3;
+    string agent_type = 4;
+    string description = 5;
+    string model_config = 6;
+    string input_schema = 7;
+    string output_schema = 8;
+    int32 is_active = 9;
+    int32 version = 10;
+    string created_by = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string updated_by = 14;
+}
+
+message AiModelRegistry {
+    string id = 1;
+    string tenant_id = 2;
+    string model_name = 3;
+    string model_type = 4;
+    string framework = 5;
+    string version = 6;
+    string storage_path = 7;
+    string accuracy_metrics = 8;
+    string training_date = 9;
+    string status = 10;
+    string hyperparameters = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string created_by = 14;
+    string updated_by = 15;
+}
+
+message AiTrainingDataset {
+    string id = 1;
+    string tenant_id = 2;
+    string dataset_name = 3;
+    string source_type = 4;
+    string source_config = 5;
+    int32 record_count = 6;
+    string feature_columns = 7;
+    string target_column = 8;
+    string created_by = 9;
+    string status = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message AiTrainingJob {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string dataset_id = 4;
+    string job_type = 5;
+    string status = 6;
+    string started_at = 7;
+    string completed_at = 8;
+    string metrics = 9;
+    string error_message = 10;
+    string triggered_by = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message AiInferenceRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string agent_id = 3;
+    string model_id = 4;
+    string request_type = 5;
+    string input_data = 6;
+    string output_data = 7;
+    double confidence_score = 8;
+    int32 execution_time_ms = 9;
+    string status = 10;
+    string source_service = 11;
+    string correlation_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message AnomalyDetection {
+    string id = 1;
+    string tenant_id = 2;
+    string entity_type = 3;
+    string entity_id = 4;
+    string anomaly_type = 5;
+    string severity = 6;
+    double anomaly_score = 7;
+    string description = 8;
+    string suggested_action = 9;
+    string status = 10;
+    string investigated_by = 11;
+    string resolution = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string updated_by = 15;
+}
+
+message ForecastResult {
+    string id = 1;
+    string tenant_id = 2;
+    string forecast_model_id = 3;
+    string period_date = 4;
+    int64 predicted_value_cents = 5;
+    int64 lower_bound_cents = 6;
+    int64 upper_bound_cents = 7;
+    int64 actual_value_cents = 8;
+    double variance_percent = 9;
+    int32 is_outlier = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

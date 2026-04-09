@@ -255,3 +255,144 @@ service ReportingService {
     rpc StreamReportData(StreamReportDataRequest) returns (stream ReportDataRow);
 }
 ```
+
+```protobuf
+message GetMetricRequest {
+    string tenant_id = 1;
+    string metric_type = 2;
+    string metric_date = 3;
+    string dimension_1 = 4;
+    string dimension_2 = 5;
+}
+
+message GetMetricResponse {
+    DailyMetric metric = 1;
+    repeated DailyMetric metrics = 2;
+}
+
+message GetDashboardRequest {
+    string tenant_id = 1;
+    string dashboard_id = 2;
+    string user_id = 3;
+}
+
+message GetDashboardResponse {
+    UserDashboard dashboard = 1;
+    repeated DashboardWidget widgets = 2;
+}
+
+message StreamReportDataRequest {
+    string tenant_id = 1;
+    string report_definition_id = 2;
+    string output_format = 3;
+    string parameters = 4;
+}
+
+message ReportDataRow {
+    string row_data = 1;
+    int32 row_number = 2;
+}
+
+message ReportDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string report_code = 3;
+    string report_name = 4;
+    string description = 5;
+    string report_type = 6;
+    string category = 7;
+    string data_source = 8;
+    string query_template = 9;
+    string parameters = 10;
+    string output_formats = 11;
+    int32 is_scheduled = 12;
+    string default_sort = 13;
+    string default_filters = 14;
+    string created_at = 15;
+    string updated_at = 16;
+    string created_by = 17;
+    string updated_by = 18;
+    int32 version = 19;
+    int32 is_active = 20;
+}
+
+message ReportExecution {
+    string id = 1;
+    string tenant_id = 2;
+    string report_definition_id = 3;
+    string executed_by = 4;
+    string executed_at = 5;
+    string parameters = 6;
+    string status = 7;
+    int32 row_count = 8;
+    int32 execution_time_ms = 9;
+    string output_format = 10;
+    string output_location = 11;
+    string error_message = 12;
+    string created_at = 13;
+}
+
+message ScheduledReport {
+    string id = 1;
+    string tenant_id = 2;
+    string report_definition_id = 3;
+    string schedule_cron = 4;
+    string recipients = 5;
+    string output_format = 6;
+    string parameters = 7;
+    int32 is_active = 8;
+    string last_run_at = 9;
+    string next_run_at = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+    int32 version = 15;
+}
+
+message DashboardWidget {
+    string id = 1;
+    string tenant_id = 2;
+    string widget_type = 3;
+    string title = 4;
+    string description = 5;
+    string data_source = 6;
+    int32 refresh_interval_seconds = 7;
+    string config = 8;
+    int32 position_x = 9;
+    int32 position_y = 10;
+    int32 width = 11;
+    int32 height = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+    int32 version = 17;
+    int32 is_active = 18;
+}
+
+message UserDashboard {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string dashboard_name = 4;
+    string widget_ids = 5;
+    int32 is_default = 6;
+    string created_at = 7;
+    string updated_at = 8;
+}
+
+message DailyMetric {
+    string id = 1;
+    string tenant_id = 2;
+    string metric_date = 3;
+    string metric_type = 4;
+    string dimension_1 = 5;
+    string dimension_2 = 6;
+    int64 value_cents = 7;
+    string quantity = 8;
+    string currency_code = 9;
+    string source_service = 10;
+    string computed_at = 11;
+}
+```

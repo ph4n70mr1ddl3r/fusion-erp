@@ -420,6 +420,231 @@ service AssistantService {
 }
 ```
 
+```protobuf
+message ProcessMessageRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string conversation_id = 3;
+    string content = 4;
+    string channel = 5;
+}
+
+message ProcessMessageResponse {
+    AssistantMessage message = 1;
+    string intent_detected = 2;
+    double confidence_score = 3;
+    repeated string suggested_actions = 4;
+}
+
+message GetPendingApprovalsRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    int32 page_size = 3;
+    string page_token = 4;
+}
+
+message GetPendingApprovalsResponse {
+    repeated ApprovalShortcut approvals = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message SendNotificationRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    string notification_type = 3;
+    string title = 4;
+    string body = 5;
+    string channel = 6;
+    string priority = 7;
+    string related_entity_type = 8;
+    string related_entity_id = 9;
+}
+
+message SendNotificationResponse {
+    bool success = 1;
+    string notification_id = 2;
+}
+
+message GetNotificationPreferencesRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+}
+
+message GetNotificationPreferencesResponse {
+    repeated AssistantNotificationRule rules = 1;
+    repeated AssistantUserPreference preferences = 2;
+}
+
+message AssistantSkill {
+    string id = 1;
+    string tenant_id = 2;
+    string skill_name = 3;
+    string skill_type = 4;
+    string description = 5;
+    string intent_patterns = 6;
+    string required_entities = 7;
+    string response_template = 8;
+    int32 confirmation_required = 9;
+    string target_service = 10;
+    string target_endpoint = 11;
+    string http_method = 12;
+    int32 is_active = 13;
+    int32 priority = 14;
+    string created_at = 15;
+    string updated_at = 16;
+    string created_by = 17;
+    string updated_by = 18;
+    int32 version = 19;
+}
+
+message AssistantConversation {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string channel = 4;
+    string status = 5;
+    string started_at = 6;
+    string completed_at = 7;
+    string context_data = 8;
+    int32 satisfaction_rating = 9;
+    string feedback_text = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+    int32 version = 15;
+    int32 is_active = 16;
+}
+
+message AssistantMessage {
+    string id = 1;
+    string tenant_id = 2;
+    string conversation_id = 3;
+    string message_type = 4;
+    string content = 5;
+    string intent_detected = 6;
+    string entities_extracted = 7;
+    double confidence_score = 8;
+    string suggested_actions = 9;
+    string response_data = 10;
+    int32 processing_time_ms = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string created_by = 14;
+    string updated_by = 15;
+}
+
+message AssistantNotificationRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string trigger_event = 4;
+    string trigger_condition = 5;
+    string channel = 6;
+    string message_template = 7;
+    string recipient_type = 8;
+    string recipient_id = 9;
+    string frequency = 10;
+    int32 is_active = 11;
+    string last_triggered_at = 12;
+    int32 trigger_count = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+}
+
+message AssistantNotification {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    string user_id = 4;
+    string notification_type = 5;
+    string title = 6;
+    string body = 7;
+    string channel = 8;
+    string priority = 9;
+    string status = 10;
+    string sent_at = 11;
+    string delivered_at = 12;
+    string read_at = 13;
+    string action_taken = 14;
+    string related_entity_type = 15;
+    string related_entity_id = 16;
+    string created_at = 17;
+    string updated_at = 18;
+    string created_by = 19;
+    string updated_by = 20;
+    int32 version = 21;
+    int32 is_active = 22;
+}
+
+message QuickAction {
+    string id = 1;
+    string tenant_id = 2;
+    string action_name = 3;
+    string action_type = 4;
+    string description = 5;
+    string icon = 6;
+    string target_url = 7;
+    string target_service = 8;
+    string required_permission = 9;
+    string display_condition = 10;
+    int32 sequence = 11;
+    int32 is_active = 12;
+    int32 usage_count = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+}
+
+message ApprovalShortcut {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string approval_type = 4;
+    string approval_id = 5;
+    string source_service = 6;
+    string summary_data = 7;
+    int64 amount_cents = 8;
+    string currency_code = 9;
+    string status = 10;
+    string delegated_to = 11;
+    string action_via = 12;
+    string actioned_at = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+    int32 is_active = 19;
+}
+
+message AssistantUserPreference {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string notification_channel = 4;
+    string category = 5;
+    int32 is_enabled = 6;
+    string quiet_hours_start = 7;
+    string quiet_hours_end = 8;
+    string digest_frequency = 9;
+    string language = 10;
+    string timezone = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string created_by = 14;
+    string updated_by = 15;
+    int32 version = 16;
+    int32 is_active = 17;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

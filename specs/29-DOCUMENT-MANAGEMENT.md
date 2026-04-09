@@ -308,6 +308,181 @@ service DocumentManagementService {
 }
 ```
 
+```protobuf
+message UploadDocumentRequest {
+    string tenant_id = 1;
+    string document_name = 2;
+    string category_id = 3;
+    string description = 4;
+    string original_filename = 5;
+    string content_type = 6;
+    int64 file_size_bytes = 7;
+    string file_hash_sha256 = 8;
+    string storage_provider = 9;
+    string storage_path = 10;
+    string storage_bucket = 11;
+    int32 is_confidential = 12;
+    string access_level = 13;
+    string metadata = 14;
+    string tags = 15;
+    string created_by = 16;
+}
+
+message UploadDocumentResponse {
+    Document document = 1;
+}
+
+message DownloadDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+    int32 version_number = 3;
+}
+
+message DocumentChunk {
+    bytes data = 1;
+    int64 offset = 2;
+    int64 total_size = 3;
+}
+
+message GetDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+}
+
+message GetDocumentResponse {
+    Document document = 1;
+}
+
+message LinkDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+    string entity_type = 3;
+    string entity_id = 4;
+    string link_type = 5;
+    string description = 6;
+    string created_by = 7;
+}
+
+message LinkDocumentResponse {
+    DocumentLink link = 1;
+}
+
+message GetEntityDocumentsRequest {
+    string tenant_id = 1;
+    string entity_type = 2;
+    string entity_id = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message GetEntityDocumentsResponse {
+    repeated DocumentLink links = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+message DeleteDocumentRequest {
+    string tenant_id = 1;
+    string document_id = 2;
+    string deleted_by = 3;
+}
+
+message DeleteDocumentResponse {
+    bool success = 1;
+    string document_id = 2;
+}
+
+message DocumentCategory {
+    string id = 1;
+    string tenant_id = 2;
+    string category_code = 3;
+    string category_name = 4;
+    string description = 5;
+    string allowed_content_types = 6;
+    int64 max_file_size_bytes = 7;
+    int32 require_approval = 8;
+    int32 retention_days = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string created_by = 12;
+    string updated_by = 13;
+    int32 version = 14;
+    int32 is_active = 15;
+}
+
+message Document {
+    string id = 1;
+    string tenant_id = 2;
+    string document_name = 3;
+    string category_id = 4;
+    string description = 5;
+    string original_filename = 6;
+    string content_type = 7;
+    int64 file_size_bytes = 8;
+    string file_hash_sha256 = 9;
+    string storage_provider = 10;
+    string storage_path = 11;
+    string storage_bucket = 12;
+    string thumbnail_path = 13;
+    int32 thumbnail_generated = 14;
+    int32 current_version = 15;
+    int32 is_latest = 16;
+    int32 is_confidential = 17;
+    string access_level = 18;
+    string metadata = 19;
+    string ocr_text = 20;
+    string tags = 21;
+    string status = 22;
+    string created_at = 23;
+    string updated_at = 24;
+    string created_by = 25;
+    string updated_by = 26;
+    int32 version_number = 27;
+    int32 is_active = 28;
+}
+
+message DocumentVersion {
+    string id = 1;
+    string tenant_id = 2;
+    string document_id = 3;
+    int32 version_number = 4;
+    string storage_path = 5;
+    int64 file_size_bytes = 6;
+    string content_type = 7;
+    string file_hash_sha256 = 8;
+    string change_description = 9;
+    string created_at = 10;
+    string created_by = 11;
+}
+
+message DocumentLink {
+    string id = 1;
+    string tenant_id = 2;
+    string document_id = 3;
+    string entity_type = 4;
+    string entity_id = 5;
+    string link_type = 6;
+    string description = 7;
+    string created_at = 8;
+    string created_by = 9;
+}
+
+message StorageConfig {
+    string id = 1;
+    string tenant_id = 2;
+    string provider = 3;
+    string base_path = 4;
+    string bucket_name = 5;
+    string region = 6;
+    string endpoint_url = 7;
+    int64 max_total_storage_mb = 8;
+    double current_usage_mb = 9;
+    int32 is_default = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

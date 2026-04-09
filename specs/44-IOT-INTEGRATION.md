@@ -510,6 +510,244 @@ service IotService {
 }
 ```
 
+```protobuf
+message IngestTelemetryRequest {
+    string tenant_id = 1;
+    string device_id = 2;
+    string stream_id = 3;
+    string timestamp = 4;
+    double value_real = 5;
+    string value_text = 6;
+    int32 value_boolean = 7;
+    string quality = 8;
+    string source_protocol = 9;
+}
+
+message IngestTelemetryResponse {
+    bool success = 1;
+    string telemetry_id = 2;
+}
+
+message GetLatestTelemetryRequest {
+    string tenant_id = 1;
+    string device_id = 2;
+    string stream_id = 3;
+    int32 limit = 4;
+}
+
+message GetLatestTelemetryResponse {
+    repeated TelemetryRaw readings = 1;
+}
+
+message SendDeviceCommandRequest {
+    string tenant_id = 1;
+    string device_id = 2;
+    string command_type = 3;
+    string command_payload = 4;
+    string correlation_id = 5;
+    string issued_by = 6;
+}
+
+message SendDeviceCommandResponse {
+    bool success = 1;
+    string command_id = 2;
+    string status = 3;
+}
+
+message SubscribeAlertsRequest {
+    string tenant_id = 1;
+    string device_id = 2;
+    string severity = 3;
+}
+
+message AlertEvent {
+    string alert_id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    string device_id = 4;
+    string stream_id = 5;
+    double alert_value = 6;
+    double threshold_value = 7;
+    string severity = 8;
+    string created_at = 9;
+}
+
+message DeviceRegistration {
+    string id = 1;
+    string tenant_id = 2;
+    string device_code = 3;
+    string device_name = 4;
+    string device_type = 5;
+    string protocol = 6;
+    string manufacturer = 7;
+    string model = 8;
+    string firmware_version = 9;
+    string serial_number = 10;
+    string location_id = 11;
+    string asset_id = 12;
+    string status = 13;
+    string last_heartbeat = 14;
+    string registration_date = 15;
+    string certificates = 16;
+    string config = 17;
+    string created_at = 18;
+    string updated_at = 19;
+    string created_by = 20;
+    string updated_by = 21;
+    int32 version = 22;
+    int32 is_active = 23;
+}
+
+message DeviceGroup {
+    string id = 1;
+    string tenant_id = 2;
+    string group_name = 3;
+    string group_type = 4;
+    string description = 5;
+    string parent_group_id = 6;
+    int32 device_count = 7;
+    int32 is_active = 8;
+    string created_at = 9;
+    string updated_at = 10;
+    string created_by = 11;
+    string updated_by = 12;
+    int32 version = 13;
+}
+
+message DataStream {
+    string id = 1;
+    string tenant_id = 2;
+    string stream_name = 3;
+    string device_id = 4;
+    string data_type = 5;
+    string unit_of_measure = 6;
+    int32 sampling_interval_seconds = 7;
+    string aggregation_type = 8;
+    int32 retention_days = 9;
+    int32 is_active = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+    int32 version = 15;
+}
+
+message TelemetryRaw {
+    string id = 1;
+    string tenant_id = 2;
+    string device_id = 3;
+    string stream_id = 4;
+    string timestamp = 5;
+    double value_real = 6;
+    string value_text = 7;
+    int32 value_boolean = 8;
+    string quality = 9;
+    string ingestion_time = 10;
+    string source_protocol = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message TelemetryAggregate {
+    string id = 1;
+    string tenant_id = 2;
+    string device_id = 3;
+    string stream_id = 4;
+    string aggregation_period = 5;
+    string period_start = 6;
+    double avg_value = 7;
+    double min_value = 8;
+    double max_value = 9;
+    double sum_value = 10;
+    int32 sample_count = 11;
+    double std_dev = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message AlertRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string device_id = 4;
+    string stream_id = 5;
+    string condition_type = 6;
+    string condition_config = 7;
+    string severity = 8;
+    string action_type = 9;
+    string action_config = 10;
+    int32 is_active = 11;
+    int32 cooldown_seconds = 12;
+    string last_triggered_at = 13;
+    int32 trigger_count = 14;
+    string created_at = 15;
+    string updated_at = 16;
+    string created_by = 17;
+    string updated_by = 18;
+    int32 version = 19;
+}
+
+message IotAlert {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    string device_id = 4;
+    string stream_id = 5;
+    double alert_value = 6;
+    double threshold_value = 7;
+    string severity = 8;
+    string status = 9;
+    string acknowledged_by = 10;
+    string acknowledged_at = 11;
+    string resolved_at = 12;
+    string resolution_notes = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+    int32 is_active = 19;
+}
+
+message DeviceCommand {
+    string id = 1;
+    string tenant_id = 2;
+    string device_id = 3;
+    string command_type = 4;
+    string command_payload = 5;
+    string status = 6;
+    string sent_at = 7;
+    string acknowledged_at = 8;
+    string response_payload = 9;
+    string correlation_id = 10;
+    string issued_by = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string created_by = 14;
+    string updated_by = 15;
+    int32 version = 16;
+    int32 is_active = 17;
+}
+
+message EdgeConfiguration {
+    string id = 1;
+    string tenant_id = 2;
+    string edge_device_id = 3;
+    string config_type = 4;
+    string config_body = 5;
+    int32 deployed_version = 6;
+    string deployment_status = 7;
+    string last_deployed_at = 8;
+    string deployed_by = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string created_by = 12;
+    string updated_by = 13;
+    int32 version = 14;
+    int32 is_active = 15;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

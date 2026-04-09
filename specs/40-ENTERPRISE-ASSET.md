@@ -502,6 +502,267 @@ service EamService {
 }
 ```
 
+```protobuf
+message GetAssetHealthRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+}
+
+message GetAssetHealthResponse {
+    OperatingAsset asset = 1;
+    string condition_rating = 2;
+    double mtbf_hours = 3;
+    double mttr_hours = 4;
+    int32 open_work_orders = 5;
+    int32 total_failures_12m = 6;
+    double maintenance_cost_12m_cents = 7;
+}
+
+message CreateMaintenanceOrderRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    string work_type = 3;
+    string priority = 4;
+    string description = 5;
+    string problem_code = 6;
+    string requested_by = 7;
+    string scheduled_start = 8;
+    string scheduled_end = 9;
+    int64 estimated_cost_cents = 10;
+    string maintenance_plan_id = 11;
+    string created_by = 12;
+}
+
+message CreateMaintenanceOrderResponse {
+    WorkOrder work_order = 1;
+}
+
+message RecordMeterReadingRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    string reading_type = 3;
+    double reading_value = 4;
+    string reading_unit = 5;
+    string reading_date = 6;
+    string reading_source = 7;
+    string notes = 8;
+    string created_by = 9;
+}
+
+message RecordMeterReadingResponse {
+    bool success = 1;
+    string reading_id = 2;
+}
+
+message CheckMaintenanceDueRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    string due_within_days = 3;
+}
+
+message CheckMaintenanceDueResponse {
+    repeated MaintenancePlan due_plans = 1;
+    int32 overdue_count = 2;
+    int32 due_soon_count = 3;
+}
+
+message OperatingAsset {
+    string id = 1;
+    string tenant_id = 2;
+    string financial_asset_id = 3;
+    string asset_tag = 4;
+    string asset_name = 5;
+    string asset_category = 6;
+    string location_id = 7;
+    string parent_asset_id = 8;
+    string manufacturer = 9;
+    string model_number = 10;
+    string serial_number = 11;
+    string installation_date = 12;
+    string warranty_expiry = 13;
+    string criticality = 14;
+    string operating_status = 15;
+    string condition_rating = 16;
+    string specifications = 17;
+    double gps_latitude = 18;
+    double gps_longitude = 19;
+    string created_at = 20;
+    string updated_at = 21;
+    string created_by = 22;
+    string updated_by = 23;
+    int32 version = 24;
+    int32 is_active = 25;
+}
+
+message MaintenancePlan {
+    string id = 1;
+    string tenant_id = 2;
+    string plan_name = 3;
+    string asset_id = 4;
+    string asset_category = 5;
+    string plan_type = 6;
+    string frequency_type = 7;
+    int32 frequency_interval = 8;
+    string description = 9;
+    string work_order_template_id = 10;
+    double estimated_duration_hours = 11;
+    int64 estimated_cost_cents = 12;
+    string next_due_date = 13;
+    string last_completed_date = 14;
+    int32 is_active = 15;
+    int32 auto_generate = 16;
+    int32 tolerance_days = 17;
+    string triggers = 18;
+    string created_at = 19;
+    string updated_at = 20;
+    string created_by = 21;
+    string updated_by = 22;
+    int32 version = 23;
+}
+
+message WorkOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string work_order_number = 3;
+    string asset_id = 4;
+    string work_type = 5;
+    string priority = 6;
+    string description = 7;
+    string problem_code = 8;
+    string cause_code = 9;
+    string remedy_code = 10;
+    string status = 11;
+    string requested_by = 12;
+    string assigned_to = 13;
+    string scheduled_start = 14;
+    string scheduled_end = 15;
+    string actual_start = 16;
+    string actual_end = 17;
+    double downtime_hours = 18;
+    int64 estimated_cost_cents = 19;
+    int64 actual_cost_cents = 20;
+    string currency_code = 21;
+    string location_id = 22;
+    string maintenance_plan_id = 23;
+    string parent_work_order_id = 24;
+    string safety_requirements = 25;
+    string completion_notes = 26;
+    string created_at = 27;
+    string updated_at = 28;
+    string created_by = 29;
+    string updated_by = 30;
+    int32 version = 31;
+    int32 is_active = 32;
+}
+
+message WorkOrderTask {
+    string id = 1;
+    string tenant_id = 2;
+    string work_order_id = 3;
+    int32 task_sequence = 4;
+    string task_description = 5;
+    string task_type = 6;
+    int32 is_completed = 7;
+    string completed_by = 8;
+    string completed_at = 9;
+    string measurements = 10;
+    string notes = 11;
+    string created_at = 12;
+    string updated_at = 13;
+    string created_by = 14;
+    string updated_by = 15;
+}
+
+message WorkOrderPart {
+    string id = 1;
+    string tenant_id = 2;
+    string work_order_id = 3;
+    string item_id = 4;
+    string quantity_required = 5;
+    string quantity_used = 6;
+    int64 unit_cost_cents = 7;
+    string warehouse_id = 8;
+    int32 is_reserved = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string created_by = 12;
+    string updated_by = 13;
+}
+
+message MeterReading {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_id = 3;
+    string reading_type = 4;
+    double reading_value = 5;
+    string reading_unit = 6;
+    string reading_date = 7;
+    string reading_source = 8;
+    string notes = 9;
+    string created_at = 10;
+    string created_by = 11;
+}
+
+message AssetFailure {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_id = 3;
+    string work_order_id = 4;
+    string failure_date = 5;
+    string failure_type = 6;
+    string failure_code = 7;
+    string component_failed = 8;
+    string root_cause = 9;
+    string corrective_action = 10;
+    double downtime_hours = 11;
+    int64 cost_cents = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+}
+
+message ServiceContract {
+    string id = 1;
+    string tenant_id = 2;
+    string contract_number = 3;
+    string vendor_id = 4;
+    string contract_type = 5;
+    string coverage_scope = 6;
+    int64 annual_cost_cents = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+    int32 response_time_hours = 10;
+    string sla_terms = 11;
+    int32 auto_renew = 12;
+    string status = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+}
+
+message SafetyPermit {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_id = 3;
+    string work_order_id = 4;
+    string permit_type = 5;
+    string status = 6;
+    string issued_by = 7;
+    string issued_at = 8;
+    string expires_at = 9;
+    string closed_by = 10;
+    string closed_at = 11;
+    string safety_checklist = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

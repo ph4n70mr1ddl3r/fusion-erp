@@ -525,6 +525,283 @@ service SustainabilityService {
 }
 ```
 
+```protobuf
+message CalculateEmissionsRequest {
+    string tenant_id = 1;
+    string source_id = 2;
+    string period_start = 3;
+    string period_end = 4;
+    string emission_factor_id = 5;
+    double activity_value = 6;
+    string activity_unit = 7;
+    string data_source = 8;
+    string created_by = 9;
+}
+
+message CalculateEmissionsResponse {
+    EmissionRecord record = 1;
+    double calculated_emission_tonnes = 2;
+}
+
+message GetCarbonFootprintRequest {
+    string tenant_id = 1;
+    string period_start = 2;
+    string period_end = 3;
+    int32 scope = 4;
+    string facility_id = 5;
+}
+
+message GetCarbonFootprintResponse {
+    double total_co2e_tonnes = 1;
+    double scope1_tonnes = 2;
+    double scope2_tonnes = 3;
+    double scope3_tonnes = 4;
+    repeated EmissionRecord records = 5;
+}
+
+message GetEsgScoreRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+    string assessment_date = 3;
+}
+
+message GetEsgScoreResponse {
+    SupplierEsgRating rating = 1;
+    double overall_score = 2;
+    string rating_grade = 3;
+}
+
+message EmissionFactor {
+    string id = 1;
+    string tenant_id = 2;
+    string factor_name = 3;
+    string category = 4;
+    string fuel_type = 5;
+    double factor_value = 6;
+    string factor_unit = 7;
+    int32 scope = 8;
+    string source = 9;
+    string effective_from = 10;
+    string effective_to = 11;
+    string country_code = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+    int32 version = 17;
+    int32 is_active = 18;
+}
+
+message EmissionSource {
+    string id = 1;
+    string tenant_id = 2;
+    string source_name = 3;
+    string source_type = 4;
+    string facility_id = 5;
+    string category = 6;
+    int32 scope = 7;
+    string fuel_type = 8;
+    double capacity = 9;
+    string capacity_unit = 10;
+    string location = 11;
+    int32 is_active = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+    int32 version = 17;
+}
+
+message ActivityData {
+    string id = 1;
+    string tenant_id = 2;
+    string source_id = 3;
+    string period_start = 4;
+    string period_end = 5;
+    string activity_type = 6;
+    double activity_value = 7;
+    string activity_unit = 8;
+    string emission_factor_id = 9;
+    double calculated_emission_tonnes = 10;
+    string data_source = 11;
+    string evidence_document_id = 12;
+    string quality_score = 13;
+    string verified_by = 14;
+    string verified_at = 15;
+    string created_at = 16;
+    string updated_at = 17;
+    string created_by = 18;
+    string updated_by = 19;
+    int32 version = 20;
+    int32 is_active = 21;
+}
+
+message EmissionRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string source_id = 3;
+    string period_start = 4;
+    string period_end = 5;
+    int32 scope = 6;
+    double co2_tonnes = 7;
+    double ch4_tonnes = 8;
+    double n2o_tonnes = 9;
+    double co2e_tonnes = 10;
+    string methodology = 11;
+    int32 is_verified = 12;
+    string verification_body = 13;
+    string verification_date = 14;
+    string created_at = 15;
+    string updated_at = 16;
+    string created_by = 17;
+    string updated_by = 18;
+    int32 version = 19;
+    int32 is_active = 20;
+}
+
+message EnergyConsumption {
+    string id = 1;
+    string tenant_id = 2;
+    string facility_id = 3;
+    string energy_type = 4;
+    string period_start = 5;
+    string period_end = 6;
+    double consumption_value = 7;
+    string consumption_unit = 8;
+    int64 cost_cents = 9;
+    double renewable_percent = 10;
+    string supplier_id = 11;
+    string meter_number = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+    int32 version = 17;
+    int32 is_active = 18;
+}
+
+message WasteRecord {
+    string id = 1;
+    string tenant_id = 2;
+    string facility_id = 3;
+    string waste_type = 4;
+    string waste_category = 5;
+    double quantity_kg = 6;
+    string disposal_method = 7;
+    string disposal_vendor_id = 8;
+    int64 cost_cents = 9;
+    string period_date = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+}
+
+message WaterUsage {
+    string id = 1;
+    string tenant_id = 2;
+    string facility_id = 3;
+    string water_source = 4;
+    string period_start = 5;
+    string period_end = 6;
+    double consumption_cubic_meters = 7;
+    double discharge_cubic_meters = 8;
+    int64 cost_cents = 9;
+    double recycling_percent = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+}
+
+message SupplyChainEmission {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string category = 4;
+    string period_start = 5;
+    string period_end = 6;
+    double estimated_emission_tonnes = 7;
+    string data_quality = 8;
+    int64 spend_amount_cents = 9;
+    double emission_intensity = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+    int32 version = 15;
+    int32 is_active = 16;
+}
+
+message SustainabilityTarget {
+    string id = 1;
+    string tenant_id = 2;
+    string target_name = 3;
+    string target_type = 4;
+    int32 baseline_year = 5;
+    int32 target_year = 6;
+    double baseline_value = 7;
+    double target_value = 8;
+    string unit = 9;
+    double current_value = 10;
+    double progress_percent = 11;
+    int32 is_science_based = 12;
+    string status = 13;
+    string owner_id = 14;
+    string created_at = 15;
+    string updated_at = 16;
+    string created_by = 17;
+    string updated_by = 18;
+    int32 version = 19;
+    int32 is_active = 20;
+}
+
+message EsgReport {
+    string id = 1;
+    string tenant_id = 2;
+    string report_name = 3;
+    string reporting_framework = 4;
+    string reporting_period_start = 5;
+    string reporting_period_end = 6;
+    double total_scope1_tonnes = 7;
+    double total_scope2_tonnes = 8;
+    double total_scope3_tonnes = 9;
+    double energy_consumption_total = 10;
+    double waste_generated_total = 11;
+    double water_consumed_total = 12;
+    string status = 13;
+    string published_at = 14;
+    string published_by = 15;
+    string report_data = 16;
+    string created_at = 17;
+    string updated_at = 18;
+    string created_by = 19;
+    string updated_by = 20;
+    int32 version = 21;
+    int32 is_active = 22;
+}
+
+message SupplierEsgRating {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_id = 3;
+    string assessment_date = 4;
+    double environmental_score = 5;
+    double social_score = 6;
+    double governance_score = 7;
+    double overall_score = 8;
+    string rating = 9;
+    string certifications = 10;
+    string risk_flags = 11;
+    string assessed_by = 12;
+    string next_assessment_date = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

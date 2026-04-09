@@ -451,6 +451,269 @@ service PlanningService {
 }
 ```
 
+```protobuf
+message RunMRPRequest {
+    string tenant_id = 1;
+    string planning_horizon_start = 2;
+    string planning_horizon_end = 3;
+    string scope_type = 4;
+    string scope_value = 5;
+    string created_by = 6;
+}
+
+message RunMRPResponse {
+    string mrp_run_id = 1;
+    string run_number = 2;
+    int32 total_items_planned = 3;
+    int32 planned_orders_generated = 4;
+    int32 action_messages = 5;
+    int32 execution_time_ms = 6;
+    string status = 7;
+}
+
+message GetMRPResultsRequest {
+    string tenant_id = 1;
+    string mrp_run_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+}
+
+message GetMRPResultsResponse {
+    repeated MrpSupply supplies = 1;
+    repeated MrpDemand demands = 2;
+    repeated PlannedOrder planned_orders = 3;
+}
+
+message GetPlannedOrdersRequest {
+    string tenant_id = 1;
+    string mrp_run_id = 2;
+    string item_id = 3;
+    string status = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message ReleasePlannedOrderRequest {
+    string tenant_id = 1;
+    string planned_order_id = 2;
+    string released_by = 3;
+}
+
+message ReleasePlannedOrderResponse {
+    bool success = 1;
+    string converted_document_id = 2;
+    string converted_document_type = 3;
+}
+
+message GetItemPlanRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string warehouse_id = 3;
+    string horizon_start = 4;
+    string horizon_end = 5;
+}
+
+message GetItemPlanResponse {
+    repeated MrpSupply supplies = 1;
+    repeated MrpDemand demands = 2;
+    repeated PlannedOrder planned_orders = 3;
+}
+
+message GenerateForecastRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+    string warehouse_id = 3;
+    string forecast_method = 4;
+    int32 periods = 5;
+    string created_by = 6;
+}
+
+message GenerateForecastResponse {
+    repeated DemandForecast forecasts = 1;
+}
+
+message RunScenarioRequest {
+    string tenant_id = 1;
+    string scenario_id = 2;
+    string parameters = 3;
+    string created_by = 4;
+}
+
+message RunScenarioResponse {
+    string scenario_id = 1;
+    string status = 2;
+    repeated ScenarioResult results = 3;
+}
+
+message PlanningCalendar {
+    string id = 1;
+    string tenant_id = 2;
+    string calendar_name = 3;
+    string calendar_type = 4;
+    string effective_from = 5;
+    string effective_to = 6;
+    int32 monday = 7;
+    int32 tuesday = 8;
+    int32 wednesday = 9;
+    int32 thursday = 10;
+    int32 friday = 11;
+    int32 saturday = 12;
+    int32 sunday = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+    int32 is_active = 19;
+}
+
+message MrpParameters {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    string planning_method = 5;
+    string lot_size_method = 6;
+    string fixed_lot_quantity = 7;
+    string min_order_quantity = 8;
+    string max_order_quantity = 9;
+    string order_multiple = 10;
+    int32 fixed_lead_time_days = 11;
+    double variable_lead_time_days = 12;
+    string safety_stock_method = 13;
+    string safety_stock_quantity = 14;
+    double service_level_percent = 15;
+    int32 safety_time_days = 16;
+    int32 planning_time_fence_days = 17;
+    int32 demand_time_fence_days = 18;
+    string order_policy = 19;
+    string created_at = 20;
+    string updated_at = 21;
+    string created_by = 22;
+    string updated_by = 23;
+    int32 version = 24;
+    int32 is_active = 25;
+}
+
+message DemandForecast {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string warehouse_id = 4;
+    string period_start_date = 5;
+    string period_end_date = 6;
+    string forecast_method = 7;
+    string forecasted_demand = 8;
+    string actual_demand = 9;
+    double accuracy_percent = 10;
+    string confidence_level = 11;
+    string forecast_set_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+}
+
+message MrpRun {
+    string id = 1;
+    string tenant_id = 2;
+    string run_number = 3;
+    string run_date = 4;
+    string planning_horizon_start = 5;
+    string planning_horizon_end = 6;
+    string scope_type = 7;
+    string scope_value = 8;
+    string status = 9;
+    int32 total_items_planned = 10;
+    int32 planned_orders_generated = 11;
+    int32 action_messages = 12;
+    int32 execution_time_ms = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+}
+
+message MrpSupply {
+    string id = 1;
+    string tenant_id = 2;
+    string mrp_run_id = 3;
+    string item_id = 4;
+    string warehouse_id = 5;
+    string supply_type = 6;
+    string supply_document_id = 7;
+    string quantity = 8;
+    string due_date = 9;
+    string status = 10;
+    string created_at = 11;
+}
+
+message MrpDemand {
+    string id = 1;
+    string tenant_id = 2;
+    string mrp_run_id = 3;
+    string item_id = 4;
+    string warehouse_id = 5;
+    string demand_type = 6;
+    string demand_document_id = 7;
+    string quantity = 8;
+    string required_date = 9;
+    int32 priority = 10;
+    string created_at = 11;
+}
+
+message PlannedOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string mrp_run_id = 3;
+    string item_id = 4;
+    string warehouse_id = 5;
+    string order_type = 6;
+    string quantity = 7;
+    string due_date = 8;
+    string release_date = 9;
+    string status = 10;
+    string pegged_demand_id = 11;
+    string pegged_demand_type = 12;
+    string converted_document_id = 13;
+    string converted_document_type = 14;
+    string action_message = 15;
+    string action_details = 16;
+    string created_at = 17;
+    string updated_at = 18;
+    string created_by = 19;
+}
+
+message Scenario {
+    string id = 1;
+    string tenant_id = 2;
+    string scenario_name = 3;
+    string description = 4;
+    string baseline_scenario_id = 5;
+    string scenario_type = 6;
+    string parameters = 7;
+    string status = 8;
+    string created_at = 9;
+    string updated_at = 10;
+    string created_by = 11;
+    string updated_by = 12;
+    int32 version = 13;
+}
+
+message ScenarioResult {
+    string id = 1;
+    string tenant_id = 2;
+    string scenario_id = 3;
+    string item_id = 4;
+    string warehouse_id = 5;
+    string period_date = 6;
+    string projected_available = 7;
+    int32 planned_orders_count = 8;
+    string shortage_quantity = 9;
+    string excess_quantity = 10;
+    string created_at = 11;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

@@ -599,6 +599,172 @@ service InnovationService {
     rpc GetMetrics(GetMetricsRequest) returns (GetMetricsResponse);
     rpc VoteIdea(VoteIdeaRequest) returns (VoteIdeaResponse);
 }
+
+// --- Innovation Campaign ---
+message InnovationCampaign {
+    string id = 1; string tenant_id = 2; string campaign_name = 3; string campaign_code = 4;
+    string description = 5; string campaign_type = 6; string theme = 7; string objectives = 8;
+    string target_audience = 9; string submission_start = 10; string submission_end = 11;
+    string evaluation_start = 12; string evaluation_end = 13; int32 max_ideas_per_submitter = 14;
+    string status = 15; string owner_id = 16; string review_committee = 17;
+    string reward_config = 18; int32 total_ideas = 19; int32 total_evaluators = 20;
+    int32 total_votes = 21; int64 budget_allocated_cents = 22; int64 budget_consumed_cents = 23;
+    string tags = 24; string metadata = 25;
+    string created_at = 26; string updated_at = 27; string created_by = 28; string updated_by = 29;
+    int32 version = 30; bool is_active = 31;
+}
+
+// --- Idea ---
+message Idea {
+    string id = 1; string tenant_id = 2; string campaign_id = 3; string idea_title = 4;
+    string idea_code = 5; string idea_description = 6; string problem_statement = 7;
+    string proposed_solution = 8; string expected_benefits = 9;
+    int64 estimated_effort_cents = 10; int64 estimated_revenue_cents = 11;
+    int64 estimated_cost_savings_cents = 12; string priority = 13; string idea_status = 14;
+    string submission_source = 15; string submitter_id = 16; string submitter_department = 17;
+    string category_id = 18; string assigned_reviewer_id = 19; string current_gate_id = 20;
+    string current_gate_status = 21; string implementation_complexity = 22;
+    int32 time_to_market_days = 23; string target_market = 24; string attachments = 25;
+    string tags = 26;
+    string created_at = 27; string updated_at = 28; string created_by = 29; string updated_by = 30;
+    int32 version = 31; bool is_active = 32;
+}
+
+// --- Idea Category ---
+message IdeaCategory {
+    string id = 1; string tenant_id = 2; string category_name = 3; string category_code = 4;
+    string description = 5; string parent_category_id = 6; int32 category_level = 7;
+    string icon = 8; string color = 9; int32 sort_order = 10; bool is_active = 11;
+    string created_at = 12; string updated_at = 13; string created_by = 14; string updated_by = 15;
+    int32 version = 16;
+}
+
+// --- Idea Evaluation ---
+message IdeaEvaluation {
+    string id = 1; string tenant_id = 2; string idea_id = 3; string evaluator_id = 4;
+    string evaluation_type = 5; string criteria_scores = 6; double overall_score_real = 7;
+    double weighted_score_real = 8; string recommendation = 9; string strengths = 10;
+    string weaknesses = 11; string comments = 12; string risk_assessment = 13;
+    double feasibility_score_real = 14; double impact_score_real = 15;
+    double strategic_alignment_score_real = 16; bool is_completed = 17; string completed_at = 18;
+    string created_at = 19; string updated_at = 20; string created_by = 21; string updated_by = 22;
+    int32 version = 23;
+}
+
+// --- Stage Gate Process ---
+message StageGateProcess {
+    string id = 1; string tenant_id = 2; string process_name = 3; string process_code = 4;
+    string description = 5; string applicable_campaign_types = 6; string gates = 7;
+    int32 total_gates = 8; int32 estimated_total_days = 9; string approval_type = 10;
+    double approval_threshold_real = 11; bool is_default = 12; bool is_active = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- Stage Gate Review ---
+message StageGateReview {
+    string id = 1; string tenant_id = 2; string idea_id = 3; string process_id = 4;
+    int32 gate_number = 5; string gate_name = 6; string gate_criteria = 7; string status = 8;
+    string review_date = 9; string reviewers = 10; string review_scores = 11;
+    double aggregate_score_real = 12; string review_comments = 13; string conditions = 14;
+    string decision_rationale = 15; string decider_id = 16; string decided_at = 17;
+    string scheduled_date = 18; int32 duration_days = 19;
+    string created_at = 20; string updated_at = 21; string created_by = 22; string updated_by = 23;
+    int32 version = 24;
+}
+
+// --- Innovation Portfolio ---
+message InnovationPortfolio {
+    string id = 1; string tenant_id = 2; string portfolio_name = 3; string portfolio_code = 4;
+    string description = 5; string portfolio_type = 6; string strategy_framework = 7;
+    string target_allocation = 8; int64 total_budget_cents = 9; int64 allocated_budget_cents = 10;
+    int64 consumed_budget_cents = 11; int32 total_ideas = 12; int32 active_ideas = 13;
+    int32 completed_ideas = 14; int32 failed_ideas = 15; double expected_roi_real = 16;
+    double actual_roi_real = 17; string owner_id = 18; string rebalancing_frequency = 19;
+    string last_rebalanced_at = 20; bool is_active = 21;
+    string created_at = 22; string updated_at = 23; string created_by = 24; string updated_by = 25;
+    int32 version = 26;
+}
+
+// --- Resource Allocation ---
+message ResourceAllocation {
+    string id = 1; string tenant_id = 2; string portfolio_id = 3; string idea_id = 4;
+    string allocation_type = 5; int64 allocated_amount_cents = 6; int64 consumed_amount_cents = 7;
+    int64 remaining_amount_cents = 8; double allocated_headcount = 9; double consumed_headcount = 10;
+    string period_start = 11; string period_end = 12; string cost_center = 13;
+    string gl_account_id = 14; string project_id = 15; string status = 16;
+    string justification = 17; string approval_status = 18; string approved_by = 19;
+    string approved_at = 20;
+    string created_at = 21; string updated_at = 22; string created_by = 23; string updated_by = 24;
+    int32 version = 25;
+}
+
+// --- Innovation Metrics ---
+message InnovationMetrics {
+    string id = 1; string tenant_id = 2; string metric_date = 3; string portfolio_id = 4;
+    string campaign_id = 5; int32 total_ideas_submitted = 6; int32 total_ideas_approved = 7;
+    int32 total_ideas_implemented = 8; int32 total_ideas_rejected = 9;
+    double conversion_rate_pct = 10; double avg_time_to_evaluate_days = 11;
+    double avg_time_to_market_days = 12; double avg_evaluation_score_real = 13;
+    int64 total_budget_allocated_cents = 14; int64 total_budget_consumed_cents = 15;
+    int64 total_revenue_generated_cents = 16; int64 total_cost_savings_cents = 17;
+    double innovation_roi_real = 18; double ideas_per_employee = 19;
+    double participation_rate_pct = 20; int32 evaluator_count = 21;
+    int32 active_gates_count = 22; int32 gates_passed_count = 23; int32 gates_failed_count = 24;
+    string created_at = 25; string updated_at = 26; string created_by = 27; string updated_by = 28;
+}
+
+// --- Collaboration Space ---
+message CollaborationSpace {
+    string id = 1; string tenant_id = 2; string idea_id = 3; string space_name = 4;
+    string space_type = 5; string description = 6; string content = 7;
+    string participant_ids = 8; string moderator_ids = 9; bool is_private = 10;
+    int32 max_participants = 11; int32 total_posts = 12; int32 total_attachments = 13;
+    string last_activity_at = 14; bool is_active = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+    int32 version = 20;
+}
+
+// --- Idea Vote ---
+message IdeaVote {
+    string id = 1; string tenant_id = 2; string idea_id = 3; string voter_id = 4;
+    string vote_type = 5; double vote_weight_real = 6; string comment = 7; string voted_at = 8;
+    string created_at = 9; string updated_at = 10; string created_by = 11; string updated_by = 12;
+}
+
+// --- RPC Request/Response Messages ---
+message GetCampaignRequest { string tenant_id = 1; string id = 2; }
+message GetCampaignResponse { InnovationCampaign data = 1; }
+
+message SubmitIdeaRequest { string tenant_id = 1; string campaign_id = 2; string idea_title = 3; string idea_description = 4; string problem_statement = 5; string proposed_solution = 6; string submitter_id = 7; }
+message SubmitIdeaResponse { Idea data = 1; }
+
+message EvaluateIdeaRequest { string tenant_id = 1; string idea_id = 2; string evaluator_id = 3; string evaluation_type = 4; string criteria_scores = 5; string recommendation = 6; }
+message EvaluateIdeaResponse { IdeaEvaluation data = 1; }
+
+message AdvanceGateRequest { string tenant_id = 1; string idea_id = 2; int32 gate_number = 3; string decision = 4; string decision_rationale = 5; string decider_id = 6; }
+message AdvanceGateResponse { StageGateReview review = 1; Idea idea = 2; }
+
+message GetPortfolioAnalysisRequest { string tenant_id = 1; string portfolio_id = 2; }
+message GetPortfolioAnalysisResponse { InnovationPortfolio portfolio = 1; repeated ResourceAllocation allocations = 2; repeated InnovationMetrics metrics = 3; }
+
+message AllocateResourcesRequest { string tenant_id = 1; string portfolio_id = 2; string idea_id = 3; string allocation_type = 4; int64 allocated_amount_cents = 5; string period_start = 6; string period_end = 7; }
+message AllocateResourcesResponse { ResourceAllocation data = 1; }
+
+message GetMetricsRequest { string tenant_id = 1; string metric_date = 2; string portfolio_id = 3; string campaign_id = 4; }
+message GetMetricsResponse { repeated InnovationMetrics metrics = 1; }
+
+message VoteIdeaRequest { string tenant_id = 1; string idea_id = 2; string voter_id = 3; string vote_type = 4; double vote_weight_real = 5; string comment = 6; }
+message VoteIdeaResponse { IdeaVote data = 1; }
+
+message ListCampaignsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListCampaignsResponse { repeated InnovationCampaign items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListIdeasRequest { string tenant_id = 1; string campaign_id = 2; int32 page_size = 3; string page_token = 4; }
+message ListIdeasResponse { repeated Idea items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListPortfoliosRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListPortfoliosResponse { repeated InnovationPortfolio items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

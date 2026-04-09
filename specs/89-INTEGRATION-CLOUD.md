@@ -550,6 +550,151 @@ service IntegrationService {
     rpc RegisterRoute(RegisterRouteRequest) returns (RegisterRouteResponse);
     rpc GetFlowMetrics(GetFlowMetricsRequest) returns (GetFlowMetricsResponse);
 }
+
+// --- Integration Connection ---
+message IntegrationConnection {
+    string id = 1; string tenant_id = 2; string connection_name = 3; string connection_code = 4;
+    string description = 5; string system_type = 6; string endpoint_url = 7;
+    string auth_type = 8; string credentials_encrypted = 9; string credential_vault_key = 10;
+    string health_check_url = 11; int32 timeout_ms = 12; int32 retry_count = 13;
+    int32 retry_delay_ms = 14; string status = 15; string last_tested_at = 16;
+    string last_error_message = 17; string metadata = 18;
+    string created_at = 19; string updated_at = 20; string created_by = 21; string updated_by = 22;
+    int32 version = 23; bool is_active = 24;
+}
+
+// --- Connection Adapter ---
+message ConnectionAdapter {
+    string id = 1; string tenant_id = 2; string adapter_name = 3; string adapter_type = 4;
+    string version_label = 5; string description = 6; string config_schema = 7;
+    string default_config = 8; string supported_auth_types = 9; string capabilities = 10;
+    bool is_builtin = 11; string adapter_library_path = 12; bool is_active = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- Integration Flow ---
+message IntegrationFlow {
+    string id = 1; string tenant_id = 2; string flow_name = 3; string flow_code = 4;
+    string description = 5; string flow_type = 6; string status = 7;
+    string source_connection_id = 8; string target_connection_id = 9;
+    string source_adapter_id = 10; string target_adapter_id = 11;
+    string trigger_type = 12; string trigger_config = 13; string error_handling_strategy = 14;
+    int32 max_retries = 15; int32 retry_interval_ms = 16; int32 timeout_ms = 17;
+    int32 batch_size = 18; int32 parallelism = 19; string tags = 20;
+    string created_at = 21; string updated_at = 22; string created_by = 23; string updated_by = 24;
+    int32 version = 25; bool is_active = 26;
+}
+
+// --- Flow Step ---
+message FlowStep {
+    string id = 1; string tenant_id = 2; string flow_id = 3; string step_name = 4;
+    string step_type = 5; int32 step_order = 6; string description = 7; string config = 8;
+    string input_schema = 9; string output_schema = 10; string error_step_id = 11;
+    string condition_expression = 12; bool is_active = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- Data Transformation ---
+message DataTransformation {
+    string id = 1; string tenant_id = 2; string transformation_name = 3;
+    string transformation_code = 4; string description = 5; string source_format = 6;
+    string target_format = 7; string mapping_rules = 8; string transformation_script = 9;
+    string source_schema = 10; string target_schema = 11; string lookup_tables = 12;
+    bool is_active = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- Integration Schedule ---
+message IntegrationSchedule {
+    string id = 1; string tenant_id = 2; string flow_id = 3; string schedule_name = 4;
+    string cron_expression = 5; string timezone = 6; bool is_active = 7;
+    string start_date = 8; string end_date = 9; int32 max_concurrent_runs = 10;
+    string misfire_policy = 11; string last_triggered_at = 12; string next_trigger_at = 13;
+    int32 total_executions = 14; string last_execution_status = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+    int32 version = 20;
+}
+
+// --- Integration Log ---
+message IntegrationLog {
+    string id = 1; string tenant_id = 2; string flow_id = 3; string schedule_id = 4;
+    string execution_id = 5; string step_id = 6; string log_level = 7; string message = 8;
+    string payload_before = 9; string payload_after = 10; string error_code = 11;
+    string error_message = 12; string error_stack_trace = 13; int32 records_processed = 14;
+    int32 records_succeeded = 15; int32 records_failed = 16; int32 duration_ms = 17;
+    string source_ip = 18; string correlation_id = 19;
+    string created_at = 20; string updated_at = 21; string created_by = 22; string updated_by = 23;
+}
+
+// --- Integration Alert ---
+message IntegrationAlert {
+    string id = 1; string tenant_id = 2; string flow_id = 3; string connection_id = 4;
+    string execution_id = 5; string alert_type = 6; string severity = 7; string title = 8;
+    string message = 9; string alert_details = 10; string status = 11; string assigned_to = 12;
+    string acknowledged_at = 13; string resolved_at = 14; string resolution_notes = 15;
+    string notification_channels = 16; string escalation_rules = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+}
+
+// --- API Gateway Route ---
+message ApiGatewayRoute {
+    string id = 1; string tenant_id = 2; string route_name = 3; string route_code = 4;
+    string description = 5; string path_pattern = 6; string http_methods = 7;
+    string target_connection_id = 8; string target_path = 9;
+    int32 rate_limit_per_minute = 10; int32 rate_limit_per_hour = 11; int32 burst_limit = 12;
+    int32 timeout_ms = 13; bool requires_auth = 14; string allowed_scopes = 15;
+    string request_transform_id = 16; string response_transform_id = 17;
+    int32 cache_ttl_seconds = 18; bool cors_enabled = 19; string cors_origins = 20;
+    bool is_active = 21; int32 priority = 22;
+    string created_at = 23; string updated_at = 24; string created_by = 25; string updated_by = 26;
+    int32 version = 27;
+}
+
+// --- Connection Pool ---
+message ConnectionPool {
+    string id = 1; string tenant_id = 2; string connection_id = 3; string pool_name = 4;
+    int32 min_size = 5; int32 max_size = 6; int32 idle_timeout_ms = 7;
+    int32 max_lifetime_ms = 8; int32 acquire_timeout_ms = 9; string validation_query = 10;
+    int32 current_active = 11; int32 current_idle = 12; int32 total_acquired = 13;
+    int32 total_released = 14; int32 total_failed = 15; int32 avg_acquire_time_ms = 16;
+    bool is_active = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+    int32 version = 22;
+}
+
+// --- RPC Request/Response Messages ---
+message GetConnectionRequest { string tenant_id = 1; string id = 2; }
+message GetConnectionResponse { IntegrationConnection data = 1; }
+
+message TestConnectionRequest { string tenant_id = 1; string connection_id = 2; }
+message TestConnectionResponse { bool success = 1; string message = 2; string tested_at = 3; }
+
+message CreateFlowRequest { string tenant_id = 1; string flow_name = 2; string flow_code = 3; string flow_type = 4; string source_connection_id = 5; string target_connection_id = 6; }
+message CreateFlowResponse { IntegrationFlow data = 1; }
+
+message ExecuteFlowRequest { string tenant_id = 1; string flow_id = 2; string correlation_id = 3; }
+message ExecuteFlowResponse { string execution_id = 1; string status = 2; }
+
+message GetExecutionStatusRequest { string tenant_id = 1; string execution_id = 2; }
+message GetExecutionStatusResponse { string status = 1; repeated IntegrationLog logs = 2; }
+
+message TransformDataRequest { string tenant_id = 1; string transformation_id = 2; string input_data = 3; }
+message TransformDataResponse { string output_data = 1; DataTransformation transformation = 2; }
+
+message RegisterRouteRequest { string tenant_id = 1; string route_name = 2; string route_code = 3; string path_pattern = 4; string target_connection_id = 5; string target_path = 6; }
+message RegisterRouteResponse { ApiGatewayRoute data = 1; }
+
+message GetFlowMetricsRequest { string tenant_id = 1; string flow_id = 2; string date_from = 3; string date_to = 4; }
+message GetFlowMetricsResponse { int32 total_executions = 1; int32 successful = 2; int32 failed = 3; int64 avg_duration_ms = 4; int32 total_records_processed = 5; }
+
+message ListConnectionsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListConnectionsResponse { repeated IntegrationConnection items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListFlowsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListFlowsResponse { repeated IntegrationFlow items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

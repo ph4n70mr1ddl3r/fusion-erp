@@ -550,6 +550,144 @@ service EdmService {
     rpc TriggerSync(TriggerSyncRequest) returns (TriggerSyncResponse);
     rpc GetAuditTrail(GetAuditTrailRequest) returns (GetAuditTrailResponse);
 }
+
+// --- EDM Dimension ---
+message EdmDimension {
+    string id = 1; string tenant_id = 2; string dimension_name = 3; string dimension_code = 4;
+    string dimension_type = 5; string description = 6; string source_system = 7;
+    string source_system_id = 8; bool is_hierarchical = 9; int32 max_depth = 10;
+    string validity_start = 11; string validity_end = 12; string governance_level = 13;
+    string owner_id = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+    int32 version = 19; bool is_active = 20;
+}
+
+// --- Dimension Member ---
+message DimensionMember {
+    string id = 1; string tenant_id = 2; string dimension_id = 3; string member_code = 4;
+    string member_name = 5; string member_description = 6; string parent_member_id = 7;
+    int32 member_level = 8; string member_path = 9; int32 sort_order = 10;
+    string member_type = 11; string alias_of_member_id = 12; string attributes = 13;
+    string validity_start = 14; string validity_end = 15; string status = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+    int32 version = 21; bool is_active = 22;
+}
+
+// --- Dimension Hierarchy ---
+message DimensionHierarchy {
+    string id = 1; string tenant_id = 2; string dimension_id = 3; string hierarchy_name = 4;
+    string hierarchy_type = 5; string description = 6; bool is_default = 7;
+    string validity_start = 8; string validity_end = 9; string version_label = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15; bool is_active = 16;
+}
+
+// --- Hierarchy Node ---
+message HierarchyNode {
+    string id = 1; string tenant_id = 2; string hierarchy_id = 3; string member_id = 4;
+    string parent_node_id = 5; int32 node_level = 6; string node_path = 7;
+    int32 sort_order = 8; bool is_leaf = 9;
+    string created_at = 10; string updated_at = 11; string created_by = 12; string updated_by = 13;
+}
+
+// --- Dimension Mapping ---
+message DimensionMapping {
+    string id = 1; string tenant_id = 2; string source_system_id = 3;
+    string target_system_id = 4; string dimension_id = 5; string source_member_code = 6;
+    string source_member_name = 7; string target_member_code = 8; string target_member_name = 9;
+    string mapping_type = 10; string mapping_direction = 11;
+    double confidence_score_real = 12; bool is_validated = 13; string validated_by = 14;
+    string validated_at = 15; string effective_from = 16; string effective_to = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+    int32 version = 22; bool is_active = 23;
+}
+
+// --- Dimension Validation ---
+message DimensionValidation {
+    string id = 1; string tenant_id = 2; string dimension_id = 3; string validation_name = 4;
+    string validation_type = 5; string validation_expression = 6; string error_message = 7;
+    string error_severity = 8; bool is_active = 9; int32 execution_order = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15;
+}
+
+// --- Governance Workflow ---
+message GovernanceWorkflow {
+    string id = 1; string tenant_id = 2; string dimension_id = 3; string workflow_name = 4;
+    string workflow_type = 5; string description = 6; bool requires_approval = 7;
+    int32 approval_levels = 8; int32 auto_approve_threshold = 9; bool is_active = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15;
+}
+
+// --- Change Request ---
+message ChangeRequest {
+    string id = 1; string tenant_id = 2; string dimension_id = 3; string workflow_id = 4;
+    string request_type = 5; string requested_change = 6; string before_snapshot = 7;
+    string after_snapshot = 8; string status = 9; string priority = 10;
+    string justification = 11; string impact_assessment = 12;
+    string implemented_at = 13; string rolled_back_at = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+    int32 version = 19;
+}
+
+// --- System Registration ---
+message SystemRegistration {
+    string id = 1; string tenant_id = 2; string system_name = 3; string system_type = 4;
+    string connection_config = 5; string dimensions_supported = 6; string sync_direction = 7;
+    string last_sync_at = 8; string sync_status = 9; string health_check_url = 10;
+    int32 error_count = 11;
+    string created_at = 12; string updated_at = 13; string created_by = 14; string updated_by = 15;
+    int32 version = 16; bool is_active = 17;
+}
+
+// --- Sync Job ---
+message SyncJob {
+    string id = 1; string tenant_id = 2; string system_id = 3; string dimension_id = 4;
+    string sync_type = 5; string status = 6; string triggered_by = 7;
+    string change_request_id = 8; int32 records_processed = 9; int32 records_created = 10;
+    int32 records_updated = 11; int32 records_failed = 12; string error_details = 13;
+    string started_at = 14; string completed_at = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+}
+
+// --- Audit Trail ---
+message AuditTrail {
+    string id = 1; string tenant_id = 2; string dimension_id = 3; string member_id = 4;
+    string action_type = 5; string entity_type = 6; string entity_id = 7;
+    string field_name = 8; string old_value = 9; string new_value = 10;
+    string change_reason = 11; string source_ip = 12; string user_agent = 13;
+    string change_request_id = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+}
+
+// --- RPC Request/Response Messages ---
+message GetDimensionRequest { string tenant_id = 1; string id = 2; }
+message GetDimensionResponse { EdmDimension data = 1; }
+
+message GetMembersRequest { string tenant_id = 1; string dimension_id = 2; int32 page_size = 3; string page_token = 4; }
+message GetMembersResponse { repeated DimensionMember items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message GetHierarchyTreeRequest { string tenant_id = 1; string hierarchy_id = 2; }
+message GetHierarchyTreeResponse { repeated HierarchyNode nodes = 1; DimensionHierarchy hierarchy = 2; }
+
+message TranslateMappingRequest { string tenant_id = 1; string source_system_id = 2; string target_system_id = 3; string dimension_id = 4; string source_member_code = 5; }
+message TranslateMappingResponse { DimensionMapping mapping = 1; string target_member_code = 2; }
+
+message ValidateDimensionRequest { string tenant_id = 1; string dimension_id = 2; }
+message ValidateDimensionResponse { repeated DimensionValidation results = 1; int32 total_errors = 2; int32 total_warnings = 3; }
+
+message TriggerSyncRequest { string tenant_id = 1; string system_id = 2; string dimension_id = 3; string sync_type = 4; }
+message TriggerSyncResponse { SyncJob job = 1; }
+
+message GetAuditTrailRequest { string tenant_id = 1; string dimension_id = 2; string entity_type = 3; string entity_id = 4; int32 page_size = 5; string page_token = 6; }
+message GetAuditTrailResponse { repeated AuditTrail items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListDimensionsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListDimensionsResponse { repeated EdmDimension items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListChangeRequestsRequest { string tenant_id = 1; string dimension_id = 2; int32 page_size = 3; string page_token = 4; }
+message ListChangeRequestsResponse { repeated ChangeRequest items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

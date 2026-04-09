@@ -527,6 +527,142 @@ service NarrativeService {
     rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
     rpc GetDisclosureStatus(GetDisclosureStatusRequest) returns (GetDisclosureStatusResponse);
 }
+
+// --- Report Package ---
+message ReportPackage {
+    string id = 1; string tenant_id = 2; string package_name = 3; string package_type = 4;
+    string fiscal_year = 5; string period_type = 6; string status = 7; string owner_id = 8;
+    string due_date = 9; string published_at = 10; string description = 11; string tags = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17; bool is_active = 18;
+}
+
+// --- Report Section ---
+message ReportSection {
+    string id = 1; string tenant_id = 2; string package_id = 3; string section_title = 4;
+    string section_number = 5; string parent_section_id = 6; string section_type = 7;
+    string content_html = 8; string content_plain = 9; int32 sort_order = 10; string status = 11;
+    string assigned_author_id = 12; string assigned_reviewer_id = 13; int32 word_count = 14;
+    string last_edited_at = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+    int32 version = 20; bool is_active = 21;
+}
+
+// --- Data Source ---
+message ReportDataSource {
+    string id = 1; string tenant_id = 2; string section_id = 3; string source_name = 4;
+    string source_type = 5; string source_config = 6; string refresh_frequency = 7;
+    string last_refreshed_at = 8; int32 cache_ttl_seconds = 9; bool is_live = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15;
+}
+
+// --- Narrative ---
+message ReportNarrative {
+    string id = 1; string tenant_id = 2; string section_id = 3; string narrative_key = 4;
+    string content_template = 5; string content_rendered = 6; string language_code = 7;
+    string variables = 8; bool is_conditional = 9; string condition_expression = 10;
+    int32 sort_order = 11;
+    string created_at = 12; string updated_at = 13; string created_by = 14; string updated_by = 15;
+    int32 version = 16;
+}
+
+// --- Report Chart ---
+message ReportChart {
+    string id = 1; string tenant_id = 2; string section_id = 3; string chart_title = 4;
+    string chart_type = 5; string data_source_id = 6; string chart_config = 7;
+    string data_payload = 8; int32 width = 9; int32 height = 10; string alt_text = 11;
+    int32 sort_order = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17;
+}
+
+// --- Review Workflow ---
+message ReviewWorkflow {
+    string id = 1; string tenant_id = 2; string package_id = 3; string section_id = 4;
+    string workflow_type = 5; string status = 6; string requested_by = 7; string assigned_to = 8;
+    string requested_at = 9; string completed_at = 10; string comments = 11;
+    string priority = 12; string due_date = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- XBRL Tag ---
+message XbrlTag {
+    string id = 1; string tenant_id = 2; string taxonomy_year = 3; string taxonomy_type = 4;
+    string tag_name = 5; string tag_label = 6; string balance_type = 7; string period_type = 8;
+    bool abstract_tag = 9; string parent_tag_id = 10; string description = 11;
+    string created_at = 12; string updated_at = 13; string created_by = 14; string updated_by = 15;
+    int32 version = 16; bool is_active = 17;
+}
+
+// --- Snapshot ---
+message ReportSnapshot {
+    string id = 1; string tenant_id = 2; string package_id = 3; string snapshot_name = 4;
+    string snapshot_type = 5; string content_html = 6; string content_xbrl = 7;
+    string section_versions = 8; string data_values = 9; int32 total_word_count = 10;
+    string snapshot_hash = 11;
+    string created_at = 12; string updated_at = 13; string created_by = 14; string updated_by = 15;
+    int32 version = 16;
+}
+
+// --- Template ---
+message ReportTemplate {
+    string id = 1; string tenant_id = 2; string template_name = 3; string template_type = 4;
+    string description = 5; string section_structure = 6; string default_narratives = 7;
+    string default_styles = 8; bool is_system = 9; int32 usage_count = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15; bool is_active = 16;
+}
+
+// --- Disclosure Checklist ---
+message DisclosureChecklist {
+    string id = 1; string tenant_id = 2; string checklist_name = 3; string regulation_type = 4;
+    string fiscal_year = 5; string package_id = 6; bool is_complete = 7;
+    double completion_percent_real = 8;
+    string created_at = 9; string updated_at = 10; string created_by = 11; string updated_by = 12;
+    int32 version = 13; bool is_active = 14;
+}
+
+// --- Disclosure Checklist Item ---
+message DisclosureChecklistItem {
+    string id = 1; string tenant_id = 2; string checklist_id = 3; string item_number = 4;
+    string requirement = 5; string regulation_reference = 6; string section_id = 7;
+    bool is_applicable = 8; bool is_addressed = 9; string evidence_text = 10;
+    string reviewed_by = 11; string reviewed_at = 12; string notes = 13; int32 sort_order = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+}
+
+// --- RPC Request/Response Messages ---
+message GetPackageRequest { string tenant_id = 1; string id = 2; }
+message GetPackageResponse { ReportPackage data = 1; }
+
+message CreateSectionRequest {
+    string tenant_id = 1; string package_id = 2; string section_title = 3;
+    string section_type = 4; string parent_section_id = 5; int32 sort_order = 6;
+}
+message CreateSectionResponse { ReportSection data = 1; }
+
+message RenderNarrativeRequest { string tenant_id = 1; string narrative_id = 2; string section_id = 3; }
+message RenderNarrativeResponse { ReportNarrative data = 1; }
+
+message GenerateXBRLRequest { string tenant_id = 1; string package_id = 2; string taxonomy_year = 3; string taxonomy_type = 4; }
+message GenerateXBRLResponse { string content_xbrl = 1; ReportSnapshot snapshot = 2; }
+
+message GetSnapshotRequest { string tenant_id = 1; string snapshot_id = 2; }
+message GetSnapshotResponse { ReportSnapshot data = 1; }
+
+message GetDisclosureStatusRequest { string tenant_id = 1; string checklist_id = 2; }
+message GetDisclosureStatusResponse { DisclosureChecklist checklist = 1; repeated DisclosureChecklistItem items = 2; }
+
+message ListPackagesRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListPackagesResponse { repeated ReportPackage items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListSectionsRequest { string tenant_id = 1; string package_id = 2; int32 page_size = 3; string page_token = 4; }
+message ListSectionsResponse { repeated ReportSection items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListSnapshotsRequest { string tenant_id = 1; string package_id = 2; int32 page_size = 3; string page_token = 4; }
+message ListSnapshotsResponse { repeated ReportSnapshot items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

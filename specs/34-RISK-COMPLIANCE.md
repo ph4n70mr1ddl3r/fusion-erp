@@ -380,6 +380,207 @@ service RiskService {
 }
 ```
 
+```protobuf
+message CheckSodComplianceRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+    repeated string proposed_permissions = 3;
+}
+
+message CheckSodComplianceResponse {
+    bool is_compliant = 1;
+    repeated SodViolation violations = 2;
+}
+
+message LogAuditEventRequest {
+    string tenant_id = 1;
+    string policy_id = 2;
+    string event_type = 3;
+    string entity_type = 4;
+    string entity_id = 5;
+    string action = 6;
+    string user_id = 7;
+    string old_value = 8;
+    string new_value = 9;
+    string ip_address = 10;
+    string user_agent = 11;
+    string severity = 12;
+}
+
+message LogAuditEventResponse {
+    bool success = 1;
+    string event_id = 2;
+    int32 is_flagged = 3;
+}
+
+message EvaluateTransactionRequest {
+    string tenant_id = 1;
+    string transaction_type = 2;
+    string transaction_id = 3;
+    string entity_type = 4;
+    int64 amount_cents = 5;
+    string user_id = 6;
+    string transaction_data = 7;
+}
+
+message EvaluateTransactionResponse {
+    string action = 1;
+    repeated TransactionAlert alerts = 2;
+}
+
+message GetUserRiskProfileRequest {
+    string tenant_id = 1;
+    string user_id = 2;
+}
+
+message GetUserRiskProfileResponse {
+    string user_id = 1;
+    repeated SodViolation sod_violations = 2;
+    int32 open_alerts = 3;
+    int32 total_violations = 4;
+    string risk_level = 5;
+}
+
+message SodRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string rule_code = 4;
+    string duty_one = 5;
+    string duty_two = 6;
+    string risk_level = 7;
+    string description = 8;
+    int32 is_active = 9;
+    string mitigating_control = 10;
+    string created_at = 11;
+    string updated_at = 12;
+    string created_by = 13;
+    string updated_by = 14;
+    int32 version = 15;
+}
+
+message SodViolation {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    string user_id = 4;
+    string duty_one = 5;
+    string duty_two = 6;
+    string detected_at = 7;
+    string status = 8;
+    string mitigated_by = 9;
+    string mitigation_reason = 10;
+    string exemption_expiry = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message AccessCertification {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_name = 3;
+    string campaign_type = 4;
+    string status = 5;
+    string start_date = 6;
+    string end_date = 7;
+    string reviewer_id = 8;
+    string certifier_id = 9;
+    int32 total_items = 10;
+    int32 completed_items = 11;
+    int32 exceptions_count = 12;
+    string created_at = 13;
+    string updated_at = 14;
+    string created_by = 15;
+    string updated_by = 16;
+    int32 version = 17;
+    int32 is_active = 18;
+}
+
+message AuditPolicy {
+    string id = 1;
+    string tenant_id = 2;
+    string policy_name = 3;
+    string policy_type = 4;
+    string entity_type = 5;
+    string condition_expression = 6;
+    string severity = 7;
+    int32 is_active = 8;
+    int32 notification_enabled = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string created_by = 12;
+    string updated_by = 13;
+    int32 version = 14;
+}
+
+message AuditEvent {
+    string id = 1;
+    string tenant_id = 2;
+    string policy_id = 3;
+    string event_type = 4;
+    string entity_type = 5;
+    string entity_id = 6;
+    string action = 7;
+    string user_id = 8;
+    string old_value = 9;
+    string new_value = 10;
+    string ip_address = 11;
+    string user_agent = 12;
+    string severity = 13;
+    int32 is_flagged = 14;
+    string created_at = 15;
+}
+
+message TransactionControl {
+    string id = 1;
+    string tenant_id = 2;
+    string control_name = 3;
+    string control_type = 4;
+    string entity_type = 5;
+    string condition_json = 6;
+    string action = 7;
+    int32 is_active = 8;
+    string created_at = 9;
+    string updated_at = 10;
+    string created_by = 11;
+    string updated_by = 12;
+    int32 version = 13;
+}
+
+message TransactionAlert {
+    string id = 1;
+    string tenant_id = 2;
+    string control_id = 3;
+    string transaction_type = 4;
+    string transaction_id = 5;
+    string alert_level = 6;
+    string alert_message = 7;
+    string status = 8;
+    string investigated_by = 9;
+    string resolution_notes = 10;
+    string created_at = 11;
+    string updated_at = 12;
+}
+
+message ComplianceReport {
+    string id = 1;
+    string tenant_id = 2;
+    string report_name = 3;
+    string report_type = 4;
+    string framework = 5;
+    string frequency = 6;
+    string last_run_at = 7;
+    string next_run_at = 8;
+    string status = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string created_by = 12;
+    string updated_by = 13;
+    int32 version = 14;
+    int32 is_active = 15;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

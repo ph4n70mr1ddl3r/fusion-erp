@@ -568,6 +568,153 @@ service BuilderService {
     rpc PublishApplication(PublishApplicationRequest) returns (PublishApplicationResponse);
     rpc GetComponentLibrary(GetComponentLibraryRequest) returns (GetComponentLibraryResponse);
 }
+
+// --- Builder Application ---
+message BuilderApplication {
+    string id = 1; string tenant_id = 2; string app_name = 3; string app_code = 4;
+    string description = 5; string app_type = 6; string category = 7; string icon = 8;
+    string theme_id = 9; string default_layout = 10; string home_page_id = 11;
+    string status = 12; int32 published_version = 13; int32 current_version = 14;
+    string tags = 15; string metadata = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+    int32 version = 21; bool is_active = 22;
+}
+
+// --- Application Page ---
+message ApplicationPage {
+    string id = 1; string tenant_id = 2; string app_id = 3; string page_name = 4;
+    string page_code = 5; string page_type = 6; string title = 7; string description = 8;
+    string route_path = 9; string parent_page_id = 10; string layout_id = 11;
+    bool is_home_page = 12; bool requires_auth = 13; string required_permissions = 14;
+    int32 sort_order = 15; string seo_title = 16; string seo_description = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+    int32 version = 22; bool is_active = 23;
+}
+
+// --- Page Component ---
+message PageComponent {
+    string id = 1; string tenant_id = 2; string page_id = 3; string component_type = 4;
+    string component_name = 5; string label = 6; string placeholder = 7; string config = 8;
+    string style_overrides = 9; string visibility_condition = 10; bool is_disabled = 11;
+    int32 sort_order = 12; string parent_component_id = 13; string slot_name = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+    int32 version = 19; bool is_active = 20;
+}
+
+// --- Page Layout ---
+message PageLayout {
+    string id = 1; string tenant_id = 2; string app_id = 3; string layout_name = 4;
+    string layout_type = 5; int32 columns = 6; int32 row_gap = 7; int32 column_gap = 8;
+    string padding = 9; string max_width = 10; string breakpoints = 11; string regions = 12;
+    string custom_css = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18; bool is_active = 19;
+}
+
+// --- Component Data Binding ---
+message ComponentDataBinding {
+    string id = 1; string tenant_id = 2; string component_id = 3; string binding_name = 4;
+    string binding_type = 5; string source_service = 6; string source_endpoint = 7;
+    string http_method = 8; string request_mapping = 9; string response_mapping = 10;
+    string error_mapping = 11; string transform_script = 12; int32 cache_ttl_seconds = 13;
+    int32 debounce_ms = 14; string trigger_event = 15; int32 poll_interval_ms = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+    int32 version = 21;
+}
+
+// --- Application Workflow ---
+message ApplicationWorkflow {
+    string id = 1; string tenant_id = 2; string app_id = 3; string page_id = 4;
+    string workflow_name = 5; string workflow_type = 6; string description = 7;
+    string trigger_type = 8; string trigger_config = 9; string steps = 10;
+    string error_handling = 11; bool is_active = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17;
+}
+
+// --- Custom Form Definition ---
+message CustomFormDefinition {
+    string id = 1; string tenant_id = 2; string app_id = 3; string form_name = 4;
+    string form_code = 5; string description = 6; string target_service = 7;
+    string target_endpoint = 8; string method = 9; string fields = 10;
+    string validation_rules = 11; string layout_config = 12; string submit_label = 13;
+    string cancel_label = 14; string success_message = 15; string success_action = 16;
+    string success_redirect_path = 17; bool is_active = 18;
+    string created_at = 19; string updated_at = 20; string created_by = 21; string updated_by = 22;
+    int32 version = 23;
+}
+
+// --- Application Theme ---
+message ApplicationTheme {
+    string id = 1; string tenant_id = 2; string theme_name = 3; string theme_code = 4;
+    string description = 5; string color_primary = 6; string color_secondary = 7;
+    string color_accent = 8; string color_background = 9; string color_surface = 10;
+    string color_error = 11; string color_success = 12; string color_warning = 13;
+    string font_family = 14; string font_size_base = 15; string border_radius = 16;
+    string spacing_unit = 17; string custom_css = 18; bool is_default = 19; bool is_active = 20;
+    string created_at = 21; string updated_at = 22; string created_by = 23; string updated_by = 24;
+    int32 version = 25;
+}
+
+// --- Application Permission ---
+message ApplicationPermission {
+    string id = 1; string tenant_id = 2; string app_id = 3; string permission_code = 4;
+    string permission_name = 5; string description = 6; string permission_type = 7;
+    string assigned_roles = 8; string assigned_users = 9; string page_ids = 10;
+    string component_ids = 11; string data_filters = 12; bool is_active = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- Published Application ---
+message PublishedApplication {
+    string id = 1; string tenant_id = 2; string app_id = 3; int32 version_number = 4;
+    string publish_notes = 5; string published_config = 6; string pages_snapshot = 7;
+    string workflows_snapshot = 8; string forms_snapshot = 9; string theme_snapshot = 10;
+    string permissions_snapshot = 11; string bundle_url = 12; string bundle_hash = 13;
+    string status = 14; string published_by = 15; string published_at = 16; string superseded_at = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+}
+
+// --- Component Library Item ---
+message ComponentLibraryItem {
+    string id = 1; string tenant_id = 2; string component_name = 3; string component_code = 4;
+    string component_type = 5; string description = 6; string icon = 7; string category = 8;
+    string tags = 9; string config_schema = 10; string default_config = 11;
+    string props_definition = 12; string events_definition = 13; string slots_definition = 14;
+    string template = 15; string styles = 16; int32 min_app_version = 17;
+    bool is_builtin = 18; bool is_active = 19;
+    string created_at = 20; string updated_at = 21; string created_by = 22; string updated_by = 23;
+    int32 version = 24;
+}
+
+// --- RPC Request/Response Messages ---
+message GetApplicationRequest { string tenant_id = 1; string id = 2; }
+message GetApplicationResponse { BuilderApplication data = 1; }
+
+message GetPageRequest { string tenant_id = 1; string id = 2; }
+message GetPageResponse { ApplicationPage data = 1; repeated PageComponent components = 2; }
+
+message RenderPageRequest { string tenant_id = 1; string page_id = 2; }
+message RenderPageResponse { ApplicationPage page = 1; repeated PageComponent components = 2; PageLayout layout = 3; }
+
+message ResolveBindingsRequest { string tenant_id = 1; string page_id = 2; }
+message ResolveBindingsResponse { repeated ComponentDataBinding bindings = 1; }
+
+message ExecuteWorkflowRequest { string tenant_id = 1; string workflow_id = 2; string input_data = 3; }
+message ExecuteWorkflowResponse { string output_data = 1; string status = 2; }
+
+message PublishApplicationRequest { string tenant_id = 1; string app_id = 2; string publish_notes = 3; }
+message PublishApplicationResponse { PublishedApplication published = 1; }
+
+message GetComponentLibraryRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; string component_type = 4; }
+message GetComponentLibraryResponse { repeated ComponentLibraryItem items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListApplicationsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListApplicationsResponse { repeated BuilderApplication items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListPagesRequest { string tenant_id = 1; string app_id = 2; int32 page_size = 3; string page_token = 4; }
+message ListPagesResponse { repeated ApplicationPage items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

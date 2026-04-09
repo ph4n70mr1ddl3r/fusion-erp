@@ -500,6 +500,142 @@ service TaxReportService {
     rpc GetDeferredTaxRollforward(GetDeferredTaxRollforwardRequest) returns (GetDeferredTaxRollforwardResponse);
     rpc PrepareReturnData(PrepareReturnDataRequest) returns (PrepareReturnDataResponse);
 }
+
+// --- Tax Jurisdiction ---
+message TaxJurisdiction {
+    string id = 1; string tenant_id = 2; string jurisdiction_name = 3; string jurisdiction_type = 4;
+    string country_code = 5; string region_code = 6; double statutory_rate_real = 7;
+    double effective_rate_real = 8; string filing_frequency = 9; string return_due_date = 10;
+    string extension_due_date = 11; string description = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17; bool is_active = 18;
+}
+
+// --- Tax Entity ---
+message TaxEntity {
+    string id = 1; string tenant_id = 2; string entity_name = 3; string entity_code = 4;
+    string legal_entity_id = 5; string tax_id_number = 6; string jurisdiction_id = 7;
+    string entity_type = 8; string filing_status = 9; string consolidation_group = 10;
+    string parent_entity_id = 11; string fiscal_year_end = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17; bool is_active = 18;
+}
+
+// --- Provision Run ---
+message ProvisionRun {
+    string id = 1; string tenant_id = 2; string run_name = 3; string entity_id = 4;
+    string period_type = 5; string fiscal_year = 6; int64 book_income_cents = 7;
+    int64 tax_income_cents = 8; int64 current_tax_expense_cents = 9;
+    int64 deferred_tax_expense_cents = 10; int64 total_tax_expense_cents = 11;
+    double effective_rate_real = 12; string status = 13; string started_at = 14;
+    string completed_at = 15; string approved_by = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+    int32 version = 21; bool is_active = 22;
+}
+
+// --- Deferred Tax Asset ---
+message DeferredTaxAsset {
+    string id = 1; string tenant_id = 2; string entity_id = 3; string provision_run_id = 4;
+    string dta_category = 5; string description = 6; int64 beginning_balance_cents = 7;
+    int64 current_period_change_cents = 8; int64 ending_balance_cents = 9;
+    double tax_rate_real = 10; int64 gross_dta_cents = 11; int64 valuation_allowance_cents = 12;
+    int64 net_dta_cents = 13; string expiration_date = 14; int32 carryforward_years = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+    int32 version = 20;
+}
+
+// --- Deferred Tax Liability ---
+message DeferredTaxLiability {
+    string id = 1; string tenant_id = 2; string entity_id = 3; string provision_run_id = 4;
+    string dtl_category = 5; string description = 6; int64 beginning_balance_cents = 7;
+    int64 current_period_change_cents = 8; int64 ending_balance_cents = 9;
+    double tax_rate_real = 10; int64 gross_dtl_cents = 11; string reversal_period = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17;
+}
+
+// --- Tax Rate Table ---
+message TaxRateTable {
+    string id = 1; string tenant_id = 2; string jurisdiction_id = 3; string rate_type = 4;
+    double rate_value_real = 5; int64 income_bracket_min_cents = 6;
+    int64 income_bracket_max_cents = 7; string effective_from = 8; string effective_to = 9;
+    string description = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15; bool is_active = 16;
+}
+
+// --- Tax Adjustment ---
+message TaxAdjustment {
+    string id = 1; string tenant_id = 2; string entity_id = 3; string provision_run_id = 4;
+    string adjustment_type = 5; string adjustment_category = 6; string description = 7;
+    int64 book_amount_cents = 8; int64 tax_amount_cents = 9; int64 difference_cents = 10;
+    bool is_recurring = 11; string gl_account_id = 12; string reference = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+    int32 version = 18;
+}
+
+// --- Tax Credit ---
+message TaxCredit {
+    string id = 1; string tenant_id = 2; string entity_id = 3; string provision_run_id = 4;
+    string credit_type = 5; string credit_name = 6; int64 credit_amount_cents = 7;
+    int64 utilized_amount_cents = 8; int64 carryforward_amount_cents = 9;
+    int64 carryback_amount_cents = 10; string expiration_date = 11;
+    string source_jurisdiction_id = 12; string supporting_document_id = 13; string status = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+    int32 version = 19; bool is_active = 20;
+}
+
+// --- Tax Audit Tracking ---
+message TaxAuditTracking {
+    string id = 1; string tenant_id = 2; string entity_id = 3; string jurisdiction_id = 4;
+    string audit_type = 5; string tax_years = 6; string status = 7;
+    string examining_agent = 8; string assigned_counsel = 9;
+    int64 proposed_adjustment_cents = 10; int64 potential_penalty_cents = 11;
+    int64 potential_interest_cents = 12; int64 resolution_amount_cents = 13;
+    string open_date = 14; string close_date = 15; string notes = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+    int32 version = 21; bool is_active = 22;
+}
+
+// --- Tax Return Data ---
+message TaxReturnData {
+    string id = 1; string tenant_id = 2; string entity_id = 3; string jurisdiction_id = 4;
+    string fiscal_year = 5; string return_type = 6; int64 taxable_income_cents = 7;
+    int64 tax_liability_cents = 8; int64 estimated_payments_cents = 9;
+    int64 balance_due_cents = 10; int64 refund_amount_cents = 11;
+    string filing_date = 12; string filing_status = 13; string e_file_confirmation = 14;
+    string preparer_id = 15; string reviewer_id = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+    int32 version = 21; bool is_active = 22;
+}
+
+// --- RPC Request/Response Messages ---
+message RunProvisionRequest { string tenant_id = 1; string entity_id = 2; string period_type = 3; string fiscal_year = 4; string run_name = 5; }
+message RunProvisionResponse { ProvisionRun data = 1; }
+
+message CalculateDeferredTaxRequest { string tenant_id = 1; string entity_id = 2; string provision_run_id = 3; }
+message CalculateDeferredTaxResponse { repeated DeferredTaxAsset assets = 1; repeated DeferredTaxLiability liabilities = 2; }
+
+message GetProvisionSummaryRequest { string tenant_id = 1; string provision_run_id = 2; }
+message GetProvisionSummaryResponse { ProvisionRun provision = 1; repeated TaxAdjustment adjustments = 2; repeated TaxCredit credits = 3; }
+
+message GetEffectiveRateReconciliationRequest { string tenant_id = 1; string entity_id = 2; string fiscal_year = 3; string period_type = 4; }
+message GetEffectiveRateReconciliationResponse { ProvisionRun provision = 1; repeated TaxAdjustment reconciling_items = 2; }
+
+message GetDeferredTaxRollforwardRequest { string tenant_id = 1; string entity_id = 2; string fiscal_year = 3; }
+message GetDeferredTaxRollforwardResponse { repeated DeferredTaxAsset assets = 1; repeated DeferredTaxLiability liabilities = 2; }
+
+message PrepareReturnDataRequest { string tenant_id = 1; string entity_id = 2; string jurisdiction_id = 3; string fiscal_year = 4; string return_type = 5; }
+message PrepareReturnDataResponse { TaxReturnData data = 1; }
+
+message ListProvisionRunsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListProvisionRunsResponse { repeated ProvisionRun items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListTaxJurisdictionsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListTaxJurisdictionsResponse { repeated TaxJurisdiction items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListTaxEntitiesRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListTaxEntitiesResponse { repeated TaxEntity items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

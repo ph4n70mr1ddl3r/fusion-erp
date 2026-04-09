@@ -249,6 +249,137 @@ service WorkflowService {
 }
 ```
 
+```protobuf
+message SubmitApprovalRequest {
+    string tenant_id = 1;
+    string document_type = 2;
+    string document_id = 3;
+    string document_number = 4;
+    string initiator_id = 5;
+    int64 amount_cents = 6;
+    string amount_field = 7;
+}
+
+message SubmitApprovalResponse {
+    WorkflowInstance instance = 1;
+}
+
+message GetApprovalStatusRequest {
+    string tenant_id = 1;
+    string document_type = 2;
+    string document_id = 3;
+}
+
+message GetApprovalStatusResponse {
+    WorkflowInstance instance = 1;
+    repeated ApprovalAction actions = 2;
+}
+
+message CancelApprovalRequest {
+    string tenant_id = 1;
+    string instance_id = 2;
+    string cancelled_by = 3;
+    string reason = 4;
+}
+
+message CancelApprovalResponse {
+    bool success = 1;
+    string instance_id = 2;
+}
+
+message WorkflowDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string workflow_name = 3;
+    string description = 4;
+    string document_type = 5;
+    int32 is_active = 6;
+    int32 priority = 7;
+    string created_at = 8;
+    string updated_at = 9;
+    string created_by = 10;
+    string updated_by = 11;
+    int32 version = 12;
+}
+
+message WorkflowStep {
+    string id = 1;
+    string tenant_id = 2;
+    string workflow_definition_id = 3;
+    int32 step_number = 4;
+    string step_name = 5;
+    string step_type = 6;
+    string description = 7;
+    string approver_type = 8;
+    string approver_user_id = 9;
+    string approver_role = 10;
+    int64 amount_threshold_cents = 11;
+    string amount_field = 12;
+    int64 auto_approve_below_cents = 13;
+    int32 timeout_hours = 14;
+    string timeout_action = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message WorkflowInstance {
+    string id = 1;
+    string tenant_id = 2;
+    string workflow_definition_id = 3;
+    string document_type = 4;
+    string document_id = 5;
+    string document_number = 6;
+    string initiator_id = 7;
+    int32 current_step_number = 8;
+    string status = 9;
+    string submitted_at = 10;
+    string completed_at = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+message ApprovalAction {
+    string id = 1;
+    string tenant_id = 2;
+    string workflow_instance_id = 3;
+    int32 step_number = 4;
+    string approver_id = 5;
+    string action = 6;
+    string comments = 7;
+    string action_date = 8;
+    string delegated_to = 9;
+    string created_at = 10;
+}
+
+message DelegationRule {
+    string id = 1;
+    string tenant_id = 2;
+    string delegator_id = 3;
+    string delegate_id = 4;
+    string start_date = 5;
+    string end_date = 6;
+    string reason = 7;
+    int32 is_active = 8;
+    string created_at = 9;
+}
+
+message Notification {
+    string id = 1;
+    string tenant_id = 2;
+    string user_id = 3;
+    string notification_type = 4;
+    string title = 5;
+    string message = 6;
+    string document_type = 7;
+    string document_id = 8;
+    string action_url = 9;
+    int32 is_read = 10;
+    string read_at = 11;
+    string priority = 12;
+    string created_at = 13;
+}
+```
+
 ### 4.6 Events Published
 | Event | Trigger |
 |-------|---------|

@@ -354,6 +354,172 @@ service EtlService {
 }
 ```
 
+```protobuf
+message GetImportTemplateRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string template_code = 3;
+}
+
+message GetImportTemplateResponse {
+    ImportTemplate template = 1;
+    repeated ImportTemplateColumn columns = 2;
+}
+
+message UploadImportRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string original_filename = 3;
+    int64 file_size_bytes = 4;
+    string file_format = 5;
+    string file_storage_path = 6;
+    string created_by = 7;
+}
+
+message UploadImportResponse {
+    ImportJob job = 1;
+}
+
+message GetImportStatusRequest {
+    string tenant_id = 1;
+    string job_id = 2;
+    string job_number = 3;
+}
+
+message GetImportStatusResponse {
+    ImportJob job = 1;
+}
+
+message ExecuteExportRequest {
+    string tenant_id = 1;
+    string export_definition_id = 2;
+    string export_format = 3;
+    string filters = 4;
+    string created_by = 5;
+}
+
+message ExecuteExportResponse {
+    ExportJob job = 1;
+}
+
+message GetExportStatusRequest {
+    string tenant_id = 1;
+    string job_id = 2;
+    string job_number = 3;
+}
+
+message GetExportStatusResponse {
+    ExportJob job = 1;
+}
+
+message ImportTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string template_code = 3;
+    string template_name = 4;
+    string description = 5;
+    string target_service = 6;
+    string target_entity = 7;
+    string target_endpoint = 8;
+    string import_mode = 9;
+    string supported_formats = 10;
+    int32 batch_size = 11;
+    int32 stop_on_error = 12;
+    int32 max_errors = 13;
+    string commit_mode = 14;
+    string created_at = 15;
+    string updated_at = 16;
+    string created_by = 17;
+    string updated_by = 18;
+    int32 version = 19;
+    int32 is_active = 20;
+}
+
+message ImportTemplateColumn {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    int32 column_position = 4;
+    string source_column_name = 5;
+    string target_field_name = 6;
+    string data_type = 7;
+    int32 is_required = 8;
+    int32 max_length = 9;
+    string default_value = 10;
+    string validation_regex = 11;
+    string transformation = 12;
+    string lookup_entity = 13;
+    string lookup_field = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+message ImportJob {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string job_number = 4;
+    string original_filename = 5;
+    int64 file_size_bytes = 6;
+    string file_format = 7;
+    string status = 8;
+    int32 total_rows = 9;
+    int32 processed_rows = 10;
+    int32 successful_rows = 11;
+    int32 failed_rows = 12;
+    int32 skipped_rows = 13;
+    string started_at = 14;
+    string completed_at = 15;
+    int32 execution_time_ms = 16;
+    string error_message = 17;
+    string file_storage_path = 18;
+    string created_at = 19;
+    string updated_at = 20;
+    string created_by = 21;
+}
+
+message ExportDefinition {
+    string id = 1;
+    string tenant_id = 2;
+    string export_code = 3;
+    string export_name = 4;
+    string description = 5;
+    string source_service = 6;
+    string source_endpoint = 7;
+    string export_format = 8;
+    string field_selection = 9;
+    string default_filters = 10;
+    string default_sort = 11;
+    string column_headers = 12;
+    int32 max_rows = 13;
+    string created_at = 14;
+    string updated_at = 15;
+    string created_by = 16;
+    string updated_by = 17;
+    int32 version = 18;
+    int32 is_active = 19;
+}
+
+message ExportJob {
+    string id = 1;
+    string tenant_id = 2;
+    string export_definition_id = 3;
+    string job_number = 4;
+    string export_format = 5;
+    string filters = 6;
+    int32 row_count = 7;
+    int64 file_size_bytes = 8;
+    string file_storage_path = 9;
+    string status = 10;
+    string started_at = 11;
+    string completed_at = 12;
+    int32 execution_time_ms = 13;
+    string error_message = 14;
+    string created_at = 15;
+    string created_by = 16;
+}
+```
+
 ---
 
 ## 6. Inter-Service Integration

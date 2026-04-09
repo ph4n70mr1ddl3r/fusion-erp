@@ -592,6 +592,169 @@ service AutomationService {
     rpc RunProcessMining(RunProcessMiningRequest) returns (RunProcessMiningResponse);
     rpc GetAnalytics(GetAnalyticsRequest) returns (GetAnalyticsResponse);
 }
+
+// --- Automation Bot ---
+message AutomationBot {
+    string id = 1; string tenant_id = 2; string bot_name = 3; string bot_code = 4;
+    string description = 5; string bot_type = 6; string category = 7; string target_system = 8;
+    string target_application = 9; string execution_mode = 10; int32 max_concurrent_instances = 11;
+    int32 timeout_ms = 12; bool retry_on_failure = 13; int32 max_retries = 14;
+    string credential_vault_id = 15; string status = 16; int32 total_runs = 17;
+    int32 successful_runs = 18; int32 failed_runs = 19; int32 avg_duration_ms = 20;
+    string last_run_at = 21; string tags = 22; string metadata = 23;
+    string created_at = 24; string updated_at = 25; string created_by = 26; string updated_by = 27;
+    int32 version = 28; bool is_active = 29;
+}
+
+// --- Bot Step ---
+message BotStep {
+    string id = 1; string tenant_id = 2; string bot_id = 3; string step_name = 4;
+    string step_type = 5; int32 step_order = 6; string description = 7; string config = 8;
+    string selector = 9; string target_value = 10; int32 timeout_ms = 11;
+    bool continue_on_error = 12; string condition_expression = 13; string on_success_step_id = 14;
+    string on_failure_step_id = 15; string loop_variable = 16; string loop_collection = 17;
+    bool screenshot_on_failure = 18; bool is_active = 19;
+    string created_at = 20; string updated_at = 21; string created_by = 22; string updated_by = 23;
+    int32 version = 24;
+}
+
+// --- Automation Schedule ---
+message AutomationSchedule {
+    string id = 1; string tenant_id = 2; string bot_id = 3; string schedule_name = 4;
+    string cron_expression = 5; string timezone = 6; bool is_active = 7;
+    string start_date = 8; string end_date = 9; int32 priority = 10;
+    int32 max_concurrent_runs = 11; string misfire_policy = 12; string input_parameters = 13;
+    string queue_id = 14; string last_triggered_at = 15; string next_trigger_at = 16;
+    int32 total_executions = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+    int32 version = 22;
+}
+
+// --- Bot Execution ---
+message BotExecution {
+    string id = 1; string tenant_id = 2; string bot_id = 3; string schedule_id = 4;
+    string queue_item_id = 5; string execution_type = 6; string status = 7;
+    int32 priority = 8; string input_parameters = 9; string output_data = 10;
+    string error_code = 11; string error_message = 12; string error_screenshot_url = 13;
+    string current_step_id = 14; int32 current_step_order = 15; int32 total_steps = 16;
+    int32 completed_steps = 17; string started_at = 18; string completed_at = 19;
+    int32 duration_ms = 20; string triggered_by = 21; string worker_id = 22;
+    int32 retry_count = 23; string correlation_id = 24;
+    string created_at = 25; string updated_at = 26; string created_by = 27; string updated_by = 28;
+}
+
+// --- Execution Log ---
+message ExecutionLog {
+    string id = 1; string tenant_id = 2; string execution_id = 3; string step_id = 4;
+    string step_name = 5; string step_type = 6; string log_level = 7; string message = 8;
+    string screenshot_url = 9; string element_snapshot = 10; string data_before = 11;
+    string data_after = 12; int32 duration_ms = 13; bool is_successful = 14;
+    string error_details = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+}
+
+// --- Process Mining Result ---
+message ProcessMiningResult {
+    string id = 1; string tenant_id = 2; string analysis_name = 3; string source_system = 4;
+    string process_name = 5; string analysis_type = 6; string date_from = 7; string date_to = 8;
+    int32 total_cases = 9; int32 total_events = 10; int32 unique_activities = 11;
+    int32 variants_found = 12; int32 avg_case_duration_ms = 13; int32 median_case_duration_ms = 14;
+    string bottleneck_activities = 15; string process_graph = 16; string variant_distribution = 17;
+    string automation_candidates = 18; double conformance_rate_real = 19;
+    string analysis_config = 20; string status = 21; string completed_at = 22;
+    string created_at = 23; string updated_at = 24; string created_by = 25; string updated_by = 26;
+    int32 version = 27;
+}
+
+// --- Automation Queue ---
+message AutomationQueue {
+    string id = 1; string tenant_id = 2; string queue_name = 3; string queue_code = 4;
+    string description = 5; string bot_id = 6; int32 priority = 7; int32 max_retries = 8;
+    int32 retry_delay_ms = 9; int32 item_ttl_ms = 10; int32 deadlock_timeout_ms = 11;
+    int32 total_items = 12; int32 pending_items = 13; int32 in_progress_items = 14;
+    int32 completed_items = 15; int32 failed_items = 16; bool is_active = 17;
+    string created_at = 18; string updated_at = 19; string created_by = 20; string updated_by = 21;
+    int32 version = 22;
+}
+
+// --- Queue Item ---
+message AutomationQueueItem {
+    string id = 1; string tenant_id = 2; string queue_id = 3; string status = 4;
+    int32 priority = 5; string payload = 6; string result = 7; string error_message = 8;
+    string execution_id = 9; string assigned_worker = 10; int32 retry_count = 11;
+    int32 max_retries = 12; string due_date = 13; string deadline = 14;
+    string started_at = 15; string completed_at = 16;
+    string created_at = 17; string updated_at = 18; string created_by = 19; string updated_by = 20;
+}
+
+// --- Exception Handling Rule ---
+message ExceptionHandlingRule {
+    string id = 1; string tenant_id = 2; string rule_name = 3; string rule_code = 4;
+    string description = 5; string applies_to = 6; string target_id = 7;
+    string exception_type = 8; string error_pattern = 9; string action = 10;
+    int32 max_retries = 11; int32 retry_delay_ms = 12; double retry_backoff_multiplier = 13;
+    string escalation_channel = 14; string custom_script = 15; string fallback_bot_id = 16;
+    bool is_active = 17; int32 priority = 18;
+    string created_at = 19; string updated_at = 20; string created_by = 21; string updated_by = 22;
+    int32 version = 23;
+}
+
+// --- Automation Analytics ---
+message AutomationAnalytics {
+    string id = 1; string tenant_id = 2; string metric_date = 3; string bot_id = 4;
+    string category = 5; int32 total_executions = 6; int32 successful_executions = 7;
+    int32 failed_executions = 8; int32 avg_duration_ms = 9; int32 total_duration_ms = 10;
+    int32 time_saved_ms = 11; int64 cost_saved_cents = 12;
+    double manual_effort_hours_real = 13; double automated_effort_hours_real = 14;
+    double roi_pct = 15; double error_rate_pct = 16; double throughput_per_hour = 17;
+    int32 queue_backlog = 18; int32 queue_avg_wait_ms = 19;
+    string created_at = 20; string updated_at = 21; string created_by = 22; string updated_by = 23;
+}
+
+// --- Credential Vault ---
+message CredentialVault {
+    string id = 1; string tenant_id = 2; string vault_name = 3; string vault_code = 4;
+    string description = 5; string credential_type = 6; string credentials_encrypted = 7;
+    string encryption_key_id = 8; string target_system = 9; string target_application = 10;
+    bool rotation_enabled = 11; int32 rotation_interval_days = 12; string last_rotated_at = 13;
+    string expires_at = 14; bool is_active = 15;
+    string created_at = 16; string updated_at = 17; string created_by = 18; string updated_by = 19;
+    int32 version = 20;
+}
+
+// --- RPC Request/Response Messages ---
+message GetBotRequest { string tenant_id = 1; string id = 2; }
+message GetBotResponse { AutomationBot data = 1; repeated BotStep steps = 2; }
+
+message ExecuteBotRequest { string tenant_id = 1; string bot_id = 2; string input_parameters = 3; string correlation_id = 4; }
+message ExecuteBotResponse { BotExecution execution = 1; }
+
+message GetExecutionStatusRequest { string tenant_id = 1; string execution_id = 2; }
+message GetExecutionStatusResponse { BotExecution execution = 1; }
+
+message CancelExecutionRequest { string tenant_id = 1; string execution_id = 2; }
+message CancelExecutionResponse { BotExecution execution = 1; }
+
+message GetExecutionLogsRequest { string tenant_id = 1; string execution_id = 2; int32 page_size = 3; string page_token = 4; }
+message GetExecutionLogsResponse { repeated ExecutionLog items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message EnqueueItemRequest { string tenant_id = 1; string queue_id = 2; string payload = 3; int32 priority = 4; string due_date = 5; }
+message EnqueueItemResponse { AutomationQueueItem item = 1; }
+
+message GetQueueStatusRequest { string tenant_id = 1; string queue_id = 2; }
+message GetQueueStatusResponse { AutomationQueue queue = 1; }
+
+message RunProcessMiningRequest { string tenant_id = 1; string analysis_name = 2; string source_system = 3; string process_name = 4; string analysis_type = 5; string date_from = 6; string date_to = 7; }
+message RunProcessMiningResponse { ProcessMiningResult result = 1; }
+
+message GetAnalyticsRequest { string tenant_id = 1; string metric_date = 2; string bot_id = 3; }
+message GetAnalyticsResponse { repeated AutomationAnalytics metrics = 1; }
+
+message ListBotsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListBotsResponse { repeated AutomationBot items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListQueuesRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListQueuesResponse { repeated AutomationQueue items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---

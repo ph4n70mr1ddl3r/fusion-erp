@@ -540,6 +540,134 @@ service ProfitabilityService {
     rpc RunWhatIfScenario(RunWhatIfScenarioRequest) returns (RunWhatIfScenarioResponse);
     rpc ComparePeriods(ComparePeriodsRequest) returns (ComparePeriodsResponse);
 }
+
+// --- Profitability Model ---
+message ProfitabilityModel {
+    string id = 1; string tenant_id = 2; string model_name = 3; string model_type = 4;
+    string description = 5; string fiscal_year = 6; string period_type = 7; string status = 8;
+    string base_currency = 9; string allocation_methodology = 10;
+    int64 total_revenue_cents = 11; int64 total_cost_cents = 12; int64 total_margin_cents = 13;
+    double overall_margin_pct_real = 14;
+    string created_at = 15; string updated_at = 16; string created_by = 17; string updated_by = 18;
+    int32 version = 19; bool is_active = 20;
+}
+
+// --- Cost Pool ---
+message CostPool {
+    string id = 1; string tenant_id = 2; string model_id = 3; string pool_name = 4;
+    string pool_type = 5; string pool_category = 6; string gl_account_id = 7;
+    int64 total_amount_cents = 8; int64 allocated_amount_cents = 9;
+    int64 unallocated_amount_cents = 10; string description = 11; int32 sort_order = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17;
+}
+
+// --- Cost Driver ---
+message CostDriver {
+    string id = 1; string tenant_id = 2; string model_id = 3; string driver_name = 4;
+    string driver_type = 5; string unit_of_measure = 6; int64 driver_rate_cents = 7;
+    bool is_active = 8; string description = 9;
+    string created_at = 10; string updated_at = 11; string created_by = 12; string updated_by = 13;
+    int32 version = 14;
+}
+
+// --- Driver Quantity ---
+message DriverQuantity {
+    string id = 1; string tenant_id = 2; string driver_id = 3; string segment_id = 4;
+    string period_name = 5; double quantity_real = 6; string source_type = 7;
+    string source_reference = 8;
+    string created_at = 9; string updated_at = 10; string created_by = 11; string updated_by = 12;
+    int32 version = 13;
+}
+
+// --- Allocation Rule ---
+message AllocationRule {
+    string id = 1; string tenant_id = 2; string model_id = 3; string pool_id = 4;
+    string driver_id = 5; string rule_name = 6; string allocation_method = 7;
+    string fixed_percentages = 8; int32 allocation_order = 9; bool is_active = 10;
+    string effective_from = 11; string effective_to = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+    int32 version = 17;
+}
+
+// --- Profitability Segment ---
+message ProfitabilitySegment {
+    string id = 1; string tenant_id = 2; string model_id = 3; string segment_code = 4;
+    string segment_name = 5; string segment_type = 6; string parent_segment_id = 7;
+    int32 segment_level = 8; string attributes = 9; bool is_leaf = 10;
+    string created_at = 11; string updated_at = 12; string created_by = 13; string updated_by = 14;
+    int32 version = 15; bool is_active = 16;
+}
+
+// --- Segment Revenue ---
+message SegmentRevenue {
+    string id = 1; string tenant_id = 2; string model_id = 3; string segment_id = 4;
+    string period_name = 5; string revenue_type = 6; int64 gross_revenue_cents = 7;
+    int64 discounts_cents = 8; int64 returns_cents = 9; int64 net_revenue_cents = 10;
+    int32 volume_units = 11; string currency_code = 12; string source_type = 13;
+    string created_at = 14; string updated_at = 15; string created_by = 16; string updated_by = 17;
+}
+
+// --- Segment Cost ---
+message SegmentCost {
+    string id = 1; string tenant_id = 2; string model_id = 3; string segment_id = 4;
+    string period_name = 5; string cost_type = 6; string cost_category = 7;
+    int64 amount_cents = 8; string allocation_rule_id = 9; bool is_allocated = 10;
+    string currency_code = 11; string source_type = 12;
+    string created_at = 13; string updated_at = 14; string created_by = 15; string updated_by = 16;
+}
+
+// --- Profitability Calculation ---
+message ProfitabilityCalculation {
+    string id = 1; string tenant_id = 2; string model_id = 3; string segment_id = 4;
+    string period_name = 5; string calculation_type = 6;
+    int64 net_revenue_cents = 7; int64 direct_cost_cents = 8; int64 contribution_margin_cents = 9;
+    double contribution_margin_pct = 10; int64 allocated_cost_cents = 11; int64 total_cost_cents = 12;
+    int64 gross_margin_cents = 13; double gross_margin_pct = 14; int64 net_margin_cents = 15;
+    double net_margin_pct = 16; double roi_pct = 17; int64 revenue_per_unit_cents = 18;
+    int64 cost_per_unit_cents = 19; int64 profit_per_unit_cents = 20; int32 volume_units = 21;
+    string calculated_at = 22;
+    string created_at = 23; string updated_at = 24; string created_by = 25; string updated_by = 26;
+}
+
+// --- What-If Scenario ---
+message WhatIfScenario {
+    string id = 1; string tenant_id = 2; string model_id = 3; string scenario_name = 4;
+    string base_period = 5; string description = 6; string status = 7;
+    double revenue_change_pct = 8; double volume_change_pct = 9; double cost_change_pct = 10;
+    double price_change_pct = 11; string mix_change = 12;
+    int64 base_margin_cents = 13; double base_margin_pct = 14;
+    int64 scenario_margin_cents = 15; double scenario_margin_pct = 16;
+    int64 margin_delta_cents = 17; double margin_delta_pct = 18;
+    string segment_overrides = 19; string calculated_at = 20;
+    string created_at = 21; string updated_at = 22; string created_by = 23; string updated_by = 24;
+    int32 version = 25;
+}
+
+// --- RPC Request/Response Messages ---
+message GetModelRequest { string tenant_id = 1; string id = 2; }
+message GetModelResponse { ProfitabilityModel data = 1; }
+
+message RunAllocationRequest { string tenant_id = 1; string model_id = 2; string period_name = 3; }
+message RunAllocationResponse { ProfitabilityModel model = 1; repeated SegmentCost allocated_costs = 2; }
+
+message CalculateProfitabilityRequest { string tenant_id = 1; string model_id = 2; string period_name = 3; string calculation_type = 4; }
+message CalculateProfitabilityResponse { repeated ProfitabilityCalculation calculations = 1; }
+
+message GetMarginAnalysisRequest { string tenant_id = 1; string model_id = 2; string period_name = 3; string segment_type = 4; }
+message GetMarginAnalysisResponse { repeated ProfitabilityCalculation calculations = 1; }
+
+message RunWhatIfScenarioRequest { string tenant_id = 1; string scenario_id = 2; }
+message RunWhatIfScenarioResponse { WhatIfScenario scenario = 1; repeated ProfitabilityCalculation scenario_calculations = 2; }
+
+message ComparePeriodsRequest { string tenant_id = 1; string model_id = 2; string period_from = 3; string period_to = 4; }
+message ComparePeriodsResponse { repeated ProfitabilityCalculation from_calculations = 1; repeated ProfitabilityCalculation to_calculations = 2; }
+
+message ListModelsRequest { string tenant_id = 1; int32 page_size = 2; string page_token = 3; }
+message ListModelsResponse { repeated ProfitabilityModel items = 1; int32 total_count = 2; string next_page_token = 3; }
+
+message ListSegmentsRequest { string tenant_id = 1; string model_id = 2; int32 page_size = 3; string page_token = 4; }
+message ListSegmentsResponse { repeated ProfitabilitySegment items = 1; int32 total_count = 2; string next_page_token = 3; }
 ```
 
 ---
