@@ -458,6 +458,93 @@ service GtmService {
     rpc CalculateLandedCost(CalculateLandedCostRequest) returns (CalculateLandedCostResponse);
     rpc ValidateShipment(ValidateShipmentRequest) returns (ValidateShipmentResponse);
 }
+
+message ScreenEntityRequest {
+    string tenant_id = 1;
+    string entity_name = 2;
+    string entity_type = 3;
+    string country_code = 4;
+    string transaction_id = 5;
+}
+
+message ScreeningResult {
+    string match_status = 1;
+    double match_score = 2;
+    string restricted_party_name = 3;
+    string list_source = 4;
+}
+
+message ScreenEntityResponse {
+    string screening_id = 1;
+    repeated ScreeningResult results = 2;
+    bool has_match = 3;
+    string severity = 4;
+}
+
+message CheckLicenseRequest {
+    string tenant_id = 1;
+    string license_id = 2;
+    string item_id = 3;
+    int32 quantity = 4;
+    string destination_country = 5;
+}
+
+message CheckLicenseResponse {
+    bool available = 1;
+    int32 remaining_quantity = 2;
+    string license_status = 3;
+    string valid_to = 4;
+}
+
+message LandedCostLine {
+    string item_id = 1;
+    int64 unit_cost_cents = 2;
+    int64 freight_cents = 3;
+    int64 insurance_cents = 4;
+    int64 duty_cents = 5;
+    int64 tax_cents = 6;
+    int64 other_charges_cents = 7;
+    int64 total_landed_cents = 8;
+    string duty_rate = 9;
+}
+
+message CalculateLandedCostRequest {
+    string tenant_id = 1;
+    string origin_country = 2;
+    string destination_country = 3;
+    string incoterm = 4;
+    repeated LandedCostLine lines = 5;
+    string currency_code = 6;
+}
+
+message CalculateLandedCostResponse {
+    repeated LandedCostLine lines = 1;
+    int64 total_landed_cents = 2;
+    string currency_code = 3;
+    string simulation_id = 4;
+}
+
+message ValidateShipmentRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+    string origin_country = 3;
+    string destination_country = 4;
+    repeated string item_ids = 5;
+    string consignee_id = 6;
+}
+
+message ComplianceIssue {
+    string issue_type = 1;
+    string severity = 2;
+    string description = 3;
+    string resolution = 4;
+}
+
+message ValidateShipmentResponse {
+    bool is_compliant = 1;
+    repeated ComplianceIssue issues = 2;
+    bool blocked = 3;
+}
 ```
 
 ---

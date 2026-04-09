@@ -459,6 +459,105 @@ service PlmService {
     rpc ExplodeBom(ExplodeBomRequest) returns (ExplodeBomResponse);
     rpc GetWhereUsed(GetWhereUsedRequest) returns (GetWhereUsedResponse);
 }
+
+message ProductStructure {
+    string id = 1;
+    string tenant_id = 2;
+    string product_id = 3;
+    string structure_type = 4;
+    string revision = 5;
+    string status = 6;
+    string description = 7;
+}
+
+message StructureComponent {
+    string id = 1;
+    string component_item_id = 2;
+    double quantity = 3;
+    string uom = 4;
+    string usage_type = 5;
+    int32 assembly_order = 6;
+}
+
+message GetProductStructureRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+    string revision = 3;
+}
+
+message GetProductStructureResponse {
+    ProductStructure structure = 1;
+    repeated StructureComponent components = 2;
+}
+
+message ConfigurationInstance {
+    string id = 1;
+    string tenant_id = 2;
+    string configuration_model_id = 3;
+    string selected_options = 4;
+    bool is_valid = 5;
+}
+
+message ValidateConfigurationRequest {
+    string tenant_id = 1;
+    string configuration_model_id = 2;
+    string selected_options = 3;
+}
+
+message ValidationConstraint {
+    string constraint_id = 1;
+    string constraint_type = 2;
+    bool passed = 3;
+    string message = 4;
+}
+
+message ValidateConfigurationResponse {
+    bool is_valid = 1;
+    repeated ValidationConstraint constraints = 2;
+    repeated string errors = 3;
+}
+
+message ExplodeBomRequest {
+    string tenant_id = 1;
+    string product_id = 2;
+    string revision = 3;
+    int32 quantity = 4;
+}
+
+message BomComponent {
+    string item_id = 1;
+    string item_name = 2;
+    double quantity = 3;
+    string uom = 4;
+    int32 level = 5;
+    string source_structure_id = 6;
+}
+
+message ExplodeBomResponse {
+    string product_id = 1;
+    int32 root_quantity = 2;
+    repeated BomComponent components = 3;
+    int32 total_components = 4;
+}
+
+message GetWhereUsedRequest {
+    string tenant_id = 1;
+    string component_item_id = 2;
+}
+
+message WhereUsedEntry {
+    string parent_product_id = 1;
+    string parent_product_name = 2;
+    string structure_id = 3;
+    string structure_revision = 4;
+    double quantity_used = 5;
+    int32 bom_level = 6;
+}
+
+message GetWhereUsedResponse {
+    repeated WhereUsedEntry entries = 1;
+    int32 total_parents = 2;
+}
 ```
 
 ---

@@ -261,6 +261,128 @@ service FixedAssetsService {
     rpc GetAssetNetBookValue(GetAssetNetBookValueRequest) returns (GetAssetNetBookValueResponse);
     rpc GetDepreciationSchedule(GetDepreciationScheduleRequest) returns (GetDepreciationScheduleResponse);
 }
+
+// Asset messages
+message GetAssetRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetAssetResponse {
+    Asset data = 1;
+}
+
+message CreateAssetRequest {
+    string tenant_id = 1;
+    string asset_name = 2;
+    string description = 3;
+    string category_id = 4;
+    string asset_type = 5;
+    int64 original_cost_cents = 6;
+    int64 salvage_value_cents = 7;
+    string currency_code = 8;
+    string depreciation_method = 9;
+    int32 useful_life_months = 10;
+    string acquisition_date = 11;
+    string depreciation_start_date = 12;
+    string location_id = 13;
+    string department = 14;
+    string assigned_to = 15;
+    string serial_number = 16;
+    string tag_number = 17;
+    string source_type = 18;
+    string source_id = 19;
+}
+
+message CreateAssetResponse {
+    Asset data = 1;
+}
+
+message Asset {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_number = 3;
+    string asset_name = 4;
+    string description = 5;
+    string category_id = 6;
+    string asset_type = 7;
+    string status = 8;
+    int64 original_cost_cents = 9;
+    int64 current_cost_cents = 10;
+    int64 salvage_value_cents = 11;
+    int64 accumulated_depreciation_cents = 12;
+    int64 net_book_value_cents = 13;
+    string currency_code = 14;
+    int64 revaluation_reserve_cents = 15;
+    string depreciation_method = 16;
+    int32 useful_life_months = 17;
+    int32 remaining_life_months = 18;
+    double depreciation_rate = 19;
+    string acquisition_date = 20;
+    string depreciation_start_date = 21;
+    string depreciation_end_date = 22;
+    string last_depreciation_date = 23;
+    string location_id = 24;
+    string department = 25;
+    string assigned_to = 26;
+    string serial_number = 27;
+    string tag_number = 28;
+    string created_at = 29;
+    string updated_at = 30;
+}
+
+// Depreciation messages
+message CalculateDepreciationRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+    repeated string asset_ids = 3;
+}
+
+message CalculateDepreciationResponse {
+    string depreciation_run_id = 1;
+    int32 assets_processed = 2;
+    int64 total_depreciation_cents = 3;
+    int32 entries_created = 4;
+}
+
+message GetAssetNetBookValueRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string as_of_date = 3;
+}
+
+message GetAssetNetBookValueResponse {
+    string asset_id = 1;
+    int64 original_cost_cents = 2;
+    int64 accumulated_depreciation_cents = 3;
+    int64 net_book_value_cents = 4;
+    string currency_code = 5;
+}
+
+message GetDepreciationScheduleRequest {
+    string tenant_id = 1;
+    string asset_id = 2;
+    string period_from = 3;
+    string period_to = 4;
+}
+
+message GetDepreciationScheduleResponse {
+    repeated DepreciationEntry items = 1;
+}
+
+message DepreciationEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string asset_id = 3;
+    string period_name = 4;
+    int32 fiscal_year = 5;
+    int64 depreciation_amount_cents = 6;
+    int64 accumulated_depreciation_cents = 7;
+    int64 net_book_value_cents = 8;
+    string method = 9;
+    string gl_journal_id = 10;
+    string created_at = 11;
+}
 ```
 
 ---

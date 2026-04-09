@@ -389,6 +389,111 @@ service EpmService {
     rpc ExecuteAllocations(ExecuteAllocationsRequest) returns (ExecuteAllocationsResponse);
     rpc GetBudgetVsActual(GetBudgetVsActualRequest) returns (GetBudgetVsActualResponse);
 }
+
+message PlanningScenario {
+    string id = 1;
+    string tenant_id = 2;
+    string scenario_name = 3;
+    string scenario_type = 4;
+    string description = 5;
+    string fiscal_year = 6;
+    string status = 7;
+    string created_by = 8;
+    int32 version = 9;
+}
+
+message GetScenarioRequest {
+    string tenant_id = 1;
+    string scenario_id = 2;
+}
+
+message GetScenarioResponse {
+    PlanningScenario scenario = 1;
+}
+
+message ConsolidationRun {
+    string id = 1;
+    string tenant_id = 2;
+    string run_name = 3;
+    string period_from = 4;
+    string period_to = 5;
+    string status = 6;
+    string started_at = 7;
+    string completed_at = 8;
+}
+
+message CreateConsolidationRunRequest {
+    string tenant_id = 1;
+    string run_name = 2;
+    string period_from = 3;
+    string period_to = 4;
+    string created_by = 5;
+}
+
+message CreateConsolidationRunResponse {
+    ConsolidationRun run = 1;
+}
+
+message AllocationRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_name = 3;
+    string rule_type = 4;
+    string source_account_id = 5;
+    string allocation_basis = 6;
+    bool is_active = 7;
+    string effective_from = 8;
+    string effective_to = 9;
+}
+
+message ExecuteAllocationsRequest {
+    string tenant_id = 1;
+    repeated string rule_ids = 2;
+    string period_name = 3;
+    string executed_by = 4;
+}
+
+message ExecuteAllocationsResponse {
+    int32 rules_executed = 1;
+    int32 journal_entries_created = 2;
+    int64 total_allocated_cents = 3;
+}
+
+message BudgetVersion {
+    string id = 1;
+    string tenant_id = 2;
+    string budget_name = 3;
+    string fiscal_year = 4;
+    int32 version_number = 5;
+    string status = 6;
+    string parent_version_id = 7;
+    string change_description = 8;
+    int64 total_revenue_cents = 9;
+    int64 total_expense_cents = 10;
+    int64 net_income_cents = 11;
+}
+
+message GetBudgetVsActualRequest {
+    string tenant_id = 1;
+    string budget_version_id = 2;
+}
+
+message BudgetVsActualLine {
+    string account_id = 1;
+    string period_name = 2;
+    int64 budget_amount_cents = 3;
+    int64 actual_amount_cents = 4;
+    int64 variance_cents = 5;
+    double variance_pct = 6;
+}
+
+message GetBudgetVsActualResponse {
+    BudgetVersion budget = 1;
+    repeated BudgetVsActualLine lines = 2;
+    int64 total_budget_cents = 3;
+    int64 total_actual_cents = 4;
+    int64 total_variance_cents = 5;
+}
 ```
 
 ---

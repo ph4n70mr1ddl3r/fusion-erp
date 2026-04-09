@@ -686,6 +686,241 @@ service IntercompanyService {
     rpc GetIntercompanyBalance(GetIntercompanyBalanceRequest) returns (GetIntercompanyBalanceResponse);
     rpc GetOutstandingTransactions(GetOutstandingTransactionsRequest) returns (GetOutstandingTransactionsResponse);
 }
+
+// Entity messages
+message GetEntityRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEntityResponse {
+    IntercompanyEntity data = 1;
+}
+
+message IntercompanyEntity {
+    string id = 1;
+    string tenant_id = 2;
+    string entity_code = 3;
+    string entity_name = 4;
+    string legal_entity_id = 5;
+    string gl_company_segment = 6;
+    string base_currency_code = 7;
+    string tax_id = 8;
+    string description = 9;
+    string ic_receivable_account_id = 10;
+    string ic_payable_account_id = 11;
+    string ic_revenue_account_id = 12;
+    string ic_expense_account_id = 13;
+    int32 ic_auto_match = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message GetEntitiesByTenantRequest {
+    string tenant_id = 1;
+    int32 page_size = 2;
+    string page_token = 3;
+}
+
+message GetEntitiesByTenantResponse {
+    repeated IntercompanyEntity items = 1;
+    int32 total_count = 2;
+    string next_page_token = 3;
+}
+
+// Transaction messages
+message CreateTransactionRequest {
+    string tenant_id = 1;
+    string transaction_type = 2;
+    string source_entity_id = 3;
+    string target_entity_id = 4;
+    string description = 5;
+    string transaction_date = 6;
+    string accounting_date = 7;
+    string period_name = 8;
+    string currency_code = 9;
+    double exchange_rate = 10;
+    string pricing_method = 11;
+    double markup_percent = 12;
+    int64 cost_basis_cents = 13;
+}
+
+message CreateTransactionResponse {
+    IntercompanyTransaction data = 1;
+}
+
+message GetTransactionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTransactionResponse {
+    IntercompanyTransaction data = 1;
+}
+
+message IntercompanyTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string transaction_number = 3;
+    string transaction_type = 4;
+    string source_entity_id = 5;
+    string source_entity_code = 6;
+    string target_entity_id = 7;
+    string target_entity_code = 8;
+    string description = 9;
+    string transaction_date = 10;
+    string accounting_date = 11;
+    string period_name = 12;
+    string currency_code = 13;
+    double exchange_rate = 14;
+    string pricing_method = 15;
+    double markup_percent = 16;
+    int64 cost_basis_cents = 17;
+    int64 subtotal_cents = 18;
+    int64 tax_cents = 19;
+    int64 total_cents = 20;
+    int64 source_total_cents = 21;
+    int64 target_total_cents = 22;
+    string status = 23;
+    string source_gl_journal_id = 24;
+    string target_gl_journal_id = 25;
+    string elimination_gl_journal_id = 26;
+    int32 line_count = 27;
+    string created_at = 28;
+    string updated_at = 29;
+}
+
+message PostTransactionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message PostTransactionResponse {
+    string id = 1;
+    string status = 2;
+    string source_gl_journal_id = 3;
+    string target_gl_journal_id = 4;
+}
+
+message SettleTransactionRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string settlement_method = 3;
+    string settlement_date = 4;
+}
+
+message SettleTransactionResponse {
+    string id = 1;
+    string status = 2;
+    string settlement_date = 3;
+    string settlement_method = 4;
+}
+
+// Reconciliation messages
+message CreateReconciliationRequest {
+    string tenant_id = 1;
+    string from_entity_id = 2;
+    string to_entity_id = 3;
+    string period_name = 4;
+    string reconciliation_date = 5;
+    string currency_code = 6;
+}
+
+message CreateReconciliationResponse {
+    string id = 1;
+    string reconciliation_number = 2;
+    string status = 3;
+}
+
+message AutoMatchReconciliationRequest {
+    string tenant_id = 1;
+    string reconciliation_id = 2;
+}
+
+message AutoMatchReconciliationResponse {
+    string reconciliation_id = 1;
+    int32 match_count = 2;
+    int64 variance_cents = 3;
+    string status = 4;
+}
+
+message GetReconciliationStatusRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetReconciliationStatusResponse {
+    string id = 1;
+    string reconciliation_number = 2;
+    string from_entity_id = 3;
+    string to_entity_id = 4;
+    string period_name = 5;
+    int64 receivable_closing_cents = 6;
+    int64 payable_closing_cents = 7;
+    int64 variance_cents = 8;
+    int32 is_balanced = 9;
+    string status = 10;
+}
+
+// Elimination messages
+message GenerateEliminationEntriesRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+}
+
+message GenerateEliminationEntriesResponse {
+    repeated string elimination_journal_ids = 1;
+    int32 entries_generated = 2;
+    string period_name = 3;
+}
+
+message GetEliminationPreviewRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+}
+
+message GetEliminationPreviewResponse {
+    repeated EliminationPreviewEntry entries = 1;
+}
+
+message EliminationPreviewEntry {
+    string from_entity_id = 1;
+    string to_entity_id = 2;
+    string from_account_id = 3;
+    string to_account_id = 4;
+    int64 amount_cents = 5;
+    string elimination_method = 6;
+}
+
+// Balance messages
+message GetIntercompanyBalanceRequest {
+    string tenant_id = 1;
+    string from_entity_id = 2;
+    string to_entity_id = 3;
+    string period_name = 4;
+}
+
+message GetIntercompanyBalanceResponse {
+    string from_entity_id = 1;
+    string to_entity_id = 2;
+    string period_name = 3;
+    int64 receivable_cents = 4;
+    int64 payable_cents = 5;
+    int64 net_cents = 6;
+    string currency_code = 7;
+}
+
+message GetOutstandingTransactionsRequest {
+    string tenant_id = 1;
+    string entity_id = 2;
+    string as_of_date = 3;
+}
+
+message GetOutstandingTransactionsResponse {
+    repeated IntercompanyTransaction items = 1;
+    int32 total_count = 2;
+}
 ```
 
 ---

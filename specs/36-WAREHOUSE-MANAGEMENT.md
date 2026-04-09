@@ -526,6 +526,66 @@ service WmsService {
     rpc GetPickSuggestions(GetPickSuggestionsRequest) returns (GetPickSuggestionsResponse);
     rpc ConfirmShipment(ConfirmShipmentRequest) returns (ConfirmShipmentResponse);
 }
+
+message ReserveInventoryRequest {
+    string tenant_id = 1;
+    string warehouse_id = 2;
+    string item_id = 3;
+    int32 quantity = 4;
+    string reservation_ref = 5;
+    string reserved_by = 6;
+}
+
+message ReserveInventoryResponse {
+    bool success = 1;
+    string reservation_id = 2;
+    int32 quantity_reserved = 3;
+}
+
+message ReleaseInventoryRequest {
+    string tenant_id = 1;
+    string reservation_id = 2;
+    string released_by = 3;
+}
+
+message ReleaseInventoryResponse {
+    bool success = 1;
+    int32 quantity_released = 2;
+}
+
+message PickSuggestion {
+    string location_id = 1;
+    string location_code = 2;
+    string item_id = 3;
+    int32 quantity = 4;
+    int32 priority = 5;
+}
+
+message GetPickSuggestionsRequest {
+    string tenant_id = 1;
+    string warehouse_id = 2;
+    string wave_id = 3;
+    string strategy = 4;
+}
+
+message GetPickSuggestionsResponse {
+    repeated PickSuggestion suggestions = 1;
+    int32 total_lines = 2;
+}
+
+message ConfirmShipmentRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+    string carrier_id = 3;
+    string tracking_number = 4;
+    string confirmed_by = 5;
+}
+
+message ConfirmShipmentResponse {
+    bool success = 1;
+    string shipment_id = 2;
+    string status = 3;
+}
 ```
 
 ---

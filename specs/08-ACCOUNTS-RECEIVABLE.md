@@ -353,6 +353,172 @@ service AccountsReceivableService {
     rpc GetCustomerBalance(GetCustomerBalanceRequest) returns (GetCustomerBalanceResponse);
     rpc GetAging(GetAgingRequest) returns (GetAgingResponse);
 }
+
+// Customer messages
+message GetCustomerRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCustomerResponse {
+    Customer data = 1;
+}
+
+message Customer {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_number = 3;
+    string customer_name = 4;
+    string legal_name = 5;
+    string customer_type = 6;
+    string tax_id = 7;
+    string payment_terms_id = 8;
+    string currency_code = 9;
+    int64 credit_limit_cents = 10;
+    int64 credit_used_cents = 11;
+    int64 credit_available_cents = 12;
+    string status = 13;
+    string on_hold_reason = 14;
+    string customer_group = 15;
+    string sales_rep_id = 16;
+    string price_list_id = 17;
+    string email = 18;
+    string phone = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+// Invoice messages
+message GetInvoiceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetInvoiceResponse {
+    ArInvoice data = 1;
+}
+
+message CreateInvoiceRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+    string invoice_date = 3;
+    string due_date = 4;
+    string accounting_date = 5;
+    string period_name = 6;
+    string currency_code = 7;
+    double exchange_rate = 8;
+    string payment_terms_id = 9;
+    string billing_address_id = 10;
+    string shipping_address_id = 11;
+    string description = 12;
+    string notes = 13;
+    string source_type = 14;
+    string source_id = 15;
+}
+
+message CreateInvoiceResponse {
+    ArInvoice data = 1;
+}
+
+message PostInvoiceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message PostInvoiceResponse {
+    string id = 1;
+    string status = 2;
+    string gl_journal_id = 3;
+}
+
+message ArInvoice {
+    string id = 1;
+    string tenant_id = 2;
+    string invoice_number = 3;
+    string customer_id = 4;
+    string invoice_date = 5;
+    string due_date = 6;
+    string accounting_date = 7;
+    string period_name = 8;
+    string currency_code = 9;
+    double exchange_rate = 10;
+    string payment_terms_id = 11;
+    string description = 12;
+    string status = 13;
+    string gl_journal_id = 14;
+    int64 subtotal_cents = 15;
+    int64 tax_cents = 16;
+    int64 discount_cents = 17;
+    int64 freight_cents = 18;
+    int64 total_cents = 19;
+    int64 amount_paid_cents = 20;
+    int64 amount_remaining_cents = 21;
+    int32 line_count = 22;
+    string source_type = 23;
+    string source_id = 24;
+    int32 dunning_level = 25;
+    string last_dunning_date = 26;
+    int32 days_overdue = 27;
+    string created_at = 28;
+    string updated_at = 29;
+}
+
+// Receipt messages
+message ApplyReceiptRequest {
+    string tenant_id = 1;
+    string receipt_id = 2;
+    string invoice_id = 3;
+    int64 amount_applied_cents = 4;
+    int64 discount_taken_cents = 5;
+}
+
+message ApplyReceiptResponse {
+    string receipt_id = 1;
+    string invoice_id = 2;
+    string status = 3;
+    int64 unapplied_amount_cents = 4;
+}
+
+// Balance and aging messages
+message GetCustomerBalanceRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+}
+
+message GetCustomerBalanceResponse {
+    string customer_id = 1;
+    int64 total_outstanding_cents = 2;
+    int64 total_overdue_cents = 3;
+    int64 current_cents = 4;
+    int64 bucket_1_30_cents = 5;
+    int64 bucket_31_60_cents = 6;
+    int64 bucket_61_90_cents = 7;
+    int64 bucket_90_plus_cents = 8;
+    int64 credit_limit_cents = 9;
+    int64 credit_used_cents = 10;
+}
+
+message GetAgingRequest {
+    string tenant_id = 1;
+    string as_of_date = 2;
+    repeated string aging_buckets = 3;
+}
+
+message GetAgingResponse {
+    string as_of_date = 1;
+    repeated ArAgingLine lines = 2;
+}
+
+message ArAgingLine {
+    string customer_id = 1;
+    string customer_name = 2;
+    int64 current_cents = 3;
+    int64 bucket_1_30_cents = 4;
+    int64 bucket_31_60_cents = 5;
+    int64 bucket_61_90_cents = 6;
+    int64 bucket_90_plus_cents = 7;
+    int64 total_cents = 8;
+}
 ```
 
 ---

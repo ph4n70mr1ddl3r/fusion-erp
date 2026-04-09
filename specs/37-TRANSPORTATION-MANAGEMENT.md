@@ -441,6 +441,88 @@ service TmsService {
     rpc UpdateTracking(UpdateTrackingRequest) returns (UpdateTrackingResponse);
     rpc GetShipmentCost(GetShipmentCostRequest) returns (GetShipmentCostResponse);
 }
+
+message RateShopRequest {
+    string tenant_id = 1;
+    string origin_address_id = 2;
+    string destination_address_id = 3;
+    repeated ShipmentLineItem lines = 4;
+    string ship_date = 5;
+    string service_level = 6;
+}
+
+message ShipmentLineItem {
+    string item_id = 1;
+    int32 quantity = 2;
+    double weight_kg = 3;
+    double volume_cubic = 4;
+    bool is_hazmat = 5;
+}
+
+message CarrierOption {
+    string carrier_id = 1;
+    string carrier_name = 2;
+    string service_level = 3;
+    int64 total_cost_cents = 4;
+    int32 transit_days = 5;
+    double best_value_score = 6;
+}
+
+message RateShopResponse {
+    repeated CarrierOption options = 1;
+    string currency_code = 2;
+}
+
+message BookShipmentRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+    string carrier_id = 3;
+    string carrier_service = 4;
+    string booked_by = 5;
+}
+
+message BookShipmentResponse {
+    string shipment_id = 1;
+    string tracking_number = 2;
+    string status = 3;
+}
+
+message TrackingEvent {
+    string event_type = 1;
+    string timestamp = 2;
+    string location = 3;
+    string description = 4;
+    double latitude = 5;
+    double longitude = 6;
+}
+
+message UpdateTrackingRequest {
+    string tenant_id = 1;
+    string tracking_number = 2;
+    TrackingEvent event = 3;
+}
+
+message UpdateTrackingResponse {
+    string shipment_id = 1;
+    string status = 2;
+}
+
+message GetShipmentCostRequest {
+    string tenant_id = 1;
+    string shipment_id = 2;
+}
+
+message ShipmentCostBreakdown {
+    int64 freight_cost_cents = 1;
+    int64 fuel_surcharge_cents = 2;
+    int64 accessorials_cents = 3;
+    int64 total_cost_cents = 4;
+    string currency_code = 5;
+}
+
+message GetShipmentCostResponse {
+    ShipmentCostBreakdown cost = 1;
+}
 ```
 
 ---

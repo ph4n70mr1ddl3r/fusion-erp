@@ -246,6 +246,121 @@ service CashManagementService {
     rpc GetCashPosition(GetCashPositionRequest) returns (GetCashPositionResponse);
     rpc GetReconciliationStatus(GetReconciliationStatusRequest) returns (GetReconciliationStatusResponse);
 }
+
+// Bank Account messages
+message GetBankAccountRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetBankAccountResponse {
+    BankAccount data = 1;
+}
+
+message BankAccount {
+    string id = 1;
+    string tenant_id = 2;
+    string account_number = 3;
+    string account_name = 4;
+    string bank_name = 5;
+    string bank_code = 6;
+    string branch_code = 7;
+    string account_type = 8;
+    string currency_code = 9;
+    string gl_account_id = 10;
+    int64 opening_balance_cents = 11;
+    int64 current_balance_cents = 12;
+    int64 available_balance_cents = 13;
+    string last_reconciled_date = 14;
+    string status = 15;
+    int32 is_default = 16;
+    string created_at = 17;
+    string updated_at = 18;
+}
+
+// Transaction messages
+message RecordTransactionRequest {
+    string tenant_id = 1;
+    string bank_account_id = 2;
+    string transaction_date = 3;
+    string value_date = 4;
+    string transaction_type = 5;
+    string direction = 6;
+    int64 amount_cents = 7;
+    string currency_code = 8;
+    string description = 9;
+    string reference = 10;
+    string counterparty = 11;
+    string source_type = 12;
+    string source_id = 13;
+}
+
+message RecordTransactionResponse {
+    CashTransaction data = 1;
+}
+
+message CashTransaction {
+    string id = 1;
+    string tenant_id = 2;
+    string transaction_number = 3;
+    string bank_account_id = 4;
+    string transaction_date = 5;
+    string value_date = 6;
+    string transaction_type = 7;
+    string direction = 8;
+    int64 amount_cents = 9;
+    string currency_code = 10;
+    int64 running_balance_cents = 11;
+    string description = 12;
+    string reference = 13;
+    string counterparty = 14;
+    string source_type = 15;
+    string source_id = 16;
+    int32 is_reconciled = 17;
+    string status = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+// Cash Position messages
+message GetCashPositionRequest {
+    string tenant_id = 1;
+    string as_of_date = 2;
+    string currency_code = 3;
+}
+
+message GetCashPositionResponse {
+    string as_of_date = 1;
+    int64 total_cash_cents = 2;
+    int64 total_available_cents = 3;
+    repeated BankAccountBalance accounts = 4;
+}
+
+message BankAccountBalance {
+    string bank_account_id = 1;
+    string account_name = 2;
+    string currency_code = 3;
+    int64 current_balance_cents = 4;
+    int64 available_balance_cents = 5;
+}
+
+// Reconciliation messages
+message GetReconciliationStatusRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetReconciliationStatusResponse {
+    string id = 1;
+    string bank_account_id = 2;
+    string statement_date = 3;
+    int64 opening_balance_cents = 4;
+    int64 closing_balance_cents = 5;
+    int32 total_lines = 6;
+    int32 matched_lines = 7;
+    int32 unmatched_lines = 8;
+    string status = 9;
+}
 ```
 
 ---

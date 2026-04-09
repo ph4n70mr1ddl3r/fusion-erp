@@ -387,4 +387,157 @@ service AccountsPayableService {
     rpc GetSupplierBalance(GetSupplierBalanceRequest) returns (GetSupplierBalanceResponse);
     rpc GetAging(GetAgingRequest) returns (GetAgingResponse);
 }
+
+// Supplier messages
+message GetSupplierRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSupplierResponse {
+    Supplier data = 1;
+}
+
+message Supplier {
+    string id = 1;
+    string tenant_id = 2;
+    string supplier_number = 3;
+    string supplier_name = 4;
+    string legal_name = 5;
+    string supplier_type = 6;
+    string tax_id = 7;
+    string payment_terms_id = 8;
+    string payment_method = 9;
+    string currency_code = 10;
+    int64 credit_limit_cents = 11;
+    string status = 12;
+    string on_hold_reason = 13;
+    string bank_name = 14;
+    string bank_routing_number = 15;
+    string address_line1 = 16;
+    string address_line2 = 17;
+    string city = 18;
+    string state = 19;
+    string postal_code = 20;
+    string country = 21;
+    string email = 22;
+    string phone = 23;
+    string created_at = 24;
+    string updated_at = 25;
+}
+
+// Invoice messages
+message GetInvoiceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetInvoiceResponse {
+    ApInvoice data = 1;
+}
+
+message CreateInvoiceRequest {
+    string tenant_id = 1;
+    string supplier_invoice_number = 2;
+    string supplier_id = 3;
+    string invoice_date = 4;
+    string invoice_received_date = 5;
+    string due_date = 6;
+    string accounting_date = 7;
+    string period_name = 8;
+    string currency_code = 9;
+    double exchange_rate = 10;
+    string payment_terms_id = 11;
+    string payment_method = 12;
+    string description = 13;
+    string purchase_order_id = 14;
+    string goods_receipt_id = 15;
+}
+
+message CreateInvoiceResponse {
+    ApInvoice data = 1;
+}
+
+message PostInvoiceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message PostInvoiceResponse {
+    string id = 1;
+    string status = 2;
+    string gl_journal_id = 3;
+}
+
+message ApInvoice {
+    string id = 1;
+    string tenant_id = 2;
+    string invoice_number = 3;
+    string supplier_invoice_number = 4;
+    string supplier_id = 5;
+    string invoice_date = 6;
+    string invoice_received_date = 7;
+    string due_date = 8;
+    string accounting_date = 9;
+    string period_name = 10;
+    string currency_code = 11;
+    double exchange_rate = 12;
+    string payment_terms_id = 13;
+    string payment_method = 14;
+    string description = 15;
+    string status = 16;
+    string gl_journal_id = 17;
+    string match_status = 18;
+    int64 subtotal_cents = 19;
+    int64 tax_cents = 20;
+    int64 withholding_tax_cents = 21;
+    int64 total_cents = 22;
+    int64 amount_paid_cents = 23;
+    int64 amount_remaining_cents = 24;
+    int64 discount_available_cents = 25;
+    int32 line_count = 26;
+    string purchase_order_id = 27;
+    string goods_receipt_id = 28;
+    string created_at = 29;
+    string updated_at = 30;
+}
+
+// Balance and aging messages
+message GetSupplierBalanceRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+}
+
+message GetSupplierBalanceResponse {
+    string supplier_id = 1;
+    int64 total_outstanding_cents = 2;
+    int64 total_overdue_cents = 3;
+    int64 current_cents = 4;
+    int64 bucket_1_30_cents = 5;
+    int64 bucket_31_60_cents = 6;
+    int64 bucket_61_90_cents = 7;
+    int64 bucket_90_plus_cents = 8;
+}
+
+message GetAgingRequest {
+    string tenant_id = 1;
+    string as_of_date = 2;
+    repeated string aging_buckets = 3;
+}
+
+message GetAgingResponse {
+    string as_of_date = 1;
+    repeated AgingLine lines = 2;
+}
+
+message AgingLine {
+    string supplier_id = 1;
+    string supplier_name = 2;
+    int64 current_cents = 3;
+    int64 bucket_1_30_cents = 4;
+    int64 bucket_31_60_cents = 5;
+    int64 bucket_61_90_cents = 6;
+    int64 bucket_90_plus_cents = 7;
+    int64 total_cents = 8;
+}
 ```

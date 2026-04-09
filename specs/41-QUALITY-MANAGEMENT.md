@@ -514,6 +514,103 @@ service QualityService {
     rpc GetItemQualityProfile(GetItemQualityProfileRequest) returns (GetItemQualityProfileResponse);
     rpc GetSupplierQualityScore(GetSupplierQualityScoreRequest) returns (GetSupplierQualityScoreResponse);
 }
+
+message Inspection {
+    string id = 1;
+    string tenant_id = 2;
+    string inspection_plan_id = 3;
+    string item_id = 4;
+    string lot_number = 5;
+    string source_type = 6;
+    string source_reference = 7;
+    double quantity_inspected = 8;
+    double quantity_sampled = 9;
+    string overall_result = 10;
+    string disposition = 11;
+    string status = 12;
+}
+
+message CreateInspectionRequest {
+    string tenant_id = 1;
+    string inspection_plan_id = 2;
+    string item_id = 3;
+    string lot_number = 4;
+    string source_type = 5;
+    string source_reference = 6;
+    double quantity_to_inspect = 7;
+    string created_by = 8;
+}
+
+message CreateInspectionResponse {
+    Inspection inspection = 1;
+}
+
+message InspectionResult {
+    string characteristic_id = 1;
+    string characteristic_name = 2;
+    string characteristic_type = 3;
+    double measured_value = 4;
+    string text_value = 5;
+    string result = 6;
+    string fail_reason = 7;
+}
+
+message RecordResultRequest {
+    string tenant_id = 1;
+    string inspection_id = 2;
+    string characteristic_id = 3;
+    double measured_value = 4;
+    string text_value = 5;
+    string recorded_by = 6;
+}
+
+message RecordResultResponse {
+    InspectionResult result = 1;
+    string inspection_status = 2;
+}
+
+message QualityProfile {
+    string item_id = 1;
+    int32 total_inspections = 2;
+    int32 passed_inspections = 3;
+    int32 failed_inspections = 4;
+    double pass_rate = 5;
+    double defect_rate_ppm = 6;
+    int32 open_ncr_count = 7;
+    int32 open_capa_count = 8;
+}
+
+message GetItemQualityProfileRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+}
+
+message GetItemQualityProfileResponse {
+    QualityProfile profile = 1;
+}
+
+message SupplierQualityScore {
+    string supplier_id = 1;
+    string period = 2;
+    int32 total_inspections = 3;
+    int32 passed_inspections = 4;
+    int32 failed_inspections = 5;
+    double defect_rate_ppm = 6;
+    double quality_score = 7;
+    double delivery_score = 8;
+    double overall_score = 9;
+    string rating = 10;
+}
+
+message GetSupplierQualityScoreRequest {
+    string tenant_id = 1;
+    string supplier_id = 2;
+    string period = 3;
+}
+
+message GetSupplierQualityScoreResponse {
+    SupplierQualityScore score = 1;
+}
 ```
 
 ---

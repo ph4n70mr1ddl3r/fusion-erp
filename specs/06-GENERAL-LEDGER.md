@@ -715,6 +715,208 @@ service GeneralLedgerService {
     rpc ClosePeriod(ClosePeriodRequest) returns (ClosePeriodResponse);
     rpc GetOpenPeriod(GetOpenPeriodRequest) returns (GetOpenPeriodResponse);
 }
+
+// Account messages
+message GetAccountRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetAccountResponse {
+    GlAccount data = 1;
+}
+
+message GetAccountsByCodeRequest {
+    string tenant_id = 1;
+    string account_code = 2;
+}
+
+message GetAccountsByCodeResponse {
+    repeated GlAccount items = 1;
+}
+
+message GlAccount {
+    string id = 1;
+    string tenant_id = 2;
+    string account_code = 3;
+    string account_name = 4;
+    string account_type = 5;
+    string account_category = 6;
+    string parent_account_id = 7;
+    string description = 8;
+    int32 is_postable = 9;
+    int32 is_reconcile = 10;
+    string effective_from = 11;
+    string effective_to = 12;
+    string default_currency_code = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+
+// Journal messages
+message CreateJournalRequest {
+    string tenant_id = 1;
+    string description = 2;
+    string journal_date = 3;
+    string currency_code = 4;
+    string reference = 5;
+    string reference_type = 6;
+    string reference_id = 7;
+    repeated JournalLineInput lines = 8;
+}
+
+message JournalLineInput {
+    string account_id = 1;
+    string description = 2;
+    int64 entered_debit_cents = 3;
+    int64 entered_credit_cents = 4;
+    string currency_code = 5;
+}
+
+message CreateJournalResponse {
+    JournalEntry data = 1;
+}
+
+message PostJournalRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message PostJournalResponse {
+    string id = 1;
+    string status = 2;
+    string posting_date = 3;
+    string posted_by = 4;
+}
+
+message ReverseJournalRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string reason = 3;
+    string reversal_date = 4;
+}
+
+message ReverseJournalResponse {
+    JournalEntry data = 1;
+}
+
+message JournalEntry {
+    string id = 1;
+    string tenant_id = 2;
+    string journal_number = 3;
+    string batch_id = 4;
+    string journal_source = 5;
+    string description = 6;
+    string journal_date = 7;
+    string period_name = 8;
+    string currency_code = 9;
+    string status = 10;
+    string posting_date = 11;
+    string posted_by = 12;
+    string reversal_of_id = 13;
+    string reversal_reason = 14;
+    string reference = 15;
+    string reference_type = 16;
+    string reference_id = 17;
+    int64 total_entered_debit_cents = 18;
+    int64 total_entered_credit_cents = 19;
+    int64 total_accounted_debit_cents = 20;
+    int64 total_accounted_credit_cents = 21;
+    int32 line_count = 22;
+    string created_at = 23;
+    string updated_at = 24;
+}
+
+// Balance messages
+message GetBalancesRequest {
+    string tenant_id = 1;
+    string account_id = 2;
+    string period_name = 3;
+    string balance_type = 4;
+}
+
+message GetBalancesResponse {
+    repeated GlBalance items = 1;
+}
+
+message GlBalance {
+    string id = 1;
+    string tenant_id = 2;
+    string account_id = 3;
+    string period_name = 4;
+    string balance_type = 5;
+    string currency_code = 6;
+    int64 beginning_balance_cents = 7;
+    int64 period_debits_cents = 8;
+    int64 period_credits_cents = 9;
+    int64 ending_balance_cents = 10;
+    int64 net_change_cents = 11;
+}
+
+message GetTrialBalanceRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+    string balance_type = 3;
+    int32 include_zero_balances = 4;
+}
+
+message GetTrialBalanceResponse {
+    string period_name = 1;
+    string as_of_date = 2;
+    string currency_code = 3;
+    int64 total_debit_cents = 4;
+    int64 total_credit_cents = 5;
+    repeated TrialBalanceLine lines = 6;
+}
+
+message TrialBalanceLine {
+    string account_code = 1;
+    string account_name = 2;
+    string account_type = 3;
+    int64 beginning_balance_cents = 4;
+    int64 period_debits_cents = 5;
+    int64 period_credits_cents = 6;
+    int64 ending_balance_cents = 7;
+}
+
+// Period messages
+message ClosePeriodRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ClosePeriodResponse {
+    string id = 1;
+    string status = 2;
+    string closing_date = 3;
+}
+
+message GetOpenPeriodRequest {
+    string tenant_id = 1;
+    string period_name = 2;
+}
+
+message GetOpenPeriodResponse {
+    GlPeriod data = 1;
+}
+
+message GlPeriod {
+    string id = 1;
+    string tenant_id = 2;
+    string period_name = 3;
+    int32 period_year = 4;
+    int32 period_number = 5;
+    string period_type = 6;
+    string start_date = 7;
+    string end_date = 8;
+    string status = 9;
+    string closing_date = 10;
+    string closed_by = 11;
+    string quarter_name = 12;
+    string year_name = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
 ```
 
 ---
