@@ -163,7 +163,7 @@ CREATE TABLE notifications (
 
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
 
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    -- user_id is a logical reference to auth-service users(id), validated via gRPC
 );
 
 CREATE INDEX idx_notifications_tenant_user ON notifications(tenant_id, user_id, is_read);
@@ -205,51 +205,30 @@ GET           /api/v1/workflow/notifications/unread-count Permission: workflow.n
 
 ---
 
-## 4. Business Rules
+## 4. Events
 
-### 4.1 Approval Routing Logic
-1. Service submits document for approval via gRPC: `SubmitApproval(doc_type, doc_id, amount, initiator_id)`
-2. Workflow engine looks up active workflow definition for `doc_type`
-3. Evaluates step rules:
-   - **FIXED_USER:** Route to specified user
-   - **ROLE_BASED:** Route to anyone with the specified role
-   - **AMOUNT_BASED:** Compare document amount field against thresholds
-   - **HIERARCHY:** Route to initiator's manager
-4. Create workflow_instance and notification(s)
-5. On approval action, advance to next step or complete
+| Event | Trigger |
+|-------|---------|
+| `workflow.approval_required` | New approval needed |
+| `workflow.approved` | Document fully approved |
+| `workflow.rejected` | Document rejected |
+| `workflow.escalated` | Approval escalated |
+| `workflow.notification.created` | New notification |
 
-### 4.2 Amount-Based Rules
-```json
-{
-  "rules": [
-    { "below": 100000, "approver_type": "SELF", "auto_approve": true },
-    { "from": 100000, "to": 1000000, "approver_role": "FinanceManager" },
-    { "above": 1000000, "approver_role": "TenantAdmin", "multi_step": true }
-  ]
-}
-```
+---
 
-### 4.3 Parallel Approvals
-- PARALLEL_SPLIT creates multiple approval tasks simultaneously
-- PARALLEL_JOIN waits for all parallel tasks to complete
-- Any rejection in parallel flow cancels the entire branch
+## 5. gRPC Service Definition
 
-### 4.4 Timeout Handling
-- Background task checks for timed-out approvals periodically
-- ESCALATE: route to next-level approver
-- AUTO_APPROVE: automatically approve
-- AUTO_REJECT: automatically reject
-
-### 4.5 gRPC Service (called by other services)
 ```protobuf
+syntax = "proto3";
+package fusion.workflow.v1;
+
 service WorkflowService {
     rpc SubmitApproval(SubmitApprovalRequest) returns (SubmitApprovalResponse);
     rpc GetApprovalStatus(GetApprovalStatusRequest) returns (GetApprovalStatusResponse);
     rpc CancelApproval(CancelApprovalRequest) returns (CancelApprovalResponse);
 }
-```
 
-```protobuf
 message SubmitApprovalRequest {
     string tenant_id = 1;
     string document_type = 2;
@@ -380,11 +359,68 @@ message Notification {
 }
 ```
 
-### 4.6 Events Published
-| Event | Trigger |
-|-------|---------|
-| `workflow.approval_required` | New approval needed |
-| `workflow.approved` | Document fully approved |
-| `workflow.rejected` | Document rejected |
-| `workflow.escalated` | Approval escalated |
-| `workflow.notification.created` | New notification |
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | workflow_definitions | — |
+| V002 | workflow_steps | V001 |
+| V003 | workflow_instances | V001 |
+| V004 | approval_actions | V003 |
+| V005 | delegation_rules | — |
+| V006 | notifications | — |
+
+---
+
+## 7. Business Rules
+
+### 7.1 Approval Routing Logic
+1. Service submits document for approval via gRPC: `SubmitApproval(doc_type, doc_id, amount, initiator_id)`
+2. Workflow engine looks up active workflow definition for `doc_type`
+3. Evaluates step rules:
+   - **FIXED_USER:** Route to specified user
+   - **ROLE_BASED:** Route to anyone with the specified role
+   - **AMOUNT_BASED:** Compare document amount field against thresholds
+   - **HIERARCHY:** Route to initiator's manager
+4. Create workflow_instance and notification(s)
+5. On approval action, advance to next step or complete
+
+### 7.2 Amount-Based Rules
+```json
+{
+  "rules": [
+    { "below": 100000, "approver_type": "SELF", "auto_approve": true },
+    { "from": 100000, "to": 1000000, "approver_role": "FinanceManager" },
+    { "above": 1000000, "approver_role": "TenantAdmin", "multi_step": true }
+  ]
+}
+```
+
+### 7.3 Parallel Approvals
+- PARALLEL_SPLIT creates multiple approval tasks simultaneously
+- PARALLEL_JOIN waits for all parallel tasks to complete
+- Any rejection in parallel flow cancels the entire branch
+
+### 7.4 Timeout Handling
+- Background task checks for timed-out approvals periodically
+- ESCALATE: route to next-level approver
+- AUTO_APPROVE: automatically approve
+- AUTO_REJECT: automatically reject
+
+---
+
+## 8. Inter-Service Integration
+
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| auth-service | `GetUser` | Resolve approver users and roles |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| ap-service | `SubmitApproval` | AP invoice approval workflow |
+| ar-service | `SubmitApproval` | AR credit memo approval workflow |
+| expense-service | `SubmitApproval` | Expense report approval |

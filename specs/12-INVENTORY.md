@@ -48,10 +48,10 @@ CREATE TABLE items (
 
     -- Purchasing
     lead_time_days INTEGER,
-    min_order_quantity DECIMAL(18,4),
-    max_order_quantity DECIMAL(18,4),
-    reorder_point DECIMAL(18,4),
-    reorder_quantity DECIMAL(18,4),
+    min_order_quantity REAL,
+    max_order_quantity REAL,
+    reorder_point REAL,
+    reorder_quantity REAL,
     preferred_supplier_id TEXT,
 
     -- Sales
@@ -151,10 +151,10 @@ CREATE TABLE on_hand_quantities (
     location_id TEXT,
     lot_number TEXT,
     serial_number TEXT,
-    quantity_on_hand DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_reserved DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_available DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_in_inspection DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_on_hand REAL NOT NULL DEFAULT 0,
+    quantity_reserved REAL NOT NULL DEFAULT 0,
+    quantity_available REAL NOT NULL DEFAULT 0,
+    quantity_in_inspection REAL NOT NULL DEFAULT 0,
     cost_cents INTEGER NOT NULL DEFAULT 0,
     currency_code TEXT NOT NULL DEFAULT 'USD',
     expiry_date TEXT,
@@ -182,7 +182,7 @@ CREATE TABLE stock_movements (
         CHECK(movement_type IN ('RECEIPT','ISSUE','TRANSFER','ADJUSTMENT','RETURN','SCRAP','PRODUCTION_RECEIPT','PRODUCTION_ISSUE')),
     movement_date TEXT NOT NULL,
     item_id TEXT NOT NULL,
-    quantity DECIMAL(18,4) NOT NULL,
+    quantity REAL NOT NULL,
     unit_of_measure TEXT NOT NULL,
     unit_cost_cents INTEGER NOT NULL DEFAULT 0,
     total_cost_cents INTEGER NOT NULL DEFAULT 0,
@@ -223,8 +223,8 @@ CREATE TABLE cost_layers (
     item_id TEXT NOT NULL,
     warehouse_id TEXT NOT NULL,
     layer_date TEXT NOT NULL,
-    quantity_received DECIMAL(18,4) NOT NULL,
-    quantity_remaining DECIMAL(18,4) NOT NULL,
+    quantity_received REAL NOT NULL,
+    quantity_remaining REAL NOT NULL,
     unit_cost_cents INTEGER NOT NULL,
     currency_code TEXT NOT NULL DEFAULT 'USD',
     lot_number TEXT,
@@ -266,9 +266,9 @@ CREATE TABLE physical_count_lines (
     item_id TEXT NOT NULL,
     location_id TEXT,
     lot_number TEXT,
-    system_quantity DECIMAL(18,4) NOT NULL,
-    counted_quantity DECIMAL(18,4),
-    variance_quantity DECIMAL(18,4),
+    system_quantity REAL NOT NULL,
+    counted_quantity REAL,
+    variance_quantity REAL,
     counted_by TEXT,
     counted_at TEXT,
     status TEXT DEFAULT 'PENDING' CHECK(status IN ('PENDING','COUNTED','VERIFIED','ADJUSTED')),
@@ -319,10 +319,7 @@ GET           /api/v1/inv/reports/aging               Permission: inv.reports.vi
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
+## 4. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -349,7 +346,7 @@ message GetItemAvailabilityRequest { string tenant_id = 1; string item_id = 2; }
 message GetItemAvailabilityResponse { repeated WarehouseQuantity warehouses = 1; }
 ```
 
-## 6. Migration Order
+## 5. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
@@ -365,33 +362,33 @@ message GetItemAvailabilityResponse { repeated WarehouseQuantity warehouses = 1;
 
 ---
 
-## 7. Business Rules
+## 6. Business Rules
 
-### 4.1 Stock Movement Processing
+### 7.1 Stock Movement Processing
 1. Create movement record
 2. Update on_hand_quantities (add to `to`, subtract from `from`)
 3. Update cost layers for costing
 4. If movement has GL impact, create journal entry
 
-### 4.2 Costing Methods
+### 7.2 Costing Methods
 - **FIFO:** Issue from oldest cost layer first
 - **LIFO:** Issue from newest cost layer first
 - **Weighted Average:** `new_avg = (existing_qty * existing_cost + received_qty * received_cost) / total_qty`
 - **Standard:** Fixed cost per item, variances tracked separately
 
-### 4.3 Quantity Logic
+### 7.3 Quantity Logic
 - `quantity_available = quantity_on_hand - quantity_reserved - quantity_in_inspection`
 - Cannot issue more than `quantity_available`
 - Receiving increments `quantity_on_hand` (and `quantity_in_inspection` if inspection required)
 
-### 4.4 GL Integration
+### 7.4 GL Integration
 Stock movements create GL journals:
 - **Receipt:** Debit Inventory, Credit GRNI (or Cash/AP)
 - **Issue:** Debit COGS/Expense, Credit Inventory
 - **Adjustment:** Debit/Credit Inventory, Credit/Debit Expense/Variance
 - **Transfer:** No GL impact (same asset, different location within tenant)
 
-### 4.5 Events Published
+### 7.5 Events Published
 | Event | Trigger | Consumers |
 |-------|---------|-----------|
 | `inv.item.created` | Item created | — |

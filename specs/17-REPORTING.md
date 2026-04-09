@@ -138,7 +138,7 @@ CREATE TABLE daily_metrics (
     dimension_1 TEXT,                      -- e.g., customer_id, supplier_id, account_id
     dimension_2 TEXT,                      -- e.g., department, category
     value_cents INTEGER NOT NULL DEFAULT 0,
-    quantity DECIMAL(18,4),
+    quantity REAL,
     currency_code TEXT NOT NULL DEFAULT 'USD',
     source_service TEXT NOT NULL,
     computed_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -247,8 +247,14 @@ GET /api/v1/reports/ap-aging?as_of=2024-01-31
 - Permission-based: `reports.financial.view`, `reports.operational.view`, `reports.export`
 - Row-level filtering based on user's department (configurable)
 
-### 4.6 gRPC Service
+---
+
+## 5. gRPC Service Definition
+
 ```protobuf
+syntax = "proto3";
+package fusion.report.v1;
+
 service ReportingService {
     rpc GetMetric(GetMetricRequest) returns (GetMetricResponse);
     rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
@@ -396,3 +402,16 @@ message DailyMetric {
     string computed_at = 11;
 }
 ```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | report_definitions | — |
+| V002 | report_executions | V001 |
+| V003 | scheduled_reports | V001 |
+| V004 | dashboard_widgets | — |
+| V005 | user_dashboards | V004 |
+| V006 | daily_metrics | — |

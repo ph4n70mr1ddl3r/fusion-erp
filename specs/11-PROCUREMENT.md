@@ -48,7 +48,7 @@ CREATE TABLE requisition_lines (
     line_number INTEGER NOT NULL,
     item_id TEXT,
     item_description TEXT NOT NULL,
-    quantity DECIMAL(18,4) NOT NULL,
+    quantity REAL NOT NULL,
     unit_of_measure TEXT NOT NULL,
     unit_price_cents INTEGER,
     estimated_price_cents INTEGER,
@@ -110,7 +110,7 @@ CREATE TABLE purchase_orders (
     version INTEGER NOT NULL DEFAULT 1,
     is_active INTEGER NOT NULL DEFAULT 1,
 
-    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE RESTRICT,
+    -- supplier_id is a logical reference to ap-service suppliers(id), validated via gRPC
     UNIQUE(tenant_id, po_number)
 );
 
@@ -126,10 +126,10 @@ CREATE TABLE purchase_order_lines (
     item_id TEXT,
     item_description TEXT NOT NULL,
     supplier_part_number TEXT,
-    quantity_ordered DECIMAL(18,4) NOT NULL,
-    quantity_received DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_invoiced DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_cancelled DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_ordered REAL NOT NULL,
+    quantity_received REAL NOT NULL DEFAULT 0,
+    quantity_invoiced REAL NOT NULL DEFAULT 0,
+    quantity_cancelled REAL NOT NULL DEFAULT 0,
     unit_of_measure TEXT NOT NULL,
     unit_price_cents INTEGER NOT NULL,
     line_amount_cents INTEGER NOT NULL DEFAULT 0,
@@ -194,9 +194,9 @@ CREATE TABLE goods_receipt_lines (
     line_number INTEGER NOT NULL,
     item_id TEXT,
     item_description TEXT NOT NULL,
-    quantity_received DECIMAL(18,4) NOT NULL,
-    quantity_accepted DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_rejected DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_received REAL NOT NULL,
+    quantity_accepted REAL NOT NULL DEFAULT 0,
+    quantity_rejected REAL NOT NULL DEFAULT 0,
     unit_of_measure TEXT NOT NULL,
     lot_number TEXT,
     serial_numbers TEXT,                   -- JSON array
@@ -275,10 +275,7 @@ GET/PUT       /api/v1/proc/blanket-agreements/{id}      Permission: proc.agreeme
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
+## 4. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -308,7 +305,7 @@ message GetSupplierBalanceRequest { string tenant_id = 1; string supplier_id = 2
 message GetSupplierBalanceResponse { int64 outstanding_cents = 1; int64 overdue_cents = 2; }
 ```
 
-## 6. Migration Order
+## 5. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
@@ -322,33 +319,33 @@ message GetSupplierBalanceResponse { int64 outstanding_cents = 1; int64 overdue_
 
 ---
 
-## 7. Business Rules
+## 6. Business Rules
 
-### 4.1 Requisition to PO Flow
+### 7.1 Requisition to PO Flow
 1. Employee creates requisition → DRAFT
 2. Submit for approval → SUBMITTED
 3. Approver reviews → APPROVED or REJECTED
 4. Buyer converts approved requisition to PO → requisition status = CONVERTED
 5. PO lines reference original requisition lines
 
-### 4.2 PO to Goods Receipt
+### 7.2 PO to Goods Receipt
 1. PO issued to supplier → ISSUED
 2. On goods receipt: update PO line quantity_received
 3. PO status transitions: PARTIALLY_RECEIVED (some lines) or RECEIVED (all lines)
 4. Cannot receive more than quantity_ordered (configurable over-receipt tolerance)
 
-### 4.3 Three-Way Match (PO → GR → Invoice)
+### 7.3 Three-Way Match (PO → GR → Invoice)
 1. AP invoice references PO and GR
 2. Match check: PO quantity ordered ≥ GR quantity received ≥ Invoice quantity invoiced
 3. Match check: PO unit price = Invoice unit price (within tolerance)
 4. Status: UNMATCHED → 2_WAY (PO+Invoice) → 3_WAY (PO+GR+Invoice)
 
-### 4.4 GL Integration
+### 7.4 GL Integration
 - PO itself does NOT create GL entries (encumbrance optional)
 - Goods Receipt → GL: Debit Inventory/Expense, Credit Goods Received Not Invoiced (GRNI)
 - Invoice matching → GL: Debit GRNI, Credit AP
 
-### 4.5 Events Published
+### 7.5 Events Published
 | Event | Trigger | Consumers |
 |-------|---------|-----------|
 | `proc.requisition.approved` | Requisition approved | — |

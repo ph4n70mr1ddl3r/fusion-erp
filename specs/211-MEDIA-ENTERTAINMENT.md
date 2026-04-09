@@ -670,49 +670,6 @@ message GetAudienceTrendsResponse {
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
-
-```protobuf
-syntax = "proto3";
-package fusion.media.v1;
-
-service MediaEntertainmentService {
-    rpc GetContentRight(GetContentRightRequest) returns (GetContentRightResponse);
-    rpc RecordRoyalty(RecordRoyaltyRequest) returns (RecordRoyaltyResponse);
-    rpc GetAdInventory(GetAdInventoryRequest) returns (GetAdInventoryResponse);
-    rpc GetAudienceAnalytics(GetAudienceAnalyticsRequest) returns (GetAudienceAnalyticsResponse);
-}
-
-message ContentRight { string id = 1; string tenant_id = 2; string content_id = 3; string territory = 4; string right_type = 5; string start_date = 6; string end_date = 7; string status = 8; string created_at = 9; string updated_at = 10; }
-message Royalty { string id = 1; string tenant_id = 2; string content_id = 3; string recipient_id = 4; int64 amount_cents = 5; string currency_code = 6; string period = 7; string status = 8; string created_at = 9; string updated_at = 10; }
-message AdSlot { string id = 1; string tenant_id = 2; string channel = 3; string slot_time = 4; int32 duration_seconds = 5; int64 rate_cents = 6; string status = 7; string created_at = 8; }
-message AudienceMetric { string id = 1; string tenant_id = 2; string content_id = 3; string metric_date = 4; int64 views = 5; int64 unique_viewers = 6; double avg_watch_time_minutes = 7; string created_at = 8; }
-
-message GetContentRightRequest { string tenant_id = 1; string id = 2; }
-message GetContentRightResponse { ContentRight data = 1; }
-message RecordRoyaltyRequest { string tenant_id = 1; string content_id = 2; string recipient_id = 3; int64 amount_cents = 4; string period = 5; }
-message RecordRoyaltyResponse { Royalty data = 1; }
-message GetAdInventoryRequest { string tenant_id = 1; string channel = 2; string date_from = 3; string date_to = 4; }
-message GetAdInventoryResponse { repeated AdSlot items = 1; }
-message GetAudienceAnalyticsRequest { string tenant_id = 1; string content_id = 2; string date_from = 3; string date_to = 4; }
-message GetAudienceAnalyticsResponse { repeated AudienceMetric items = 1; }
-```
-
-## 6. Migration Order
-
-| Migration | Table | Dependencies |
-|-----------|-------|-------------|
-| V001 | me_content_rights | — |
-| V002 | me_royalties | V001 |
-| V003 | me_ad_inventory | V002 |
-| V004 | me_production_budgets | V003 |
-| V005 | me_audience_analytics | V004 |
-
----
-
 ## 7. Business Rules
 
 1. **Rights Windowing**: Content availability enforced per territorial and platform window rules

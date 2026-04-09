@@ -85,14 +85,14 @@ CREATE TABLE sales_order_lines (
 
     item_id TEXT,
     item_description TEXT NOT NULL,
-    quantity_ordered DECIMAL(18,4) NOT NULL,
-    quantity_allocated DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_picked DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_packed DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_shipped DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_invoiced DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_returned DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_cancelled DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_ordered REAL NOT NULL,
+    quantity_allocated REAL NOT NULL DEFAULT 0,
+    quantity_picked REAL NOT NULL DEFAULT 0,
+    quantity_packed REAL NOT NULL DEFAULT 0,
+    quantity_shipped REAL NOT NULL DEFAULT 0,
+    quantity_invoiced REAL NOT NULL DEFAULT 0,
+    quantity_returned REAL NOT NULL DEFAULT 0,
+    quantity_cancelled REAL NOT NULL DEFAULT 0,
     unit_of_measure TEXT NOT NULL,
     unit_price_cents INTEGER NOT NULL,
     unit_cost_cents INTEGER,
@@ -160,7 +160,7 @@ CREATE TABLE shipment_lines (
     shipment_id TEXT NOT NULL,
     order_line_id TEXT NOT NULL,
     item_id TEXT,
-    quantity_shipped DECIMAL(18,4) NOT NULL,
+    quantity_shipped REAL NOT NULL,
     lot_number TEXT,
     serial_number TEXT,
 
@@ -203,7 +203,7 @@ CREATE TABLE return_lines (
     return_id TEXT NOT NULL,
     order_line_id TEXT NOT NULL,
     item_id TEXT,
-    quantity_returned DECIMAL(18,4) NOT NULL,
+    quantity_returned REAL NOT NULL,
     condition TEXT DEFAULT 'GOOD'
         CHECK(condition IN ('GOOD','DAMAGED','DEFECTIVE','WRONG_ITEM')),
     disposition TEXT DEFAULT 'RETURN_TO_STOCK'
@@ -257,10 +257,7 @@ GET           /api/v1/om/reports/backlog                Permission: om.reports.v
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
+## 4. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -286,7 +283,7 @@ message GetOrderStatusRequest { string tenant_id = 1; string id = 2; }
 message GetOrderStatusResponse { string order_id = 1; string status = 2; string tracking_number = 3; }
 ```
 
-## 6. Migration Order
+## 5. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
@@ -299,31 +296,31 @@ message GetOrderStatusResponse { string order_id = 1; string status = 2; string 
 
 ---
 
-## 7. Business Rules
+## 6. Business Rules
 
-### 4.1 Order Processing Flow
+### 7.1 Order Processing Flow
 ```
 DRAFT → SUBMITTED → APPROVED → CONFIRMED → ALLOCATED → PICKING → PACKED → SHIPPED → INVOICED → COMPLETED
                                                                                                ↕
                                                                                           CANCELLED / ON_HOLD
 ```
 
-### 4.2 Stock Allocation
+### 7.2 Stock Allocation
 - On confirm: check inventory availability via INV gRPC
 - Reserve stock for the order (update on_hand_quantities.quantity_reserved)
 - Backorder if insufficient stock (partial allocation allowed)
 
-### 4.3 Invoicing
+### 7.3 Invoicing
 - On ship: eligible for invoicing
 - Create invoice via AR gRPC: Debit AR, Credit Revenue
 - Can invoice partial shipment
 
-### 4.4 GL Integration
+### 7.4 GL Integration
 - **Shipment:** Debit COGS, Credit Inventory (via INV service)
 - **Invoice:** Debit AR, Credit Revenue (via AR service)
 - **Return:** Reverse COGS and revenue entries
 
-### 4.5 Events Published
+### 7.5 Events Published
 | Event | Trigger | Consumers |
 |-------|---------|-----------|
 | `om.order.created` | Order created | — |

@@ -23,7 +23,7 @@ CREATE TABLE bills_of_materials (
     bom_type TEXT NOT NULL DEFAULT 'STANDARD'
         CHECK(bom_type IN ('STANDARD','ALTERNATIVE','ENGINEERING')),
     description TEXT,
-    quantity DECIMAL(18,4) NOT NULL DEFAULT 1,
+    quantity REAL NOT NULL DEFAULT 1,
     uom TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'ACTIVE'
         CHECK(status IN ('ACTIVE','INACTIVE','OBSOLETE')),
@@ -42,7 +42,7 @@ CREATE TABLE bom_components (
     tenant_id TEXT NOT NULL,
     bom_id TEXT NOT NULL,
     component_item_id TEXT NOT NULL,
-    quantity DECIMAL(18,4) NOT NULL,
+    quantity REAL NOT NULL,
     unit_of_measure TEXT NOT NULL,
     scrap_percent REAL DEFAULT 0,
     operation_sequence INTEGER,            -- Linked to routing operation
@@ -121,13 +121,13 @@ CREATE TABLE work_orders (
     routing_id TEXT,
     description TEXT,
     order_type TEXT NOT NULL DEFAULT 'STANDARD'
-        CHECK(order_type IN ('STANDARD','DISASSEMBLY','REWORK','PROTOYPE')),
+        CHECK(order_type IN ('STANDARD','DISASSEMBLY','REWORK','PROTOTYPE')),
 
     -- Quantities
-    quantity_ordered DECIMAL(18,4) NOT NULL,
-    quantity_completed DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_scrapped DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_remaining DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_ordered REAL NOT NULL,
+    quantity_completed REAL NOT NULL DEFAULT 0,
+    quantity_scrapped REAL NOT NULL DEFAULT 0,
+    quantity_remaining REAL NOT NULL DEFAULT 0,
     unit_of_measure TEXT NOT NULL,
 
     -- Dates
@@ -184,8 +184,8 @@ CREATE TABLE work_order_materials (
     work_order_id TEXT NOT NULL,
     component_item_id TEXT NOT NULL,
     bom_component_id TEXT,
-    quantity_required DECIMAL(18,4) NOT NULL,
-    quantity_issued DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_required REAL NOT NULL,
+    quantity_issued REAL NOT NULL DEFAULT 0,
     unit_of_measure TEXT NOT NULL,
     warehouse_id TEXT,
     cost_cents INTEGER NOT NULL DEFAULT 0,
@@ -208,8 +208,8 @@ CREATE TABLE production_reports (
     operation_sequence INTEGER,
 
     -- Output
-    quantity_completed DECIMAL(18,4) NOT NULL DEFAULT 0,
-    quantity_scrapped DECIMAL(18,4) NOT NULL DEFAULT 0,
+    quantity_completed REAL NOT NULL DEFAULT 0,
+    quantity_scrapped REAL NOT NULL DEFAULT 0,
     warehouse_id TEXT,                     -- Output warehouse
 
     -- Labor
@@ -276,10 +276,7 @@ GET           /api/v1/mfg/reports/variance-analysis     Permission: mfg.reports.
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
+## 4. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -306,7 +303,7 @@ message GetWorkOrderStatusRequest { string tenant_id = 1; string id = 2; }
 message GetWorkOrderStatusResponse { WorkOrder data = 1; }
 ```
 
-## 6. Migration Order
+## 5. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
@@ -320,15 +317,15 @@ message GetWorkOrderStatusResponse { WorkOrder data = 1; }
 
 ---
 
-## 7. Business Rules
+## 6. Business Rules
 
-### 4.1 BOM Rules
+### 7.1 BOM Rules
 - Circular references MUST NOT be allowed (component cannot contain its parent)
 - Phantom items are exploded during work order creation
 - BOM components reference routing operations for sequencing
 - Cost roll-up: sum of component costs + routing labor + overhead
 
-### 4.2 Work Order Processing
+### 7.2 Work Order Processing
 ```
 DRAFT → RELEASED → IN_PROGRESS → COMPLETED → CLOSED
 ```
@@ -338,22 +335,22 @@ DRAFT → RELEASED → IN_PROGRESS → COMPLETED → CLOSED
 4. **COMPLETED:** All quantity produced, remaining materials returned
 5. **CLOSED:** Financial settlement complete, GL entries finalized
 
-### 4.3 Material Consumption
+### 7.3 Material Consumption
 - On production report: auto-deduct materials per BOM ratio
 - Overconsumption flagged for variance tracking
 - Underconsumption: remaining stays reserved until work order close
 
-### 4.4 Cost Calculation
+### 7.4 Cost Calculation
 - `estimated_cost = material_cost (from BOM × component cost) + labor (routing × rate) + overhead`
 - `actual_cost` updated with each production report
 - Variance = actual - estimated (tracked per work order)
 
-### 4.5 GL Integration
+### 7.5 GL Integration
 - **Material Issue:** Debit WIP, Credit Inventory
 - **Production Output:** Debit Finished Goods, Credit WIP
 - **Variance:** Debit/Credit Variance Account, Credit/Debit WIP
 
-### 4.6 Events Published
+### 7.6 Events Published
 | Event | Trigger | Consumers |
 |-------|---------|-----------|
 | `mfg.work_order.released` | WO released | INV (reserve materials) |

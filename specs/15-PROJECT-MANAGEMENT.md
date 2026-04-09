@@ -143,7 +143,7 @@ CREATE TABLE time_entries (
     task_id TEXT NOT NULL,
     employee_id TEXT NOT NULL,
     entry_date TEXT NOT NULL,
-    hours DECIMAL(8,2) NOT NULL,
+    hours REAL NOT NULL,
     description TEXT,
     activity_type TEXT DEFAULT 'WORK'
         CHECK(activity_type IN ('WORK','OVERTIME','TRAVEL','TRAINING','MEETING')),
@@ -279,10 +279,7 @@ GET           /api/v1/pm/reports/revenue-by-project   Permission: pm.reports.vie
 
 ---
 
-
----
-
-## 5. gRPC Service Definition
+## 4. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -309,7 +306,7 @@ message GetProjectStatusRequest { string tenant_id = 1; string id = 2; }
 message GetProjectStatusResponse { string project_id = 1; string status = 2; double percent_complete = 3; }
 ```
 
-## 6. Migration Order
+## 5. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
@@ -321,25 +318,25 @@ message GetProjectStatusResponse { string project_id = 1; string status = 2; dou
 
 ---
 
-## 7. Business Rules
+## 6. Business Rules
 
-### 4.1 Project Costing
+### 7.1 Project Costing
 - `actual_cost = SUM(time_entries.cost_amount) + SUM(expense_entries.amount) + overhead`
 - `remaining_budget = budget_cost - actual_cost - committed_cost`
 - Cost rates per employee (configurable), updated on time entry approval
 
-### 4.2 Revenue Recognition
+### 7.2 Revenue Recognition
 - **Fixed Price:** Recognize on milestone completion or % complete
 - **T&M:** Recognize based on approved billable time and expenses
 - On billing approval, create AR invoice via gRPC
 
-### 4.3 GL Integration
+### 7.3 GL Integration
 - **Time entry approval:** Debit Project Cost (WIP), Credit Labor Cost
 - **Expense approval:** Debit Project Cost (WIP), Credit AP/Cash
 - **Billing:** Debit AR, Credit Project Revenue
 - **Completion:** Debit COGS, Credit WIP
 
-### 4.4 Events Published
+### 7.4 Events Published
 | Event | Trigger |
 |-------|---------|
 | `pm.project.created` | Project created |
