@@ -90,6 +90,33 @@ Build a full-featured, enterprise-grade ERP system cloning the capabilities of O
 | 80 | Visual Builder | `builder-service` | `90-VISUAL-BUILDER.md` |
 | 81 | Process Automation (RPA) | `automation-service` | `91-PROCESS-AUTOMATION.md` |
 | 82 | Innovation Management | `innovation-service` | `92-INNOVATION-MANAGEMENT.md` |
+| 83 | Opportunity Marketplace | `marketplace-service` | `93-OPPORTUNITY-MARKETPLACE.md` |
+| 84 | Dynamic Skills | `skills-service` | `94-DYNAMIC-SKILLS.md` |
+| 85 | Employee Experience (My Experience) | `experience-service` | `95-EMPLOYEE-EXPERIENCE.md` |
+| 86 | Onboarding & Transitions | `onboarding-service` | `96-ONBOARDING.md` |
+| 87 | Loyalty Management | `loyalty-service` | `97-LOYALTY-MANAGEMENT.md` |
+| 88 | Contract Manufacturing | `contractmfg-service` | `98-CONTRACT-MANUFACTURING.md` |
+| 89 | Manufacturing Execution System (MES) | `mes-service` | `99-MANUFACTURING-EXECUTION.md` |
+| 90 | Financial Consolidation & Close | `consolidation-service` | `100-FINANCIAL-CONSOLIDATION.md` |
+| 91 | Account Reconciliation | `recon-service` | `101-ACCOUNT-RECONCILIATION.md` |
+| 92 | Fusion Data Intelligence | `fdi-service` | `102-FUSION-DATA-INTELLIGENCE.md` |
+| 93 | Application Composer | `composer-service` | `103-APPLICATION-COMPOSER.md` |
+| 94 | U.S. Federal Financials | `federal-service` | `104-FEDERAL-FINANCIALS.md` |
+| 95 | Workforce Labor Optimization | `laboropt-service` | `105-WORKFORCE-LABOR-OPTIMIZATION.md` |
+| 96 | Manager Edge | `manageredge-service` | `106-MANAGER-EDGE.md` |
+| 97 | Work Life | `worklife-service` | `107-WORK-LIFE.md` |
+| 98 | Advanced HCM Controls | `hcmcontrols-service` | `108-ADVANCED-HCM-CONTROLS.md` |
+| 99 | Experience Design Studio | `exdesign-service` | `109-EXPERIENCE-DESIGN-STUDIO.md` |
+| 100 | Activity Centers | `activity-service` | `110-ACTIVITY-CENTERS.md` |
+| 101 | Workforce Modeling | `wfmodel-service` | `111-WORKFORCE-MODELING.md` |
+| 102 | Digital Customer Service | `digitalcs-service` | `112-DIGITAL-CUSTOMER-SERVICE.md` |
+| 103 | Project-Driven Manufacturing | `projectmfg-service` | `113-PROJECT-DRIVEN-MANUFACTURING.md` |
+| 104 | SCM Analytics | `scmanalytics-service` | `114-SCM-ANALYTICS.md` |
+| 105 | Project Asset Management | `projectasset-service` | `115-PROJECT-ASSET-MANAGEMENT.md` |
+| 106 | Business Continuity Planning | `continuity-service` | `116-BUSINESS-CONTINUITY.md` |
+| 107 | EPM Platform | `epmplatform-service` | `117-EPM-PLATFORM.md` |
+| 108 | Freeform Planning (Essbase) | `freeform-service` | `118-FREEFORM-PLANNING.md` |
+| 109 | Strategic Workforce Planning | `strategicwf-service` | `119-STRATEGIC-WORKFORCE-PLANNING.md` |
 
 ## Supporting Infrastructure
 
@@ -234,6 +261,53 @@ AI agents MUST follow this build order. Each stage depends on the prior stage be
 87. `91-PROCESS-AUTOMATION.md` - RPA, process mining, bot execution
 88. `92-INNOVATION-MANAGEMENT.md` - Innovation pipeline, stage-gate
 
+### Stage 18 - HCM Talent Extensions
+89. `93-OPPORTUNITY-MARKETPLACE.md` - Internal talent marketplace, gigs, stretch assignments
+90. `94-DYNAMIC-SKILLS.md` - AI skills ontology, inference, gap analysis
+91. `95-EMPLOYEE-EXPERIENCE.md` - Employee engagement, pulse surveys, wellbeing
+92. `96-ONBOARDING.md` - Employee onboarding journeys, offboarding, transitions
+
+### Stage 19 - CX & Commerce Extensions
+93. `97-LOYALTY-MANAGEMENT.md` - Customer loyalty programs, rewards, tiers
+
+### Stage 20 - Advanced Manufacturing
+94. `98-CONTRACT-MANUFACTURING.md` - Outsourced manufacturing, consignment
+95. `99-MANUFACTURING-EXECUTION.md` - MES, shop floor, OEE, IIoT
+
+### Stage 21 - Financial Close & Consolidation
+96. `100-FINANCIAL-CONSOLIDATION.md` - Multi-entity consolidation, currency translation, eliminations
+97. `101-ACCOUNT-RECONCILIATION.md` - Auto-matching, reconciliation, certification
+98. `104-FEDERAL-FINANCIALS.md` - U.S. Federal financials, appropriations, USSGL
+
+### Stage 22 - Analytics & Platform Extensions
+99. `102-FUSION-DATA-INTELLIGENCE.md` - Cross-app analytics, KPIs, NLP querying
+100. `103-APPLICATION-COMPOSER.md` - Custom objects, fields, page layouts, business logic
+
+### Stage 23 - Workforce Optimization
+101. `105-WORKFORCE-LABOR-OPTIMIZATION.md` - Labor demand forecasting, shift optimization
+
+### Stage 24 - HCM Experience & Governance
+102. `106-MANAGER-EDGE.md` - AI-powered manager dashboard, coaching, team insights
+103. `107-WORK-LIFE.md` - Employee wellness programs, challenges, balance tracking
+104. `108-ADVANCED-HCM-CONTROLS.md` - SoD enforcement, access certifications, audit
+105. `109-EXPERIENCE-DESIGN-STUDIO.md` - No-code UI customization, themes, A/B testing
+106. `110-ACTIVITY-CENTERS.md` - Role-based workspaces, activity feeds, quick actions
+
+### Stage 25 - Workforce Strategy & Digital CX
+107. `111-WORKFORCE-MODELING.md` - Scenario-based headcount modeling, cost projections
+108. `112-DIGITAL-CUSTOMER-SERVICE.md` - AI chatbot, self-service, digital-first support
+109. `119-STRATEGIC-WORKFORCE-PLANNING.md` - Multi-year talent supply/demand alignment
+
+### Stage 26 - Advanced Manufacturing & Analytics
+110. `113-PROJECT-DRIVEN-MANUFACTURING.md` - Project-linked production, CIP accounting
+111. `114-SCM-ANALYTICS.md` - Pre-built supply chain KPIs, dashboards, scorecards
+112. `115-PROJECT-ASSET-MANAGEMENT.md` - Capital project assets, CIP capitalization
+113. `116-BUSINESS-CONTINUITY.md` - Disaster recovery, RTO/RPO, incident management
+
+### Stage 27 - EPM Foundation
+114. `117-EPM-PLATFORM.md` - OLAP engine, dimensions, calculation manager, data integration
+115. `118-FREEFORM-PLANNING.md` - Freeform budgeting, ad-hoc modeling, sandboxed planning
+
 ### Cross-Cutting (Build in parallel with Stage 1+)
 - `18-MULTI-TENANCY.md` - Tenant isolation layer
 - `19-INTEGRATION.md` - Event bus, service mesh
@@ -340,6 +414,33 @@ fusion/
 │   ├── builder-service/            # Visual Builder
 │   ├── automation-service/         # Process Automation
 │   ├── innovation-service/         # Innovation Management
+│   ├── marketplace-service/        # Opportunity Marketplace
+│   ├── skills-service/             # Dynamic Skills
+│   ├── experience-service/         # Employee Experience
+│   ├── onboarding-service/         # Onboarding & Transitions
+│   ├── loyalty-service/            # Loyalty Management
+│   ├── contractmfg-service/        # Contract Manufacturing
+│   ├── mes-service/                # Manufacturing Execution System
+│   ├── consolidation-service/      # Financial Consolidation & Close
+│   ├── recon-service/              # Account Reconciliation
+│   ├── fdi-service/                # Fusion Data Intelligence
+│   ├── composer-service/           # Application Composer
+│   ├── federal-service/            # U.S. Federal Financials
+│   ├── laboropt-service/           # Workforce Labor Optimization
+│   ├── manageredge-service/        # Manager Edge
+│   ├── worklife-service/           # Work Life
+│   ├── hcmcontrols-service/        # Advanced HCM Controls
+│   ├── exdesign-service/           # Experience Design Studio
+│   ├── activity-service/           # Activity Centers
+│   ├── wfmodel-service/            # Workforce Modeling
+│   ├── digitalcs-service/          # Digital Customer Service
+│   ├── projectmfg-service/         # Project-Driven Manufacturing
+│   ├── scmanalytics-service/       # SCM Analytics
+│   ├── projectasset-service/       # Project Asset Management
+│   ├── continuity-service/         # Business Continuity Planning
+│   ├── epmplatform-service/        # EPM Platform
+│   ├── freeform-service/           # Freeform Planning (Essbase)
+│   ├── strategicwf-service/        # Strategic Workforce Planning
 │   └── gateway-service/            # API Gateway / BFF
 ├── migrations/
 │   ├── auth/
