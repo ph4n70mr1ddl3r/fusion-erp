@@ -70,6 +70,51 @@
 | supplier-service | `services/supplier-service` | `data/supplier.db` | 8072 | Supplier Portal & Sourcing |
 | mobile-service | `services/mobile-service` | `data/mobile.db` | 8073 | Mobile Application Framework |
 | chain-service | `services/chain-service` | `data/chain.db` | 8074 | Blockchain & Digital Thread |
+| costing-service | `services/costing-service` | `data/costing.db` | 8080 | Cost Management |
+| accounthub-service | `services/accounthub-service` | `data/accounthub.db` | 8081 | Accounting Hub |
+| promising-service | `services/promising-service` | `data/promising.db` | 8082 | Global Order Promising |
+| producthub-service | `services/producthub-service` | `data/producthub.db` | 8083 | Product Hub / MDM |
+| orchestration-service | `services/orchestration-service` | `data/orchestration.db` | 8084 | Supply Chain Orchestration |
+| contracts-service | `services/contracts-service` | `data/contracts.db` | 8085 | Procurement Contracts |
+| grant-service | `services/grant-service` | `data/grant.db` | 8086 | Grant Management |
+| jv-service | `services/jv-service` | `data/jv.db` | 8087 | Joint Venture Management |
+| subscription-service | `services/subscription-service` | `data/subscription.db` | 8088 | Subscription Management |
+| cpq-service | `services/cpq-service` | `data/cpq.db` | 8089 | Configure Price Quote |
+| configurator-service | `services/configurator-service` | `data/configurator.db` | 8090 | Product Configurator |
+| commerce-service | `services/commerce-service` | `data/commerce.db` | 8091 | Commerce (B2B/B2C) |
+| cdp-service | `services/cdp-service` | `data/cdp.db` | 8092 | Customer Data Platform |
+| marketing-service | `services/marketing-service` | `data/marketing.db` | 8093 | Marketing |
+| hr-service | `services/hr-service` | `data/hr.db` | 8094 | Core HR |
+| payroll-service | `services/payroll-service` | `data/payroll.db` | 8095 | Payroll |
+| timelabor-service | `services/timelabor-service` | `data/timelabor.db` | 8096 | Time & Labor |
+| compensation-service | `services/compensation-service` | `data/compensation.db` | 8097 | Compensation |
+| benefits-service | `services/benefits-service` | `data/benefits.db` | 8098 | Benefits |
+| recruiting-service | `services/recruiting-service` | `data/recruiting.db` | 8099 | Recruiting |
+| performance-service | `services/performance-service` | `data/performance.db` | 8100 | Performance Management |
+| learning-service | `services/learning-service` | `data/learning.db` | 8101 | Learning & Development |
+| succession-service | `services/succession-service` | `data/succession.db` | 8102 | Succession Planning |
+| career-service | `services/career-service` | `data/career.db` | 8103 | Career Development |
+| absence-service | `services/absence-service` | `data/absence.db` | 8104 | Absence Management |
+| scheduling-service | `services/scheduling-service` | `data/scheduling.db` | 8105 | Workforce Scheduling |
+| wfplanning-service | `services/wfplanning-service` | `data/wfplanning.db` | 8106 | Workforce Planning |
+| hrhelpdesk-service | `services/hrhelpdesk-service` | `data/hrhelpdesk.db` | 8107 | HR Help Desk |
+| safety-service | `services/safety-service` | `data/safety.db` | 8108 | Workforce Safety |
+| sales-service | `services/sales-service` | `data/sales.db` | 8109 | Sales Force Automation |
+| salesplanning-service | `services/salesplanning-service` | `data/salesplanning.db` | 8110 | Sales Planning |
+| salesperf-service | `services/salesperf-service` | `data/salesperf.db` | 8111 | Sales Performance |
+| fieldservice-service | `services/fieldservice-service` | `data/fieldservice.db` | 8112 | Field Service |
+| customerservice-service | `services/customerservice-service` | `data/customerservice.db` | 8113 | Customer Service |
+| knowledge-service | `services/knowledge-service` | `data/knowledge.db` | 8114 | Knowledge Management |
+| servicelogistics-service | `services/servicelogistics-service` | `data/servicelogistics.db` | 8115 | Service Logistics |
+| channel-service | `services/channel-service` | `data/channel.db` | 8116 | Channel Management |
+| taxreport-service | `services/taxreport-service` | `data/taxreport.db` | 8117 | Tax Reporting |
+| narrative-service | `services/narrative-service` | `data/narrative.db` | 8118 | Narrative Reporting |
+| edm-service | `services/edm-service` | `data/edm.db` | 8119 | Enterprise Data Management |
+| profitability-service | `services/profitability-service` | `data/profitability.db` | 8120 | Profitability Management |
+| integration-service | `services/integration-service` | `data/integration.db` | 8121 | Integration Cloud |
+| builder-service | `services/builder-service` | `data/builder.db` | 8122 | Visual Builder |
+| automation-service | `services/automation-service` | `data/automation.db` | 8123 | Process Automation |
+| innovation-service | `services/innovation-service` | `data/innovation.db` | 8124 | Innovation Management |
 | workflow-service | `services/workflow-service` | `data/workflow.db` | 8040 | Workflow & Approvals |
 | report-service | `services/report-service` | `data/report.db` | 8050 | Reporting & Analytics |
 

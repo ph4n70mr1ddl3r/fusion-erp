@@ -45,6 +45,51 @@ Build a full-featured, enterprise-grade ERP system cloning the capabilities of O
 | 35 | Supplier Portal & Sourcing | `supplier-service` | `45-SUPPLIER-PORTAL.md` |
 | 36 | Mobile Application Framework | `mobile-service` | `46-MOBILE.md` |
 | 37 | Blockchain & Digital Thread | `chain-service` | `47-BLOCKCHAIN.md` |
+| 38 | Cost Management | `costing-service` | `48-COST-MANAGEMENT.md` |
+| 39 | Accounting Hub | `accounthub-service` | `49-ACCOUNTING-HUB.md` |
+| 40 | Global Order Promising | `promising-service` | `50-GLOBAL-ORDER-PROMISING.md` |
+| 41 | Product Hub / MDM | `producthub-service` | `51-PRODUCT-HUB.md` |
+| 42 | Supply Chain Orchestration | `orchestration-service` | `52-SUPPLY-CHAIN-ORCHESTRATION.md` |
+| 43 | Procurement Contracts | `contracts-service` | `53-PROCUREMENT-CONTRACTS.md` |
+| 44 | Grant Management | `grant-service` | `54-GRANT-MANAGEMENT.md` |
+| 45 | Joint Venture Management | `jv-service` | `55-JOINT-VENTURE.md` |
+| 46 | Subscription Management | `subscription-service` | `56-SUBSCRIPTION-MANAGEMENT.md` |
+| 47 | Configure Price Quote (CPQ) | `cpq-service` | `57-CPQ.md` |
+| 48 | Product Configurator | `configurator-service` | `58-CONFIGURATOR.md` |
+| 49 | Commerce (B2B/B2C) | `commerce-service` | `59-COMMERCE.md` |
+| 50 | Customer Data Platform | `cdp-service` | `60-CUSTOMER-DATA-PLATFORM.md` |
+| 51 | Marketing | `marketing-service` | `61-MARKETING.md` |
+| 52 | Core HR | `hr-service` | `62-CORE-HR.md` |
+| 53 | Payroll | `payroll-service` | `63-PAYROLL.md` |
+| 54 | Time & Labor | `timelabor-service` | `64-TIME-LABOR.md` |
+| 55 | Compensation | `compensation-service` | `65-COMPENSATION.md` |
+| 56 | Benefits | `benefits-service` | `66-BENEFITS.md` |
+| 57 | Recruiting | `recruiting-service` | `67-RECRUITING.md` |
+| 58 | Performance Management | `performance-service` | `68-PERFORMANCE-MANAGEMENT.md` |
+| 59 | Learning & Development | `learning-service` | `69-LEARNING-DEVELOPMENT.md` |
+| 60 | Succession Planning | `succession-service` | `70-SUCCESSION-PLANNING.md` |
+| 61 | Career Development | `career-service` | `71-CAREER-DEVELOPMENT.md` |
+| 62 | Absence Management | `absence-service` | `72-ABSENCE-MANAGEMENT.md` |
+| 63 | Workforce Scheduling | `scheduling-service` | `73-WORKFORCE-SCHEDULING.md` |
+| 64 | Workforce Planning | `wfplanning-service` | `74-WORKFORCE-PLANNING.md` |
+| 65 | HR Help Desk | `hrhelpdesk-service` | `75-HR-HELP-DESK.md` |
+| 66 | Workforce Safety | `safety-service` | `76-WORKFORCE-SAFETY.md` |
+| 67 | Sales Force Automation | `sales-service` | `77-SALES-AUTOMATION.md` |
+| 68 | Sales Planning | `salesplanning-service` | `78-SALES-PLANNING.md` |
+| 69 | Sales Performance | `salesperf-service` | `79-SALES-PERFORMANCE.md` |
+| 70 | Field Service | `fieldservice-service` | `80-FIELD-SERVICE.md` |
+| 71 | Customer Service | `customerservice-service` | `81-CUSTOMER-SERVICE.md` |
+| 72 | Knowledge Management | `knowledge-service` | `82-KNOWLEDGE-MANAGEMENT.md` |
+| 73 | Service Logistics | `servicelogistics-service` | `83-SERVICE-LOGISTICS.md` |
+| 74 | Channel Management | `channel-service` | `84-CHANNEL-MANAGEMENT.md` |
+| 75 | Tax Reporting (ASC 740) | `taxreport-service` | `85-TAX-REPORTING.md` |
+| 76 | Narrative Reporting | `narrative-service` | `86-NARRATIVE-REPORTING.md` |
+| 77 | Enterprise Data Management | `edm-service` | `87-ENTERPRISE-DATA-MANAGEMENT.md` |
+| 78 | Profitability Management | `profitability-service` | `88-PROFITABILITY-MANAGEMENT.md` |
+| 79 | Integration Cloud | `integration-service` | `89-INTEGRATION-CLOUD.md` |
+| 80 | Visual Builder | `builder-service` | `90-VISUAL-BUILDER.md` |
+| 81 | Process Automation (RPA) | `automation-service` | `91-PROCESS-AUTOMATION.md` |
+| 82 | Innovation Management | `innovation-service` | `92-INNOVATION-MANAGEMENT.md` |
 
 ## Supporting Infrastructure
 
@@ -130,6 +175,65 @@ AI agents MUST follow this build order. Each stage depends on the prior stage be
 42. `21-DEPLOYMENT.md` - Containerization, orchestration
 43. `22-TESTING.md` - Integration testing, load testing
 
+### Stage 11 - Financial Extensions II
+44. `48-COST-MANAGEMENT.md` - Product costing, cost rollup, variance analysis
+45. `49-ACCOUNTING-HUB.md` - Centralized accounting for third-party systems
+46. `54-GRANT-MANAGEMENT.md` - Federal grant lifecycle, compliance
+47. `55-JOINT-VENTURE.md` - JV cost sharing, partner billing
+
+### Stage 12 - Supply Chain Extensions II
+48. `50-GLOBAL-ORDER-PROMISING.md` - ATP/CTP, delivery date promising
+49. `51-PRODUCT-HUB.md` - Product MDM, catalog publishing
+50. `52-SUPPLY-CHAIN-ORCHESTRATION.md` - Saga-based process coordination
+51. `53-PROCUREMENT-CONTRACTS.md` - Contract lifecycle, compliance
+
+### Stage 13 - Revenue & Commerce
+52. `56-SUBSCRIPTION-MANAGEMENT.md` - Recurring billing, subscription analytics
+53. `57-CPQ.md` - Configure-Price-Quote engine
+54. `58-CONFIGURATOR.md` - Product configuration rules engine
+55. `59-COMMERCE.md` - B2B/B2C e-commerce platform
+56. `60-CUSTOMER-DATA-PLATFORM.md` - Unified customer profiles
+57. `61-MARKETING.md` - Campaign management, marketing automation
+
+### Stage 14 - Human Capital Management
+58. `62-CORE-HR.md` - Employee records, org structures
+59. `63-PAYROLL.md` - Payroll processing, payslips, accounting
+60. `64-TIME-LABOR.md` - Time tracking, overtime, labor distribution
+61. `65-COMPENSATION.md` - Salary plans, merit cycles, equity
+62. `66-BENEFITS.md` - Benefits enrollment, plan administration
+63. `67-RECRUITING.md` - Talent acquisition, hiring pipeline
+64. `68-PERFORMANCE-MANAGEMENT.md` - Reviews, goals, PIPs
+65. `69-LEARNING-DEVELOPMENT.md` - LMS, certifications, compliance training
+66. `70-SUCCESSION-PLANNING.md` - Talent pipeline, readiness
+67. `71-CAREER-DEVELOPMENT.md` - Skills, career paths, development plans
+68. `72-ABSENCE-MANAGEMENT.md` - Leave tracking, accruals, calendars
+69. `73-WORKFORCE-SCHEDULING.md` - Shift scheduling, labor optimization
+70. `74-WORKFORCE-PLANNING.md` - Strategic headcount planning
+71. `75-HR-HELP-DESK.md` - HR case management, knowledge base
+72. `76-WORKFORCE-SAFETY.md` - Incident reporting, OSHA compliance
+
+### Stage 15 - Customer Experience (CX/CRM)
+73. `77-SALES-AUTOMATION.md` - CRM, leads, opportunities, pipeline
+74. `78-SALES-PLANNING.md` - Territory and quota management
+75. `79-SALES-PERFORMANCE.md` - Commissions, incentive management
+76. `80-FIELD-SERVICE.md` - Technician dispatch, service operations
+77. `81-CUSTOMER-SERVICE.md` - Support tickets, SLA management
+78. `82-KNOWLEDGE-MANAGEMENT.md` - Knowledge base, article management
+79. `83-SERVICE-LOGISTICS.md` - Service parts, depot repair, RMA
+80. `84-CHANNEL-MANAGEMENT.md` - Partner portal, deal registration
+
+### Stage 16 - EPM & Governance Extensions
+81. `85-TAX-REPORTING.md` - Tax provision (ASC 740), deferred tax
+82. `86-NARRATIVE-REPORTING.md` - SEC filings, report authoring, XBRL
+83. `87-ENTERPRISE-DATA-MANAGEMENT.md` - Dimension governance, MDM for finance
+84. `88-PROFITABILITY-MANAGEMENT.md` - Activity-based costing, margin analysis
+
+### Stage 17 - Platform & Integration
+85. `89-INTEGRATION-CLOUD.md` - iPaaS, adapters, flow designer
+86. `90-VISUAL-BUILDER.md` - Low-code app builder, page designer
+87. `91-PROCESS-AUTOMATION.md` - RPA, process mining, bot execution
+88. `92-INNOVATION-MANAGEMENT.md` - Innovation pipeline, stage-gate
+
 ### Cross-Cutting (Build in parallel with Stage 1+)
 - `18-MULTI-TENANCY.md` - Tenant isolation layer
 - `19-INTEGRATION.md` - Event bus, service mesh
@@ -191,6 +295,51 @@ fusion/
 │   ├── supplier-service/           # Supplier Portal & Sourcing
 │   ├── mobile-service/             # Mobile Application Framework
 │   ├── chain-service/              # Blockchain & Digital Thread
+│   ├── costing-service/            # Cost Management
+│   ├── accounthub-service/         # Accounting Hub
+│   ├── promising-service/          # Global Order Promising
+│   ├── producthub-service/         # Product Hub / MDM
+│   ├── orchestration-service/      # Supply Chain Orchestration
+│   ├── contracts-service/          # Procurement Contracts
+│   ├── grant-service/              # Grant Management
+│   ├── jv-service/                 # Joint Venture Management
+│   ├── subscription-service/       # Subscription Management
+│   ├── cpq-service/                # Configure Price Quote
+│   ├── configurator-service/       # Product Configurator
+│   ├── commerce-service/           # Commerce (B2B/B2C)
+│   ├── cdp-service/                # Customer Data Platform
+│   ├── marketing-service/          # Marketing
+│   ├── hr-service/                 # Core HR
+│   ├── payroll-service/            # Payroll
+│   ├── timelabor-service/          # Time & Labor
+│   ├── compensation-service/       # Compensation
+│   ├── benefits-service/           # Benefits
+│   ├── recruiting-service/         # Recruiting
+│   ├── performance-service/        # Performance Management
+│   ├── learning-service/           # Learning & Development
+│   ├── succession-service/         # Succession Planning
+│   ├── career-service/             # Career Development
+│   ├── absence-service/            # Absence Management
+│   ├── scheduling-service/         # Workforce Scheduling
+│   ├── wfplanning-service/         # Workforce Planning
+│   ├── hrhelpdesk-service/         # HR Help Desk
+│   ├── safety-service/             # Workforce Safety
+│   ├── sales-service/              # Sales Force Automation
+│   ├── salesplanning-service/      # Sales Planning
+│   ├── salesperf-service/          # Sales Performance
+│   ├── fieldservice-service/       # Field Service
+│   ├── customerservice-service/    # Customer Service
+│   ├── knowledge-service/          # Knowledge Management
+│   ├── servicelogistics-service/   # Service Logistics
+│   ├── channel-service/            # Channel Management
+│   ├── taxreport-service/          # Tax Reporting
+│   ├── narrative-service/          # Narrative Reporting
+│   ├── edm-service/                # Enterprise Data Management
+│   ├── profitability-service/      # Profitability Management
+│   ├── integration-service/        # Integration Cloud
+│   ├── builder-service/            # Visual Builder
+│   ├── automation-service/         # Process Automation
+│   ├── innovation-service/         # Innovation Management
 │   └── gateway-service/            # API Gateway / BFF
 ├── migrations/
 │   ├── auth/
