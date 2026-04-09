@@ -173,7 +173,138 @@ CREATE INDEX idx_sd_report_status ON sd_reports(tenant_id, status);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.spreadsheet_designer.v1;
+
+service SpreadsheetDesignerService {
+    rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+    rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
+    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+    rpc GetReport(GetReportRequest) returns (GetReportResponse);
+    rpc ListReports(ListReportsRequest) returns (ListReportsResponse);
+}
+
+// Template messages
+message GetTemplateRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTemplateResponse {
+    SdTemplate data = 1;
+}
+
+message CreateTemplateRequest {
+    string tenant_id = 1;
+    string template_code = 2;
+    string template_name = 3;
+    string description = 4;
+    string data_source_config = 5;
+    int32 sheet_count = 6;
+    string layout_config = 7;
+    string cell_definitions = 8;
+    string conditional_formats = 9;
+    string chart_definitions = 10;
+    string named_ranges = 11;
+    string parameters = 12;
+    string default_output_format = 13;
+}
+
+message CreateTemplateResponse {
+    SdTemplate data = 1;
+}
+
+message SdTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string template_code = 3;
+    string template_name = 4;
+    string description = 5;
+    string data_source_config = 6;
+    int32 sheet_count = 7;
+    string layout_config = 8;
+    string cell_definitions = 9;
+    string conditional_formats = 10;
+    string chart_definitions = 11;
+    string named_ranges = 12;
+    string parameters = 13;
+    string default_output_format = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Report messages
+message GenerateReportRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string parameters = 3;
+    string output_format = 4;
+}
+
+message GenerateReportResponse {
+    SdReport data = 1;
+}
+
+message GetReportRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetReportResponse {
+    SdReport data = 1;
+}
+
+message ListReportsRequest {
+    string tenant_id = 1;
+    string template_id = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message ListReportsResponse {
+    repeated SdReport data = 1;
+    string next_page_token = 2;
+}
+
+message SdReport {
+    string id = 1;
+    string tenant_id = 2;
+    string template_id = 3;
+    string report_number = 4;
+    string parameters = 5;
+    string output_format = 6;
+    string output_path = 7;
+    int64 file_size_bytes = 8;
+    int32 sheet_count = 9;
+    int32 row_count = 10;
+    string status = 11;
+    string started_at = 12;
+    string completed_at = 13;
+    int32 execution_time_ms = 14;
+    string error_message = 15;
+    string created_at = 16;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sd_templates | -- |
+| V002 | sd_cell_defs | V001 |
+| V003 | sd_data_bindings | V001 |
+| V004 | sd_reports | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Cell Limits**: Max 1M cells per sheet; max 50 sheets per template
 2. **Data Binding**: Dynamic data bindings executed at generation time
@@ -183,13 +314,18 @@ CREATE INDEX idx_sd_report_status ON sd_reports(tenant_id, status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| BI Publisher (150) | Report rendering engine |
-| OTBI (174) | Data source for analysis |
-| Enterprise Scheduler (173) | Scheduled report generation |
-| Data Import/Export (30) | Data source connections |
-| Smart View (155) | Template compatibility |
-| Reporting (17) | Report catalog |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| bi-publisher-service | `RenderReport` | Report rendering engine |
+| otbi-service | `ExecuteQuery` | Data source for analysis |
+| scheduler-service | `ScheduleJob` | Scheduled report generation |
+| data-import-service | `GetConnection` | Data source connections |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| smart-view-service | `GetTemplate` | Template compatibility |
+| reporting-service | `GetReport` | Report catalog |

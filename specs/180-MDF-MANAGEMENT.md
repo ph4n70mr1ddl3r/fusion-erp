@@ -258,7 +258,220 @@ CREATE INDEX idx_mdf_roi_program ON mdf_roi_analysis(program_id, period DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.mdf.v1;
+
+service MdfManagementService {
+    rpc GetProgram(GetProgramRequest) returns (GetProgramResponse);
+    rpc CreateProgram(CreateProgramRequest) returns (CreateProgramResponse);
+    rpc SubmitFundRequest(SubmitFundRequestRequest) returns (SubmitFundRequestResponse);
+    rpc SubmitClaim(SubmitClaimRequest) returns (SubmitClaimResponse);
+    rpc ApproveClaim(ApproveClaimRequest) returns (ApproveClaimResponse);
+    rpc GetRoiAnalysis(GetRoiAnalysisRequest) returns (GetRoiAnalysisResponse);
+}
+
+// Program messages
+message GetProgramRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProgramResponse {
+    MdfProgram data = 1;
+}
+
+message CreateProgramRequest {
+    string tenant_id = 1;
+    string program_code = 2;
+    string program_name = 3;
+    string program_type = 4;
+    string description = 5;
+    int64 total_budget_cents = 6;
+    string currency_code = 7;
+    string start_date = 8;
+    string end_date = 9;
+    string eligibility_criteria = 10;
+    string allowed_activities = 11;
+    double max_claim_pct = 12;
+    double co_fund_pct = 13;
+}
+
+message CreateProgramResponse {
+    MdfProgram data = 1;
+}
+
+message MdfProgram {
+    string id = 1;
+    string tenant_id = 2;
+    string program_code = 3;
+    string program_name = 4;
+    string program_type = 5;
+    string description = 6;
+    int64 total_budget_cents = 7;
+    int64 allocated_cents = 8;
+    int64 claimed_cents = 9;
+    int64 paid_cents = 10;
+    int64 remaining_cents = 11;
+    string currency_code = 12;
+    string start_date = 13;
+    string end_date = 14;
+    string eligibility_criteria = 15;
+    string allowed_activities = 16;
+    double max_claim_pct = 17;
+    double co_fund_pct = 18;
+    string status = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+// Fund request messages
+message SubmitFundRequestRequest {
+    string tenant_id = 1;
+    string program_id = 2;
+    string allocation_id = 3;
+    string partner_id = 4;
+    string activity_type = 5;
+    string activity_name = 6;
+    string activity_description = 7;
+    string planned_start_date = 8;
+    string planned_end_date = 9;
+    int64 requested_amount_cents = 10;
+    int64 partner_contribution_cents = 11;
+    int64 total_budget_cents = 12;
+    string expected_outcomes = 13;
+}
+
+message SubmitFundRequestResponse {
+    MdfFundRequest data = 1;
+}
+
+message MdfFundRequest {
+    string id = 1;
+    string tenant_id = 2;
+    string program_id = 3;
+    string allocation_id = 4;
+    string partner_id = 5;
+    string request_number = 6;
+    string activity_type = 7;
+    string activity_name = 8;
+    string activity_description = 9;
+    string planned_start_date = 10;
+    string planned_end_date = 11;
+    int64 requested_amount_cents = 12;
+    int64 partner_contribution_cents = 13;
+    int64 total_budget_cents = 14;
+    string expected_outcomes = 15;
+    string status = 16;
+    int64 approved_amount_cents = 17;
+    string reviewed_by = 18;
+    string reviewed_at = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+// Claim messages
+message SubmitClaimRequest {
+    string tenant_id = 1;
+    string request_id = 2;
+    string allocation_id = 3;
+    string partner_id = 4;
+    string activity_completion_date = 5;
+    int64 claimed_amount_cents = 6;
+    int64 actual_spent_cents = 7;
+    string invoice_reference = 8;
+    string proof_of_execution = 9;
+    string actual_outcomes = 10;
+}
+
+message SubmitClaimResponse {
+    MdfClaim data = 1;
+}
+
+message ApproveClaimRequest {
+    string tenant_id = 1;
+    string id = 2;
+    int64 approved_amount_cents = 3;
+    string review_comments = 4;
+}
+
+message ApproveClaimResponse {
+    string id = 1;
+    string status = 2;
+    int64 approved_amount_cents = 3;
+}
+
+message MdfClaim {
+    string id = 1;
+    string tenant_id = 2;
+    string request_id = 3;
+    string allocation_id = 4;
+    string partner_id = 5;
+    string claim_number = 6;
+    string activity_completion_date = 7;
+    int64 claimed_amount_cents = 8;
+    int64 actual_spent_cents = 9;
+    string invoice_reference = 10;
+    string proof_of_execution = 11;
+    string actual_outcomes = 12;
+    string roi_analysis = 13;
+    string status = 14;
+    int64 approved_amount_cents = 15;
+    string payment_reference = 16;
+    string paid_at = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+// ROI messages
+message GetRoiAnalysisRequest {
+    string tenant_id = 1;
+    string program_id = 2;
+    string partner_id = 3;
+    string period = 4;
+}
+
+message GetRoiAnalysisResponse {
+    MdfRoiAnalysis data = 1;
+}
+
+message MdfRoiAnalysis {
+    string id = 1;
+    string tenant_id = 2;
+    string program_id = 3;
+    string partner_id = 4;
+    string period = 5;
+    int64 total_investment_cents = 6;
+    int64 pipeline_generated_cents = 7;
+    int64 revenue_attributed_cents = 8;
+    int32 leads_generated = 9;
+    int32 opportunities_created = 10;
+    int32 deals_closed = 11;
+    double roi_pct = 12;
+    int64 cost_per_lead_cents = 13;
+    int64 cost_per_opportunity_cents = 14;
+    string notes = 15;
+    string created_at = 16;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | mdf_programs | -- |
+| V002 | mdf_allocations | V001 |
+| V003 | mdf_requests | V001, V002 |
+| V004 | mdf_claims | V003, V002 |
+| V005 | mdf_roi_analysis | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Eligibility**: Partners must meet program eligibility criteria before allocation
 2. **Co-Funding**: Partner must contribute minimum co-fund percentage
@@ -270,14 +483,20 @@ CREATE INDEX idx_mdf_roi_program ON mdf_roi_analysis(program_id, period DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Channel Management (84) | Partner data and qualification |
-| Accounts Payable (07) | Claim payment processing |
-| Marketing (61) | Activity templates and content |
-| Sales Automation (77) | Pipeline and revenue attribution |
-| Workflow (16) | Approval workflows |
-| Procurement (11) | Vendor setup for payments |
-| Document Management (29) | Proof of execution storage |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| channel-service | `GetPartner` | Partner data and qualification |
+| ap-service | `CreateInvoice` | Claim payment processing |
+| marketing-service | `GetTemplate` | Activity templates and content |
+| sales-service | `GetOpportunity` | Pipeline and revenue attribution |
+| workflow-service | `SubmitApproval` | Approval workflows |
+| procurement-service | `GetVendor` | Vendor setup for payments |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| document-service | `GetDocument` | Proof of execution storage |
+| sales-service | `GetRoiAnalysis` | Pipeline revenue attribution |

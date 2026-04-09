@@ -262,7 +262,173 @@ CREATE INDEX idx_elo_eng_time ON elo_campaign_engagement(timestamp DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.eloqua.v1;
+
+service EloquaService {
+    rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
+    rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+    rpc GetEmailTemplate(GetEmailTemplateRequest) returns (GetEmailTemplateResponse);
+    rpc GetLeadScore(GetLeadScoreRequest) returns (GetLeadScoreResponse);
+    rpc RecordEngagement(RecordEngagementRequest) returns (RecordEngagementResponse);
+    rpc GetCampaignAnalytics(GetCampaignAnalyticsRequest) returns (GetCampaignAnalyticsResponse);
+}
+
+// Campaign messages
+message GetCampaignRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCampaignResponse {
+    EloCampaign data = 1;
+}
+
+message CreateCampaignRequest {
+    string tenant_id = 1;
+    string campaign_code = 2;
+    string campaign_name = 3;
+    string campaign_type = 4;
+    string description = 5;
+    string objective = 6;
+    string target_audience = 7;
+    string start_date = 8;
+    string end_date = 9;
+    int64 budget_cents = 10;
+    string currency_code = 11;
+    int32 expected_leads = 12;
+    int64 expected_pipeline_cents = 13;
+    string owner_id = 14;
+}
+
+message CreateCampaignResponse {
+    EloCampaign data = 1;
+}
+
+message EloCampaign {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_code = 3;
+    string campaign_name = 4;
+    string campaign_type = 5;
+    string description = 6;
+    string objective = 7;
+    string target_audience = 8;
+    string start_date = 9;
+    string end_date = 10;
+    int64 budget_cents = 11;
+    int64 actual_cost_cents = 12;
+    string currency_code = 13;
+    int32 expected_leads = 14;
+    int64 expected_pipeline_cents = 15;
+    int32 actual_leads = 16;
+    int64 actual_pipeline_cents = 17;
+    double roi_pct = 18;
+    string owner_id = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+// Email template messages
+message GetEmailTemplateRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEmailTemplateResponse {
+    EloEmailTemplate data = 1;
+}
+
+message EloEmailTemplate {
+    string id = 1;
+    string tenant_id = 2;
+    string template_code = 3;
+    string template_name = 4;
+    string subject_line = 5;
+    string preheader_text = 6;
+    string html_body = 7;
+    string plain_text_body = 8;
+    string from_name = 9;
+    string from_email = 10;
+    string reply_to_email = 11;
+    string ab_variant_group = 12;
+    string ab_variant_label = 13;
+    string status = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Lead scoring messages
+message GetLeadScoreRequest {
+    string tenant_id = 1;
+    string contact_id = 2;
+}
+
+message GetLeadScoreResponse {
+    int32 score = 1;
+    string grade = 2;
+    string score_trend = 3;
+}
+
+// Engagement messages
+message RecordEngagementRequest {
+    string tenant_id = 1;
+    string campaign_id = 2;
+    string contact_id = 3;
+    string contact_email = 4;
+    string engagement_type = 5;
+    string email_template_id = 6;
+    string url_visited = 7;
+    string engagement_data = 8;
+}
+
+message RecordEngagementResponse {
+    string id = 1;
+    string engagement_type = 2;
+    int32 score_impact = 3;
+    string timestamp = 4;
+}
+
+// Analytics messages
+message GetCampaignAnalyticsRequest {
+    string tenant_id = 1;
+    string campaign_id = 2;
+}
+
+message GetCampaignAnalyticsResponse {
+    string campaign_id = 1;
+    int32 emails_sent = 2;
+    int32 opens = 3;
+    int32 clicks = 4;
+    int32 bounces = 5;
+    int32 form_submissions = 6;
+    double open_rate = 7;
+    double click_rate = 8;
+    int32 leads_generated = 9;
+    int64 pipeline_cents = 10;
+    double roi_pct = 11;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | elo_campaigns | -- |
+| V002 | elo_email_templates | -- |
+| V003 | elo_lead_scoring_models | -- |
+| V004 | elo_contact_lists | -- |
+| V005 | elo_campaign_engagement | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Lead Scoring Thresholds**: Contacts exceeding hot threshold trigger automatic sales handoff notification
 2. **Score Decay**: Inactive contacts lose points over time based on configurable decay rules
@@ -274,14 +440,19 @@ CREATE INDEX idx_elo_eng_time ON elo_campaign_engagement(timestamp DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Sales Automation (77) | Lead handoff and opportunity attribution |
-| Customer Data Platform (60) | Unified contact profiles and segmentation |
-| Marketing (61) | Shared content and campaign coordination |
-| CX Analytics (131) | Unified marketing performance analytics |
-| Workflow (16) | Campaign approval workflows |
-| Notification Center (165) | Alert on high-intent leads |
-| Sales Engagement (179) | Sequence enrollment for hot leads |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| sales-service | `GetOpportunity` / `GetLead` | Lead handoff and opportunity attribution |
+| cdp-service | `GetProfile` / `GetSegment` | Unified contact profiles and segmentation |
+| marketing-service | `GetContent` | Shared content and campaign coordination |
+| workflow-service | `SubmitApproval` | Campaign approval workflows |
+| notification-service | `SendAlert` | Alert on high-intent leads |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| cx-analytics-service | `GetCampaignAnalytics` | Unified marketing performance analytics |
+| sales-engagement-service | `EnrollContact` | Sequence enrollment for hot leads |

@@ -274,7 +274,171 @@ CREATE INDEX idx_pd_doc_eco ON pd_design_documents(eco_id);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.product_dev.v1;
+
+service ProductDevelopmentService {
+    rpc GetECO(GetECORequest) returns (GetECOResponse);
+    rpc CreateECO(CreateECORequest) returns (CreateECOResponse);
+    rpc ApproveECO(ApproveECORequest) returns (ApproveECOResponse);
+    rpc GetEngineeringBOM(GetEngineeringBOMRequest) returns (GetEngineeringBOMResponse);
+    rpc ReleaseBOM(ReleaseBOMRequest) returns (ReleaseBOMResponse);
+    rpc GetItemLifecycle(GetItemLifecycleRequest) returns (GetItemLifecycleResponse);
+}
+
+// ECO messages
+message GetECORequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetECOResponse {
+    EngineeringChangeOrder data = 1;
+}
+
+message EngineeringChangeOrder {
+    string id = 1;
+    string tenant_id = 2;
+    string eco_number = 3;
+    string eco_type = 4;
+    string title = 5;
+    string description = 6;
+    string reason = 7;
+    string change_category = 8;
+    string priority = 9;
+    string requested_by = 10;
+    string assigned_engineer = 11;
+    string affected_items = 12;
+    string affected_boms = 13;
+    string affected_routings = 14;
+    string status = 15;
+    string effectivity_type = 16;
+    string effectivity_start = 17;
+    string effectivity_end = 18;
+    string old_bom_version = 19;
+    string new_bom_version = 20;
+    string implementation_date = 21;
+    int64 cost_impact_cents = 22;
+    int32 lead_time_impact_days = 23;
+    string implemented_at = 24;
+    string implemented_by = 25;
+    string created_at = 26;
+    string updated_at = 27;
+}
+
+message CreateECORequest {
+    string tenant_id = 1;
+    string eco_type = 2;
+    string title = 3;
+    string description = 4;
+    string reason = 5;
+    string change_category = 6;
+    string priority = 7;
+    string requested_by = 8;
+    string assigned_engineer = 9;
+    string affected_items = 10;
+    string affected_boms = 11;
+    string effectivity_type = 12;
+    string effectivity_start = 13;
+    string effectivity_end = 14;
+}
+
+message CreateECOResponse {
+    EngineeringChangeOrder data = 1;
+}
+
+message ApproveECORequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ApproveECOResponse {
+    string id = 1;
+    string status = 2;
+}
+
+// BOM messages
+message GetEngineeringBOMRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEngineeringBOMResponse {
+    EngineeringBOM data = 1;
+}
+
+message EngineeringBOM {
+    string id = 1;
+    string tenant_id = 2;
+    string bom_number = 3;
+    string item_id = 4;
+    string bom_type = 5;
+    string description = 6;
+    string revision = 7;
+    string status = 8;
+    string alternate_bom_number = 9;
+    string effectivity_start = 10;
+    string effectivity_end = 11;
+    string source_eco_id = 12;
+    string released_at = 13;
+    string released_by = 14;
+    int32 transferred_to_mfg = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message ReleaseBOMRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message ReleaseBOMResponse {
+    string id = 1;
+    string status = 2;
+    string revision = 3;
+}
+
+// Item Lifecycle messages
+message GetItemLifecycleRequest {
+    string tenant_id = 1;
+    string item_id = 2;
+}
+
+message GetItemLifecycleResponse {
+    repeated LifecyclePhase phases = 1;
+}
+
+message LifecyclePhase {
+    string id = 1;
+    string tenant_id = 2;
+    string item_id = 3;
+    string lifecycle_phase = 4;
+    string phase_entered_date = 5;
+    string phase_exit_date = 6;
+    string approved_by = 7;
+    string notes = 8;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | pd_ecos | -- |
+| V002 | pd_eco_lines | V001 |
+| V003 | pd_engineering_boms | -- |
+| V004 | pd_bom_components | V003 |
+| V005 | pd_item_lifecycle | -- |
+| V006 | pd_design_documents | -- |
+
+---
+
+## 7. Business Rules
 
 1. **ECO Approval**: All ECOs require engineering lead approval; safety-related require QA approval
 2. **BOM Versioning**: Each BOM release creates new revision; historical versions preserved
@@ -287,15 +451,20 @@ CREATE INDEX idx_pd_doc_eco ON pd_design_documents(eco_id);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Product Hub (51) | Item master data |
-| Manufacturing (14) | Manufacturing BOM and routing |
-| Quality Management (41) | Quality-triggered ECOs |
-| Cost Management (48) | Cost impact analysis |
-| PLM (38) | Product lifecycle coordination |
-| Document Management (29) | Document storage |
-| Configurator (58) | Configuration model updates |
-| Inventory (12) | Effectivity-based inventory allocation |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| product-hub-service | `GetItem` | Read item master data for BOM/ECO references |
+| manufacturing-service | `TransferBOM` | Transfer engineering BOM to manufacturing |
+| quality-service | `GetNCR` | Read non-conformance reports for corrective ECOs |
+| cost-service | `CalculateCostImpact` | Analyze cost impact of proposed changes |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| manufacturing-service | `GetEngineeringBOM` | Read released engineering BOMs |
+| quality-service | `GetECO` | Read engineering change order details |
+| inventory-service | `GetEffectivity` | Read BOM effectivity dates for allocation |
+| configurator-service | `GetBOMStructure` | Read BOM structure for configuration models |

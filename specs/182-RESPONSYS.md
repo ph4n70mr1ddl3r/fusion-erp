@@ -275,7 +275,183 @@ CREATE INDEX idx_rsys_seg_owner ON rsys_audience_segments(owner_id);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.responsys.v1;
+
+service ResponsysService {
+    rpc GetProgram(GetProgramRequest) returns (GetProgramResponse);
+    rpc CreateProgram(CreateProgramRequest) returns (CreateProgramResponse);
+    rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
+    rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+    rpc GetCustomerProfile(GetCustomerProfileRequest) returns (GetCustomerProfileResponse);
+    rpc RecordInteraction(RecordInteractionRequest) returns (RecordInteractionResponse);
+}
+
+// Program messages
+message GetProgramRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetProgramResponse {
+    RsysProgram data = 1;
+}
+
+message CreateProgramRequest {
+    string tenant_id = 1;
+    string program_code = 2;
+    string program_name = 3;
+    string description = 4;
+    string channel_types = 5;
+    string orchestration_rules = 6;
+    string entry_criteria = 7;
+    string exit_criteria = 8;
+    int32 max_duration_days = 9;
+    int32 priority = 10;
+    string owner_id = 11;
+}
+
+message CreateProgramResponse {
+    RsysProgram data = 1;
+}
+
+message RsysProgram {
+    string id = 1;
+    string tenant_id = 2;
+    string program_code = 3;
+    string program_name = 4;
+    string description = 5;
+    string channel_types = 6;
+    string orchestration_rules = 7;
+    string entry_criteria = 8;
+    string exit_criteria = 9;
+    int32 max_duration_days = 10;
+    int32 priority = 11;
+    string frequency_capping = 12;
+    int32 estimated_audience_size = 13;
+    string owner_id = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Message messages
+message GetMessageRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetMessageResponse {
+    RsysMessage data = 1;
+}
+
+message SendMessageRequest {
+    string tenant_id = 1;
+    string message_id = 2;
+    string segment_id = 3;
+    string send_schedule = 4;
+}
+
+message SendMessageResponse {
+    string message_id = 1;
+    string status = 2;
+    int32 recipients = 3;
+}
+
+message RsysMessage {
+    string id = 1;
+    string tenant_id = 2;
+    string program_id = 3;
+    string message_code = 4;
+    string message_name = 5;
+    string channel = 6;
+    string content_template_id = 7;
+    string subject_line = 8;
+    string preview_text = 9;
+    string personalization_rules = 10;
+    string send_schedule = 11;
+    string send_window_start = 12;
+    string send_window_end = 13;
+    int32 priority = 14;
+    string status = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Customer profile messages
+message GetCustomerProfileRequest {
+    string tenant_id = 1;
+    string customer_id = 2;
+}
+
+message GetCustomerProfileResponse {
+    RsysCustomerProfile data = 1;
+}
+
+message RsysCustomerProfile {
+    string id = 1;
+    string tenant_id = 2;
+    string customer_id = 3;
+    string email = 4;
+    string phone = 5;
+    string first_name = 6;
+    string last_name = 7;
+    string preferences = 8;
+    string channel_opt_ins = 9;
+    double engagement_score = 10;
+    string lifecycle_stage = 11;
+    string last_engagement_at = 12;
+    int32 total_messages_received = 13;
+    int32 total_opens = 14;
+    int32 total_clicks = 15;
+    int32 total_conversions = 16;
+    int64 total_revenue_cents = 17;
+    string preferred_channel = 18;
+    string timezone = 19;
+    string language = 20;
+    string status = 21;
+    string created_at = 22;
+    string updated_at = 23;
+}
+
+// Interaction messages
+message RecordInteractionRequest {
+    string tenant_id = 1;
+    string message_id = 2;
+    string customer_id = 3;
+    string interaction_type = 4;
+    string channel = 5;
+    string url_clicked = 6;
+    int64 conversion_value_cents = 7;
+    string conversion_order_id = 8;
+    string interaction_data = 9;
+}
+
+message RecordInteractionResponse {
+    string id = 1;
+    string interaction_type = 2;
+    string timestamp = 3;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | rsys_programs | -- |
+| V002 | rsys_messages | V001 |
+| V003 | rsys_customer_profiles | -- |
+| V004 | rsys_message_interactions | V002, V003 |
+| V005 | rsys_audience_segments | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Frequency Capping**: Messages respect per-channel and per-customer frequency limits within rolling windows
 2. **Channel Preference**: Only send via channels the customer has opted into; respect global unsubscribe
@@ -287,15 +463,20 @@ CREATE INDEX idx_rsys_seg_owner ON rsys_audience_segments(owner_id);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Customer Data Platform (60) | Unified customer profiles and identity resolution |
-| Order Management (39) | Purchase-triggered messages and conversion tracking |
-| Loyalty Management (97) | Tier-based personalization and rewards messaging |
-| CX Analytics (131) | Cross-channel marketing performance analytics |
-| Eloqua (181) | B2B/B2C campaign coordination |
-| CX Advertising (183) | Audience activation for paid media |
-| Workflow (16) | Program approval workflows |
-| Notification Center (165) | Campaign alerts and delivery reports |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| cdp-service | `GetProfile` / `GetSegment` | Unified customer profiles and identity resolution |
+| order-service | `GetOrder` | Purchase-triggered messages and conversion tracking |
+| loyalty-service | `GetMember` | Tier-based personalization and rewards messaging |
+| workflow-service | `SubmitApproval` | Program approval workflows |
+| notification-service | `SendAlert` | Campaign alerts and delivery reports |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| cx-analytics-service | `GetInteractionData` | Cross-channel marketing performance analytics |
+| eloqua-service | `GetCustomerProfile` | B2B/B2C campaign coordination |
+| cx-advertising-service | `GetSegment` | Audience activation for paid media |

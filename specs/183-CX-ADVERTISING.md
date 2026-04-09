@@ -273,7 +273,212 @@ CREATE INDEX idx_cxa_chan_sync ON cxa_channel_configs(sync_status);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.cx_advertising.v1;
+
+service CxAdvertisingService {
+    rpc GetAdCampaign(GetAdCampaignRequest) returns (GetAdCampaignResponse);
+    rpc CreateAdCampaign(CreateAdCampaignRequest) returns (CreateAdCampaignResponse);
+    rpc GetAudience(GetAudienceRequest) returns (GetAudienceResponse);
+    rpc CreateAudience(CreateAudienceRequest) returns (CreateAudienceResponse);
+    rpc GetCreative(GetCreativeRequest) returns (GetCreativeResponse);
+    rpc GetCampaignPerformance(GetCampaignPerformanceRequest) returns (GetCampaignPerformanceResponse);
+}
+
+// Campaign messages
+message GetAdCampaignRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetAdCampaignResponse {
+    CxaAdCampaign data = 1;
+}
+
+message CreateAdCampaignRequest {
+    string tenant_id = 1;
+    string campaign_code = 2;
+    string campaign_name = 3;
+    string campaign_type = 4;
+    string description = 5;
+    string objective = 6;
+    string start_date = 7;
+    string end_date = 8;
+    int64 budget_cents = 9;
+    int64 daily_budget_cents = 10;
+    string currency_code = 11;
+    string targeting_rules = 12;
+    string audience_id = 13;
+    string creative_ids = 14;
+    string bid_strategy = 15;
+    int64 bid_amount_cents = 16;
+    string owner_id = 17;
+}
+
+message CreateAdCampaignResponse {
+    CxaAdCampaign data = 1;
+}
+
+message CxaAdCampaign {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_code = 3;
+    string campaign_name = 4;
+    string campaign_type = 5;
+    string description = 6;
+    string objective = 7;
+    string start_date = 8;
+    string end_date = 9;
+    int64 budget_cents = 10;
+    int64 daily_budget_cents = 11;
+    int64 spent_cents = 12;
+    string currency_code = 13;
+    string targeting_rules = 14;
+    string audience_id = 15;
+    string creative_ids = 16;
+    string bid_strategy = 17;
+    int64 bid_amount_cents = 18;
+    string owner_id = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+// Audience messages
+message GetAudienceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetAudienceResponse {
+    CxaAudience data = 1;
+}
+
+message CreateAudienceRequest {
+    string tenant_id = 1;
+    string audience_code = 2;
+    string audience_name = 3;
+    string description = 4;
+    string criteria = 5;
+    string data_source = 6;
+    string owner_id = 7;
+}
+
+message CreateAudienceResponse {
+    CxaAudience data = 1;
+}
+
+message CxaAudience {
+    string id = 1;
+    string tenant_id = 2;
+    string audience_code = 3;
+    string audience_name = 4;
+    string description = 5;
+    string criteria = 6;
+    int32 audience_size = 7;
+    string data_source = 8;
+    bool lookalike_enabled = 9;
+    string lookalike_seed_audience_id = 10;
+    double lookalike_expansion_pct = 11;
+    int32 lookalike_size = 12;
+    string activation_channels = 13;
+    string last_synced_at = 14;
+    string sync_status = 15;
+    string owner_id = 16;
+    string status = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+// Creative messages
+message GetCreativeRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCreativeResponse {
+    CxaCreativeAsset data = 1;
+}
+
+message CxaCreativeAsset {
+    string id = 1;
+    string tenant_id = 2;
+    string creative_code = 3;
+    string creative_name = 4;
+    string creative_type = 5;
+    string format = 6;
+    string dimensions = 7;
+    string file_url = 8;
+    int32 file_size_kb = 9;
+    int32 duration_seconds = 10;
+    string headline = 11;
+    string body_text = 12;
+    string call_to_action = 13;
+    string landing_page_url = 14;
+    string channels = 15;
+    string ab_variant_group = 16;
+    string ab_variant_label = 17;
+    string approval_status = 18;
+    string owner_id = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+// Performance messages
+message GetCampaignPerformanceRequest {
+    string tenant_id = 1;
+    string campaign_id = 2;
+    string period_date = 3;
+}
+
+message GetCampaignPerformanceResponse {
+    CxaAdPerformance data = 1;
+}
+
+message CxaAdPerformance {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_id = 3;
+    string creative_id = 4;
+    string channel = 5;
+    string period_date = 6;
+    int32 impressions = 7;
+    int32 clicks = 8;
+    int32 conversions = 9;
+    int64 revenue_cents = 10;
+    int64 spend_cents = 11;
+    double ctr = 12;
+    int64 cpc_cents = 13;
+    int64 cpa_cents = 14;
+    int64 cpm_cents = 15;
+    double roas = 16;
+    double view_rate = 17;
+    double engagement_rate = 18;
+    int32 reach = 19;
+    double frequency = 20;
+    string created_at = 21;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | cxa_channel_configs | -- |
+| V002 | cxa_audiences | -- |
+| V003 | cxa_creative_assets | -- |
+| V004 | cxa_ad_campaigns | V002, V003 |
+| V005 | cxa_ad_performance | V004 |
+
+---
+
+## 7. Business Rules
 
 1. **Budget Pacing**: Daily spend automatically paced to distribute budget evenly across campaign duration
 2. **Creative Approval**: Creatives must pass platform policy review before activation
@@ -285,15 +490,20 @@ CREATE INDEX idx_cxa_chan_sync ON cxa_channel_configs(sync_status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Customer Data Platform (60) | Audience segments and customer profiles |
-| Order Management (39) | Conversion tracking and revenue attribution |
-| Sales Automation (77) | Opportunity-based B2B campaign targeting |
-| CX Analytics (131) | Unified advertising and marketing analytics |
-| Eloqua (181) | B2B campaign coordination and lead attribution |
-| Responsys (182) | Cross-channel audience sharing |
-| Content Management (184) | Creative asset storage and management |
-| Notification Center (165) | Campaign alerts and budget warnings |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| cdp-service | `GetSegment` / `GetProfile` | Audience segments and customer profiles |
+| order-service | `GetOrder` | Conversion tracking and revenue attribution |
+| sales-service | `GetOpportunity` | Opportunity-based B2B campaign targeting |
+| content-management-service | `GetContentItem` | Creative asset storage and management |
+| notification-service | `SendAlert` | Campaign alerts and budget warnings |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| cx-analytics-service | `GetPerformance` | Unified advertising and marketing analytics |
+| eloqua-service | `GetAudience` | B2B campaign coordination and lead attribution |
+| responsys-service | `GetAudience` | Cross-channel audience sharing |

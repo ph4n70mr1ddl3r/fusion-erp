@@ -289,7 +289,214 @@ CREATE INDEX idx_tr_action_person ON tr_action_plans(tenant_id, person_id);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.talent_review.v1;
+
+service TalentReviewService {
+    rpc GetReviewModel(GetReviewModelRequest) returns (GetReviewModelResponse);
+    rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+    rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+    rpc SubmitAssessment(SubmitAssessmentRequest) returns (SubmitAssessmentResponse);
+    rpc GetTalentPool(GetTalentPoolRequest) returns (GetTalentPoolResponse);
+    rpc CreateActionPlan(CreateActionPlanRequest) returns (CreateActionPlanResponse);
+}
+
+// Review Model messages
+message GetReviewModelRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetReviewModelResponse {
+    ReviewModel data = 1;
+}
+
+message ReviewModel {
+    string id = 1;
+    string tenant_id = 2;
+    string model_code = 3;
+    string model_name = 4;
+    string model_type = 5;
+    string performance_axis = 6;
+    string potential_axis = 7;
+    string grid_dimensions = 8;
+    string category_definitions = 9;
+    string description = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Session messages
+message CreateSessionRequest {
+    string tenant_id = 1;
+    string session_name = 2;
+    string session_type = 3;
+    string review_model_id = 4;
+    string organization_id = 5;
+    string review_period = 6;
+    string facilitator_id = 7;
+    string participants = 8;
+}
+
+message CreateSessionResponse {
+    ReviewSession data = 1;
+}
+
+message GetSessionRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSessionResponse {
+    ReviewSession data = 1;
+}
+
+message ReviewSession {
+    string id = 1;
+    string tenant_id = 2;
+    string session_name = 3;
+    string session_type = 4;
+    string review_model_id = 5;
+    string organization_id = 6;
+    string review_period = 7;
+    string facilitator_id = 8;
+    string participants = 9;
+    string status = 10;
+    int32 total_population = 11;
+    int32 reviewed_count = 12;
+    string calibration_date = 13;
+    string notes = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Assessment messages
+message SubmitAssessmentRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string person_id = 3;
+    string job_id = 4;
+    string department_id = 5;
+    string performance_rating = 6;
+    string potential_rating = 7;
+    string grid_position = 8;
+    string talent_category = 9;
+    string readiness_level = 10;
+    string flight_risk = 11;
+    string retention_risk = 12;
+    string assessed_by = 13;
+    string assessment_notes = 14;
+    string strengths = 15;
+    string development_areas = 16;
+    string recommended_actions = 17;
+}
+
+message SubmitAssessmentResponse {
+    TalentAssessment data = 1;
+}
+
+message TalentAssessment {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string person_id = 4;
+    string job_id = 5;
+    string department_id = 6;
+    string performance_rating = 7;
+    string potential_rating = 8;
+    string grid_position = 9;
+    string talent_category = 10;
+    string readiness_level = 11;
+    string flight_risk = 12;
+    string retention_risk = 13;
+    string assessed_by = 14;
+    string assessment_notes = 15;
+    string strengths = 16;
+    string development_areas = 17;
+    string recommended_actions = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+// Talent Pool messages
+message GetTalentPoolRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetTalentPoolResponse {
+    TalentPool data = 1;
+}
+
+message TalentPool {
+    string id = 1;
+    string tenant_id = 2;
+    string pool_name = 3;
+    string pool_type = 4;
+    string description = 5;
+    string criteria = 6;
+    int32 max_members = 7;
+    string owner_id = 8;
+    string status = 9;
+    string created_at = 10;
+    string updated_at = 11;
+}
+
+// Action Plan messages
+message CreateActionPlanRequest {
+    string tenant_id = 1;
+    string session_id = 2;
+    string person_id = 3;
+    string action_type = 4;
+    string title = 5;
+    string description = 6;
+    string assigned_to = 7;
+    string target_date = 8;
+}
+
+message CreateActionPlanResponse {
+    ActionPlan data = 1;
+}
+
+message ActionPlan {
+    string id = 1;
+    string tenant_id = 2;
+    string session_id = 3;
+    string person_id = 4;
+    string action_type = 5;
+    string title = 6;
+    string description = 7;
+    string assigned_to = 8;
+    string target_date = 9;
+    string status = 10;
+    string completion_notes = 11;
+    string linked_development_plan_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | tr_review_models | — |
+| V002 | tr_review_sessions | V001 |
+| V003 | tr_talent_assessments | V002 |
+| V004 | tr_calibration_notes | V002 |
+| V005 | tr_talent_pools | — |
+| V006 | tr_talent_pool_members | V005 |
+| V007 | tr_action_plans | V002 |
+
+---
+
+## 7. Business Rules
 
 1. **Calibration Required**: All assessments must go through calibration before finalization
 2. **Dual Review**: Each person assessed by at least 2 reviewers (manager + skip-level)
@@ -301,15 +508,20 @@ CREATE INDEX idx_tr_action_person ON tr_action_plans(tenant_id, person_id);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Performance Management (68) | Performance ratings input |
-| Succession Planning (70) | Succession readiness data |
-| Career Development (71) | Development plans, career paths |
-| Recruiting (67) | Internal mobility candidates |
-| Core HR (62) | Employee data, organization hierarchy |
-| Learning & Development (69) | Development action tracking |
-| Dynamic Skills (94) | Skills assessment data |
-| Compensation (65) | Retention and merit recommendations |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| performance-service | `GetReviewRating` | Load performance rating for assessment |
+| succession-service | `GetCandidateReadiness` | Read succession readiness level |
+| career-service | `GetDevelopmentPlan` | Get development areas |
+| core-hr-service | `GetEmployee` | Get employee data and org hierarchy |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| recruiting-service | `GetTalentCategory` | Read talent category for mobility |
+| compensation-service | `GetFlightRisk` | Get flight/retention risk for merit |
+| learning-service | `GetActionPlans` | Get development action plans |
+| dynamic-skills-service | `GetAssessmentSkills` | Read skill assessment data |

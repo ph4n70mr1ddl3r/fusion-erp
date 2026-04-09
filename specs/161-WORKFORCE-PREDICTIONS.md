@@ -220,7 +220,182 @@ CREATE TABLE wp_scenarios (
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.workforce_predictions.v1;
+
+service WorkforcePredictionsService {
+    rpc GetPredictionModel(GetPredictionModelRequest) returns (GetPredictionModelResponse);
+    rpc CreatePredictionModel(CreatePredictionModelRequest) returns (CreatePredictionModelResponse);
+    rpc ExecutePredictionRun(ExecutePredictionRunRequest) returns (ExecutePredictionRunResponse);
+    rpc GetPredictionsByPerson(GetPredictionsByPersonRequest) returns (GetPredictionsByPersonResponse);
+    rpc GetAggregatedPredictions(GetAggregatedPredictionsRequest) returns (GetAggregatedPredictionsResponse);
+    rpc RunScenario(RunScenarioRequest) returns (RunScenarioResponse);
+}
+
+// Prediction Model messages
+message GetPredictionModelRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetPredictionModelResponse {
+    PredictionModel data = 1;
+}
+
+message PredictionModel {
+    string id = 1;
+    string tenant_id = 2;
+    string model_code = 3;
+    string model_name = 4;
+    string prediction_type = 5;
+    string model_algorithm = 6;
+    string feature_config = 7;
+    string hyperparameters = 8;
+    string training_config = 9;
+    string prediction_horizon = 10;
+    string accuracy_metrics = 11;
+    string last_trained_at = 12;
+    int32 training_data_size = 13;
+    string status = 14;
+    string refresh_frequency = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+message CreatePredictionModelRequest {
+    string tenant_id = 1;
+    string model_code = 2;
+    string model_name = 3;
+    string prediction_type = 4;
+    string model_algorithm = 5;
+    string feature_config = 6;
+    string hyperparameters = 7;
+    string training_config = 8;
+    string prediction_horizon = 9;
+    string refresh_frequency = 10;
+}
+
+message CreatePredictionModelResponse {
+    PredictionModel data = 1;
+}
+
+// Prediction Run messages
+message ExecutePredictionRunRequest {
+    string tenant_id = 1;
+    string model_id = 2;
+    string run_type = 3;
+    string prediction_date = 4;
+    int32 prediction_horizon_months = 5;
+    string scenario_id = 6;
+}
+
+message ExecutePredictionRunResponse {
+    PredictionRun data = 1;
+}
+
+message PredictionRun {
+    string id = 1;
+    string tenant_id = 2;
+    string model_id = 3;
+    string run_number = 4;
+    string run_type = 5;
+    string scenario_id = 6;
+    string status = 7;
+    string prediction_date = 8;
+    int32 prediction_horizon_months = 9;
+    int32 employees_scored = 10;
+    string started_at = 11;
+    string completed_at = 12;
+    int32 execution_time_ms = 13;
+}
+
+// Individual Prediction messages
+message GetPredictionsByPersonRequest {
+    string tenant_id = 1;
+    string person_id = 2;
+    string prediction_type = 3;
+}
+
+message GetPredictionsByPersonResponse {
+    repeated IndividualPrediction predictions = 1;
+}
+
+message IndividualPrediction {
+    string id = 1;
+    string tenant_id = 2;
+    string run_id = 3;
+    string person_id = 4;
+    string prediction_type = 5;
+    string predicted_outcome = 6;
+    double probability = 7;
+    double risk_score = 8;
+    string key_factors = 9;
+    string recommended_actions = 10;
+    string predicted_timeline = 11;
+    double confidence_interval_lower = 12;
+    double confidence_interval_upper = 13;
+    string model_version = 14;
+}
+
+// Aggregated Prediction messages
+message GetAggregatedPredictionsRequest {
+    string tenant_id = 1;
+    string run_id = 2;
+    string dimension_type = 3;
+}
+
+message GetAggregatedPredictionsResponse {
+    repeated AggregatedPrediction data = 1;
+}
+
+message AggregatedPrediction {
+    string id = 1;
+    string tenant_id = 2;
+    string run_id = 3;
+    string dimension_type = 4;
+    string dimension_value = 5;
+    string prediction_type = 6;
+    int32 population_size = 7;
+    int32 high_risk_count = 8;
+    int32 medium_risk_count = 9;
+    int32 low_risk_count = 10;
+    double avg_risk_score = 11;
+    int32 predicted_attrition_count = 12;
+    double predicted_attrition_pct = 13;
+    int64 estimated_replacement_cost_cents = 14;
+}
+
+// Scenario messages
+message RunScenarioRequest {
+    string tenant_id = 1;
+    string scenario_id = 2;
+}
+
+message RunScenarioResponse {
+    string scenario_id = 1;
+    string status = 2;
+    string results_summary = 3;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | wp_prediction_models | -- |
+| V002 | wp_prediction_runs | V001 |
+| V003 | wp_individual_predictions | V002 |
+| V004 | wp_aggregated_predictions | V002 |
+| V005 | wp_scenarios | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Data Privacy**: Individual predictions visible only to authorized HR roles; employee self-view limited
 2. **Bias Monitoring**: Models monitored for demographic bias; alerts on fairness threshold breaches
@@ -232,15 +407,18 @@ CREATE TABLE wp_scenarios (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Core HR (62) | Employee attributes, lifecycle events |
-| Performance Management (68) | Performance history |
-| HCM Analytics (148) | Historical workforce metrics |
-| AI/ML Platform (35) | Model training infrastructure |
-| Talent Review (146) | Calibration and talent assessment |
-| Succession Planning (70) | Succession readiness |
-| Career Development (71) | Development plan data |
-| Strategic Workforce Planning (119) | Long-term workforce models |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| core-hr-service | `GetEmployee` | Read employee attributes for prediction features |
+| hcm-analytics-service | `GetMetrics` | Historical workforce metrics for training data |
+| performance-service | `GetReviewHistory` | Performance review data for model training |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| talent-review-service | `GetPredictions` | Read attrition/flight risk predictions |
+| succession-service | `GetPromotionReadiness` | Promotion readiness scores |
+| workforce-planning-service | `GetDemandForecast` | Workforce demand predictions |

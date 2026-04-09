@@ -215,7 +215,160 @@ CREATE INDEX idx_ag_priv_user ON ag_privileged_access(user_id, status);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.access_governor.v1;
+
+service AccessGovernorService {
+    rpc GetSodRule(GetSodRuleRequest) returns (GetSodRuleResponse);
+    rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+    rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
+    rpc CertifyItem(CertifyItemRequest) returns (CertifyItemResponse);
+    rpc ScanViolations(ScanViolationsRequest) returns (ScanViolationsResponse);
+    rpc GetViolation(GetViolationRequest) returns (GetViolationResponse);
+}
+
+// SoD Rule messages
+message GetSodRuleRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSodRuleResponse {
+    AgSodRule data = 1;
+}
+
+message AgSodRule {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_code = 3;
+    string rule_name = 4;
+    string description = 5;
+    string duty_a = 6;
+    string duty_b = 7;
+    string risk_level = 8;
+    string regulation = 9;
+    string mitigating_control = 10;
+    string status = 11;
+    string created_at = 12;
+    string updated_at = 13;
+}
+
+// Campaign messages
+message CreateCampaignRequest {
+    string tenant_id = 1;
+    string campaign_code = 2;
+    string campaign_name = 3;
+    string campaign_type = 4;
+    string description = 5;
+    string scope = 6;
+    string reviewers = 7;
+    string deadline = 8;
+}
+
+message CreateCampaignResponse {
+    AgCampaign data = 1;
+}
+
+message GetCampaignRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetCampaignResponse {
+    AgCampaign data = 1;
+}
+
+message AgCampaign {
+    string id = 1;
+    string tenant_id = 2;
+    string campaign_code = 3;
+    string campaign_name = 4;
+    string campaign_type = 5;
+    string description = 6;
+    string scope = 7;
+    string reviewers = 8;
+    string deadline = 9;
+    string status = 10;
+    int32 total_items = 11;
+    int32 certified_items = 12;
+    int32 revoked_items = 13;
+    int32 exception_items = 14;
+    double completion_pct = 15;
+    string created_at = 16;
+    string updated_at = 17;
+}
+
+// Certification messages
+message CertifyItemRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string decision = 3;
+    string decision_reason = 4;
+}
+
+message CertifyItemResponse {
+    string id = 1;
+    string status = 2;
+    string decision = 3;
+}
+
+// Violation messages
+message ScanViolationsRequest {
+    string tenant_id = 1;
+    bool full_scan = 2;
+}
+
+message ScanViolationsResponse {
+    int32 violations_found = 1;
+    int32 new_violations = 2;
+}
+
+message GetViolationRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetViolationResponse {
+    AgViolation data = 1;
+}
+
+message AgViolation {
+    string id = 1;
+    string tenant_id = 2;
+    string rule_id = 3;
+    string user_id = 4;
+    string user_name = 5;
+    string duty_a = 6;
+    string duty_b = 7;
+    string detection_type = 8;
+    string risk_level = 9;
+    string status = 10;
+    string mitigation_control = 11;
+    string mitigated_by = 12;
+    string mitigated_at = 13;
+    string created_at = 14;
+    string updated_at = 15;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | ag_sod_rules | -- |
+| V002 | ag_campaigns | -- |
+| V003 | ag_cert_items | V002 |
+| V004 | ag_violations | V001 |
+| V005 | ag_privileged_access | -- |
+
+---
+
+## 7. Business Rules
 
 1. **SoD Scanning**: Automatic SoD scan triggered on role changes; periodic full scan weekly
 2. **Campaign Cadence**: Access certification campaigns run quarterly at minimum
@@ -226,14 +379,19 @@ CREATE INDEX idx_ag_priv_user ON ag_privileged_access(user_id, status);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Auth & Security (05) | User roles and permissions |
-| Workflow (16) | Certification approval workflows |
-| Risk & Compliance (34) | Compliance reporting |
-| Notification Center (165) | Review reminders |
-| Core HR (62) | Manager-employee relationships |
-| Multi-Tenancy (18) | Tenant-level access scope |
-| Reporting (17) | Compliance audit reports |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| auth-service | `GetUserRoles` | User roles and permissions |
+| workflow-service | `SubmitApproval` | Certification approval workflows |
+| notification-service | `SendNotification` | Review reminders |
+| hr-service | `GetManager` | Manager-employee relationships |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| risk-service | `GetViolations` | Compliance reporting |
+| reporting-service | `GetCampaignProgress` | Compliance audit reports |
+| auth-service | `RevokeAccess` | Execute access revocations |

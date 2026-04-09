@@ -220,7 +220,171 @@ CREATE INDEX idx_se_analytics_seq ON se_analytics(sequence_id, period DESC);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.sales_engagement.v1;
+
+service SalesEngagementService {
+    rpc GetSequence(GetSequenceRequest) returns (GetSequenceResponse);
+    rpc CreateSequence(CreateSequenceRequest) returns (CreateSequenceResponse);
+    rpc EnrollContact(EnrollContactRequest) returns (EnrollContactResponse);
+    rpc GetEnrollment(GetEnrollmentRequest) returns (GetEnrollmentResponse);
+    rpc RecordEngagement(RecordEngagementRequest) returns (RecordEngagementResponse);
+    rpc GetSequenceAnalytics(GetSequenceAnalyticsRequest) returns (GetSequenceAnalyticsResponse);
+}
+
+// Sequence messages
+message GetSequenceRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSequenceResponse {
+    SeSequence data = 1;
+}
+
+message CreateSequenceRequest {
+    string tenant_id = 1;
+    string sequence_code = 2;
+    string sequence_name = 3;
+    string sequence_type = 4;
+    string description = 5;
+    string target_persona = 6;
+    string target_segment = 7;
+    string owner_id = 8;
+}
+
+message CreateSequenceResponse {
+    SeSequence data = 1;
+}
+
+message SeSequence {
+    string id = 1;
+    string tenant_id = 2;
+    string sequence_code = 3;
+    string sequence_name = 4;
+    string sequence_type = 5;
+    string description = 6;
+    string target_persona = 7;
+    string target_segment = 8;
+    int32 total_steps = 9;
+    int32 estimated_duration_days = 10;
+    string status = 11;
+    string owner_id = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+// Enrollment messages
+message EnrollContactRequest {
+    string tenant_id = 1;
+    string sequence_id = 2;
+    string contact_id = 3;
+    string contact_email = 4;
+    string contact_name = 5;
+    string sales_rep_id = 6;
+    string opportunity_id = 7;
+}
+
+message EnrollContactResponse {
+    SeEnrollment data = 1;
+}
+
+message GetEnrollmentRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEnrollmentResponse {
+    SeEnrollment data = 1;
+}
+
+message SeEnrollment {
+    string id = 1;
+    string tenant_id = 2;
+    string sequence_id = 3;
+    string contact_id = 4;
+    string contact_email = 5;
+    string contact_name = 6;
+    string sales_rep_id = 7;
+    string opportunity_id = 8;
+    int32 current_step = 9;
+    string status = 10;
+    string enrolled_at = 11;
+    string completed_at = 12;
+    string last_step_executed_at = 13;
+    string next_step_at = 14;
+    string created_at = 15;
+    string updated_at = 16;
+}
+
+// Engagement messages
+message RecordEngagementRequest {
+    string tenant_id = 1;
+    string enrollment_id = 2;
+    string step_id = 3;
+    string contact_id = 4;
+    string event_type = 5;
+    string event_data = 6;
+}
+
+message RecordEngagementResponse {
+    string id = 1;
+    string event_type = 2;
+    string timestamp = 3;
+}
+
+// Analytics messages
+message GetSequenceAnalyticsRequest {
+    string tenant_id = 1;
+    string sequence_id = 2;
+    string period = 3;
+}
+
+message GetSequenceAnalyticsResponse {
+    SeAnalytics data = 1;
+}
+
+message SeAnalytics {
+    string id = 1;
+    string tenant_id = 2;
+    string sequence_id = 3;
+    string period = 4;
+    int32 total_enrolled = 5;
+    int32 total_completed = 6;
+    int32 total_converted = 7;
+    double conversion_rate = 8;
+    int32 emails_sent = 9;
+    double email_open_rate = 10;
+    double email_click_rate = 11;
+    double email_reply_rate = 12;
+    double email_bounce_rate = 13;
+    int32 calls_made = 14;
+    double call_connect_rate = 15;
+    int32 meetings_booked = 16;
+    double avg_steps_to_convert = 17;
+    double avg_days_to_convert = 18;
+    double opt_out_rate = 19;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | se_sequences | -- |
+| V002 | se_sequence_steps | V001 |
+| V003 | se_enrollments | V001 |
+| V004 | se_engagement_events | V003 |
+| V005 | se_analytics | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Duplicate Prevention**: Contacts can only be in one active sequence at a time
 2. **Opt-Out Compliance**: Opt-out immediately stops all sequence steps for contact
@@ -232,15 +396,18 @@ CREATE INDEX idx_se_analytics_seq ON se_analytics(sequence_id, period DESC);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Sales Automation (77) | Contact and opportunity data |
-| Marketing (61) | Email templates and content |
-| Customer Data Platform (60) | Contact intelligence |
-| Email Gateway | Email delivery and tracking |
-| Telephony Integration | Call tracking and logging |
-| Calendar Integration | Meeting scheduling |
-| CX Analytics (131) | Unified CX performance |
-| Notification Center (165) | Step reminders for reps |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| sales-service | `GetContact` / `GetOpportunity` | Contact and opportunity data |
+| marketing-service | `GetEmailTemplate` | Email templates and content |
+| cdp-service | `GetProfile` | Contact intelligence |
+| notification-service | `SendReminder` | Step reminders for reps |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| cx-analytics-service | `GetSequenceAnalytics` | Unified CX performance |
+| sales-service | `GetEnrollment` | Sales rep activity tracking |

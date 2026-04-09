@@ -279,7 +279,255 @@ CREATE INDEX idx_fs_treasury_dates ON fs_treasury_operations(value_date);
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.financial_services.v1;
+
+service FinancialServicesService {
+    rpc GetLoan(GetLoanRequest) returns (GetLoanResponse);
+    rpc OriginateLoan(OriginateLoanRequest) returns (OriginateLoanResponse);
+    rpc DisburseLoan(DisburseLoanRequest) returns (DisburseLoanResponse);
+    rpc GetKycScreening(GetKycScreeningRequest) returns (GetKycScreeningResponse);
+    rpc GetInsurancePolicy(GetInsurancePolicyRequest) returns (GetInsurancePolicyResponse);
+    rpc GetRegulatoryReport(GetRegulatoryReportRequest) returns (GetRegulatoryReportResponse);
+    rpc ExecuteTreasuryTrade(ExecuteTreasuryTradeRequest) returns (ExecuteTreasuryTradeResponse);
+}
+
+// Loan messages
+message GetLoanRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetLoanResponse {
+    Loan data = 1;
+}
+
+message OriginateLoanRequest {
+    string tenant_id = 1;
+    string loan_type = 2;
+    string borrower_id = 3;
+    string borrower_name = 4;
+    int64 principal_cents = 5;
+    double interest_rate_pct = 6;
+    int32 term_months = 7;
+    string origination_date = 8;
+    string maturity_date = 9;
+    string collateral_type = 10;
+    int64 collateral_value_cents = 11;
+    string payment_frequency = 12;
+    string officer_id = 13;
+}
+
+message OriginateLoanResponse {
+    Loan data = 1;
+}
+
+message DisburseLoanRequest {
+    string tenant_id = 1;
+    string id = 2;
+    int64 disbursement_amount_cents = 3;
+}
+
+message DisburseLoanResponse {
+    string id = 1;
+    string status = 2;
+    int64 outstanding_balance_cents = 3;
+}
+
+message Loan {
+    string id = 1;
+    string tenant_id = 2;
+    string loan_number = 3;
+    string loan_type = 4;
+    string borrower_id = 5;
+    string borrower_name = 6;
+    int64 principal_cents = 7;
+    double interest_rate_pct = 8;
+    int32 term_months = 9;
+    string origination_date = 10;
+    string maturity_date = 11;
+    string collateral_type = 12;
+    int64 collateral_value_cents = 13;
+    string payment_frequency = 14;
+    int64 outstanding_balance_cents = 15;
+    string next_payment_date = 16;
+    int64 next_payment_amount_cents = 17;
+    int32 days_past_due = 18;
+    string risk_rating = 19;
+    int64 provision_cents = 20;
+    string officer_id = 21;
+    string status = 22;
+    string created_at = 23;
+    string updated_at = 24;
+}
+
+// KYC/AML messages
+message GetKycScreeningRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetKycScreeningResponse {
+    KycScreening data = 1;
+}
+
+message KycScreening {
+    string id = 1;
+    string tenant_id = 2;
+    string entity_type = 3;
+    string entity_id = 4;
+    string entity_name = 5;
+    string screening_type = 6;
+    string country_of_residence = 7;
+    string country_of_incorporation = 8;
+    string identification_documents = 9;
+    string beneficial_owners = 10;
+    string screening_results = 11;
+    double risk_score = 12;
+    string risk_level = 13;
+    int32 pep_flag = 14;
+    int32 sanction_flag = 15;
+    int32 adverse_media_flag = 16;
+    string reviewed_by = 17;
+    string reviewed_at = 18;
+    string review_notes = 19;
+    string next_review_date = 20;
+    string status = 21;
+    string created_at = 22;
+    string updated_at = 23;
+}
+
+// Insurance messages
+message GetInsurancePolicyRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetInsurancePolicyResponse {
+    InsurancePolicy data = 1;
+}
+
+message InsurancePolicy {
+    string id = 1;
+    string tenant_id = 2;
+    string policy_number = 3;
+    string policy_type = 4;
+    string product_name = 5;
+    string insured_id = 6;
+    string insured_name = 7;
+    int64 premium_cents = 8;
+    string premium_frequency = 9;
+    int64 coverage_amount_cents = 10;
+    int64 deductible_cents = 11;
+    string effective_date = 12;
+    string expiry_date = 13;
+    string renewal_date = 14;
+    string beneficiaries = 15;
+    string underwriter_id = 16;
+    string agent_id = 17;
+    int32 claims_count = 18;
+    int64 total_claims_cents = 19;
+    string status = 20;
+    string created_at = 21;
+    string updated_at = 22;
+}
+
+// Regulatory report messages
+message GetRegulatoryReportRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetRegulatoryReportResponse {
+    RegulatoryReport data = 1;
+}
+
+message RegulatoryReport {
+    string id = 1;
+    string tenant_id = 2;
+    string report_code = 3;
+    string report_name = 4;
+    string reporting_framework = 5;
+    string report_type = 6;
+    string period = 7;
+    string submission_deadline = 8;
+    string data_payload = 9;
+    string calculated_ratios = 10;
+    string thresholds = 11;
+    int32 breach_flag = 12;
+    string prepared_by = 13;
+    string reviewed_by = 14;
+    string approved_by = 15;
+    string submitted_at = 16;
+    string status = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+// Treasury messages
+message ExecuteTreasuryTradeRequest {
+    string tenant_id = 1;
+    string operation_type = 2;
+    string counterparty = 3;
+    string buy_currency = 4;
+    string sell_currency = 5;
+    int64 buy_amount_cents = 6;
+    int64 sell_amount_cents = 7;
+    double exchange_rate = 8;
+    string trade_date = 9;
+    string value_date = 10;
+    string maturity_date = 11;
+    string portfolio_id = 12;
+    string book_id = 13;
+    string dealer_id = 14;
+}
+
+message ExecuteTreasuryTradeResponse {
+    TreasuryOperation data = 1;
+}
+
+message TreasuryOperation {
+    string id = 1;
+    string tenant_id = 2;
+    string operation_type = 3;
+    string trade_number = 4;
+    string counterparty = 5;
+    string buy_currency = 6;
+    string sell_currency = 7;
+    int64 buy_amount_cents = 8;
+    int64 sell_amount_cents = 9;
+    double exchange_rate = 10;
+    string trade_date = 11;
+    string value_date = 12;
+    string maturity_date = 13;
+    string portfolio_id = 14;
+    string book_id = 15;
+    string dealer_id = 16;
+    string settlement_status = 17;
+    string status = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | fs_loans | — |
+| V002 | fs_kyc_screenings | — |
+| V003 | fs_insurance_policies | — |
+| V004 | fs_regulatory_reports | — |
+| V005 | fs_treasury_operations | — |
+
+---
+
+## 7. Business Rules
 
 1. **KYC Renewal**: Customer screenings renewed based on risk level (annual for low, quarterly for high)
 2. **Loan Provisioning**: Provisions calculated per IFRS 9 expected credit loss model
@@ -290,13 +538,18 @@ CREATE INDEX idx_fs_treasury_dates ON fs_treasury_operations(value_date);
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| General Ledger (06) | Journal entries and posting |
-| Cash Management (10) | Treasury and liquidity |
-| Risk & Compliance (34) | Risk assessment and screening |
-| Financial Reporting (154) | Regulatory report generation |
-| Financial Consolidation (100) | Group-level reporting |
-| BI Publisher (150) | Report templates and bursting |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| gl-service | `PostJournal` | Post loan disbursement and repayment journal entries |
+| cm-service | `RecordReceipt` | Record treasury settlement cash movements |
+| compliance-service | `RunScreening` | Execute KYC/AML screening checks |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| financial-reporting-service | `GetRegulatoryReport` | Read regulatory report data |
+| risk-service | `GetLoan` / `GetKycScreening` | Read loan and screening data for risk assessment |
+| financial-consolidation-service | `GetLoan` | Aggregate loan portfolio for group reporting |

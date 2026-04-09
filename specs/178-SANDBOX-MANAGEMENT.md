@@ -210,7 +210,170 @@ CREATE INDEX idx_sb_activity_env ON sb_activity_log(environment_id, timestamp DE
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.sandbox.v1;
+
+service SandboxManagementService {
+    rpc GetEnvironment(GetEnvironmentRequest) returns (GetEnvironmentResponse);
+    rpc CreateEnvironment(CreateEnvironmentRequest) returns (CreateEnvironmentResponse);
+    rpc RequestRefresh(RequestRefreshRequest) returns (RequestRefreshResponse);
+    rpc GetRefresh(GetRefreshRequest) returns (GetRefreshResponse);
+    rpc RequestMigration(RequestMigrationRequest) returns (RequestMigrationResponse);
+}
+
+// Environment messages
+message GetEnvironmentRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetEnvironmentResponse {
+    SbEnvironment data = 1;
+}
+
+message CreateEnvironmentRequest {
+    string tenant_id = 1;
+    string environment_name = 2;
+    string environment_type = 3;
+    string source_environment_id = 4;
+    string description = 5;
+    string base_url = 6;
+    string database_instance = 7;
+    bool is_full_data = 8;
+    bool data_masking_applied = 9;
+    string masking_profile_id = 10;
+    string created_by_user = 11;
+    string team = 12;
+    string purpose = 13;
+    string auto_expiry_date = 14;
+}
+
+message CreateEnvironmentResponse {
+    SbEnvironment data = 1;
+}
+
+message SbEnvironment {
+    string id = 1;
+    string tenant_id = 2;
+    string environment_name = 3;
+    string environment_type = 4;
+    string source_environment_id = 5;
+    string description = 6;
+    string base_url = 7;
+    string database_instance = 8;
+    string config_snapshot_id = 9;
+    bool is_full_data = 10;
+    bool data_masking_applied = 11;
+    string masking_profile_id = 12;
+    string created_by_user = 13;
+    string team = 14;
+    string purpose = 15;
+    string auto_expiry_date = 16;
+    string status = 17;
+    string last_refreshed_at = 18;
+    int32 total_refreshes = 19;
+    string created_at = 20;
+    string updated_at = 21;
+}
+
+// Refresh messages
+message RequestRefreshRequest {
+    string tenant_id = 1;
+    string target_environment_id = 2;
+    string source_environment_id = 3;
+    string refresh_type = 4;
+    string modules = 5;
+    bool data_masking = 6;
+    string masking_profile_id = 7;
+    string requested_by = 8;
+}
+
+message RequestRefreshResponse {
+    SbRefresh data = 1;
+}
+
+message GetRefreshRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetRefreshResponse {
+    SbRefresh data = 1;
+}
+
+message SbRefresh {
+    string id = 1;
+    string tenant_id = 2;
+    string target_environment_id = 3;
+    string source_environment_id = 4;
+    string refresh_type = 5;
+    string modules = 6;
+    bool data_masking = 7;
+    string masking_profile_id = 8;
+    string requested_by = 9;
+    string requested_at = 10;
+    string started_at = 11;
+    string completed_at = 12;
+    string status = 13;
+    bool approval_required = 14;
+    string approved_by = 15;
+    string approved_at = 16;
+    string error_message = 17;
+    int32 duration_seconds = 18;
+    string created_at = 19;
+}
+
+// Migration messages
+message RequestMigrationRequest {
+    string tenant_id = 1;
+    string source_environment_id = 2;
+    string target_environment_id = 3;
+    string migration_type = 4;
+    string requested_by = 5;
+}
+
+message RequestMigrationResponse {
+    SbMigration data = 1;
+}
+
+message SbMigration {
+    string id = 1;
+    string tenant_id = 2;
+    string migration_number = 3;
+    string source_environment_id = 4;
+    string target_environment_id = 5;
+    string migration_type = 6;
+    string snapshot_id = 7;
+    string requested_by = 8;
+    string status = 9;
+    string approved_by = 10;
+    string started_at = 11;
+    string completed_at = 12;
+    int32 items_migrated = 13;
+    int32 items_failed = 14;
+    string error_details = 15;
+    string created_at = 16;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | sb_environments | -- |
+| V002 | sb_refreshes | V001 |
+| V003 | sb_masking_profiles | -- |
+| V004 | sb_migrations | V001 |
+| V005 | sb_activity_log | V001 |
+
+---
+
+## 7. Business Rules
 
 1. **Auto-Expiry**: Sandboxes auto-expire after configured period (default 30 days)
 2. **Data Masking**: Production-to-sandbox refreshes require data masking by default
@@ -221,13 +384,18 @@ CREATE INDEX idx_sb_activity_env ON sb_activity_log(environment_id, timestamp DE
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Deployment (21) | CI/CD pipeline integration |
-| Functional Setup Manager (163) | Configuration migration |
-| Multi-Tenancy (18) | Tenant data isolation |
-| Auth & Security (05) | Environment access control |
-| Data Import/Export (30) | Data movement |
-| Access Governor (177) | Access policy enforcement |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| deployment-service | `DeployEnvironment` | CI/CD pipeline integration |
+| setup-manager-service | `MigrateConfig` | Configuration migration |
+| data-import-service | `ExportData` / `ImportData` | Data movement |
+| auth-service | `CheckAccess` | Environment access control |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| multi-tenancy-service | `CreateEnvironment` | Tenant data isolation |
+| access-governor-service | `GetEnvironment` | Access policy enforcement |

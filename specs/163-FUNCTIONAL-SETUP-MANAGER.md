@@ -251,7 +251,164 @@ CREATE TABLE fsm_reference_data_sets (
 
 ---
 
-## 5. Business Rules
+## 5. gRPC Service Definition
+
+```protobuf
+syntax = "proto3";
+package fusion.fsm.v1;
+
+service FunctionalSetupManagerService {
+    rpc GetImplementationProject(GetImplementationProjectRequest) returns (GetImplementationProjectResponse);
+    rpc CreateImplementationProject(CreateImplementationProjectRequest) returns (CreateImplementationProjectResponse);
+    rpc GetSetupTask(GetSetupTaskRequest) returns (GetSetupTaskResponse);
+    rpc CompleteSetupTask(CompleteSetupTaskRequest) returns (CompleteSetupTaskResponse);
+    rpc CreateSnapshot(CreateSnapshotRequest) returns (CreateSnapshotResponse);
+    rpc ExecutePromotion(ExecutePromotionRequest) returns (ExecutePromotionResponse);
+}
+
+// Implementation Project messages
+message GetImplementationProjectRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetImplementationProjectResponse {
+    ImplementationProject data = 1;
+}
+
+message ImplementationProject {
+    string id = 1;
+    string tenant_id = 2;
+    string project_code = 3;
+    string project_name = 4;
+    string project_type = 5;
+    string description = 6;
+    string methodology = 7;
+    string start_date = 8;
+    string target_go_live = 9;
+    string actual_go_live = 10;
+    string status = 11;
+    string project_manager_id = 12;
+    string team_members = 13;
+    int32 total_tasks = 14;
+    int32 completed_tasks = 15;
+    double completion_pct = 16;
+    string current_phase = 17;
+    string environment = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message CreateImplementationProjectRequest {
+    string tenant_id = 1;
+    string project_code = 2;
+    string project_name = 3;
+    string project_type = 4;
+    string description = 5;
+    string methodology = 6;
+    string start_date = 7;
+    string target_go_live = 8;
+    string project_manager_id = 9;
+    string team_members = 10;
+    string environment = 11;
+}
+
+message CreateImplementationProjectResponse {
+    ImplementationProject data = 1;
+}
+
+// Setup Task messages
+message GetSetupTaskRequest {
+    string tenant_id = 1;
+    string id = 2;
+}
+
+message GetSetupTaskResponse {
+    SetupTask data = 1;
+}
+
+message SetupTask {
+    string id = 1;
+    string tenant_id = 2;
+    string project_id = 3;
+    string task_code = 4;
+    string task_name = 5;
+    string task_type = 6;
+    string description = 7;
+    string module = 8;
+    string setup_url = 9;
+    string assigned_to = 10;
+    string prerequisites = 11;
+    string priority = 12;
+    string status = 13;
+    string due_date = 14;
+    string completed_date = 15;
+    string validation_status = 16;
+    double estimated_hours = 17;
+    double actual_hours = 18;
+    string created_at = 19;
+    string updated_at = 20;
+}
+
+message CompleteSetupTaskRequest {
+    string tenant_id = 1;
+    string id = 2;
+    string completion_notes = 3;
+}
+
+message CompleteSetupTaskResponse {
+    string id = 1;
+    string status = 2;
+    string validation_status = 3;
+}
+
+// Snapshot messages
+message CreateSnapshotRequest {
+    string tenant_id = 1;
+    string snapshot_name = 2;
+    string source_environment = 3;
+    string snapshot_type = 4;
+    string modules = 5;
+    string notes = 6;
+}
+
+message CreateSnapshotResponse {
+    string id = 1;
+    string snapshot_name = 2;
+    string config_data_path = 3;
+    int32 configuration_count = 4;
+}
+
+// Promotion messages
+message ExecutePromotionRequest {
+    string tenant_id = 1;
+    string promotion_id = 2;
+}
+
+message ExecutePromotionResponse {
+    string id = 1;
+    string status = 2;
+    int32 items_promoted = 3;
+    int32 items_failed = 4;
+    string validation_results = 5;
+}
+```
+
+---
+
+## 6. Migration Order
+
+| Migration | Table | Dependencies |
+|-----------|-------|-------------|
+| V001 | fsm_impl_projects | -- |
+| V002 | fsm_setup_tasks | V001 |
+| V003 | fsm_config_snapshots | -- |
+| V004 | fsm_promotions | V003 |
+| V005 | fsm_reference_data_sets | -- |
+
+---
+
+## 7. Business Rules
 
 1. **Task Dependencies**: Tasks with prerequisites cannot start until prerequisites completed
 2. **Configuration Validation**: All configurations validated before task marked complete
@@ -264,13 +421,19 @@ CREATE TABLE fsm_reference_data_sets (
 
 ---
 
-## 6. Integration Points
+## 8. Inter-Service Integration
 
-| Service | Integration |
-|---------|-------------|
-| Deployment (21) | Environment management and deployments |
-| Auth & Security (05) | User role and permission setup |
-| Multi-Tenancy (18) | Tenant configuration management |
-| Data Import/Export (30) | Bulk data migration |
-| Workflow (16) | Task approval workflows |
-| All Modules | Configuration endpoints for each module |
+### 8.1 Services Consumed
+| Service | Method | Purpose |
+|---------|--------|---------|
+| deployment-service | `GetEnvironment` | Read environment status for promotion |
+| auth-service | `GetUserRoles` | Validate user permissions for setup tasks |
+| multi-tenancy-service | `GetTenantConfig` | Read tenant configuration |
+| workflow-service | `SubmitApproval` | Submit promotion approvals |
+
+### 8.2 Services Provided
+| Consumer | Method | Purpose |
+|----------|--------|---------|
+| All modules | `GetReferenceData` | Read shared reference data sets |
+| data-import-service | `GetSnapshot` | Export configuration snapshots for migration |
+| deployment-service | `GetPromotionStatus` | Read promotion execution status |
