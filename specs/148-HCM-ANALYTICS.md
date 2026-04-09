@@ -246,37 +246,181 @@ CREATE TABLE ha_custom_reports (
 syntax = "proto3";
 package fusion.hcm_analytics.v1;
 
-service HCMAnalyticsService {
-    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
-    rpc GetKPI(GetKPIRequest) returns (GetKPIResponse);
-    rpc GetWorkforceMetrics(GetWorkforceMetricsRequest) returns (GetWorkforceMetricsResponse);
-    rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+service HcmAnalyticsService {
+    // Dashboard management
+    rpc CreateDashboard(CreateDashboardRequest) returns (Dashboard);
+    rpc GetDashboard(GetDashboardRequest) returns (Dashboard);
+    rpc ListDashboards(ListDashboardsRequest) returns (DashboardList);
+
+    // KPI queries
+    rpc GetKpiTrend(GetKpiTrendRequest) returns (KpiTrendResponse);
+    rpc RefreshKpis(RefreshKpisRequest) returns (RefreshKpisResponse);
+
+    // Workforce metrics
+    rpc GetWorkforceMetrics(GetWorkforceMetricsRequest) returns (WorkforceMetricsList);
+    rpc CalculateMetrics(CalculateMetricsRequest) returns (CalculateMetricsResponse);
+
+    // Custom reports
+    rpc ExecuteReport(ExecuteReportRequest) returns (ReportExecutionResult);
 }
 
-message Dashboard { string id = 1; string tenant_id = 2; string name = 3; string description = 4; string dashboard_type = 5; string config = 6; string status = 7; string created_at = 8; string updated_at = 9; }
-message KPIDefinition { string id = 1; string tenant_id = 2; string kpi_code = 3; string kpi_name = 4; string description = 5; string metric_type = 6; string calculation_formula = 7; string dimensions = 8; string status = 9; string created_at = 10; string updated_at = 11; }
-message KPISnapshot { string id = 1; string tenant_id = 2; string kpi_id = 3; string snapshot_date = 4; double metric_value = 5; string dimensions = 6; string created_at = 7; }
-message WorkforceMetric { string id = 1; string tenant_id = 2; string metric_date = 3; string metric_type = 4; double metric_value = 5; string department = 6; string location = 7; string created_at = 8; }
+// Entity messages
+message Dashboard {
+    string id = 1;
+    string tenant_id = 2;
+    string dashboard_code = 3;
+    string dashboard_name = 4;
+    string dashboard_type = 5;
+    string description = 6;
+    string category = 7;
+    string widgets = 8;
+    string filters = 9;
+    string access_roles = 10;
+    bool is_default = 11;
+    string status = 12;
+    int32 version = 13;
+}
 
-message GetDashboardRequest { string tenant_id = 1; string id = 2; }
-message GetDashboardResponse { Dashboard data = 1; }
-message GetKPIRequest { string tenant_id = 1; string id = 2; }
-message GetKPIResponse { KPIDefinition data = 1; repeated KPISnapshot snapshots = 2; }
-message GetWorkforceMetricsRequest { string tenant_id = 1; string date_from = 2; string date_to = 3; string department = 4; }
-message GetWorkforceMetricsResponse { repeated WorkforceMetric items = 1; }
-message GenerateReportRequest { string tenant_id = 1; string report_type = 2; string date_from = 3; string date_to = 4; }
-message GenerateReportResponse { string report_id = 1; string report_url = 2; }
+message KpiSnapshot {
+    string id = 1;
+    string tenant_id = 2;
+    string kpi_id = 3;
+    string snapshot_date = 4;
+    string dimension_type = 5;
+    string dimension_value = 6;
+    double measure_value = 7;
+    double target_value = 8;
+    string status = 9;
+    int32 record_count = 10;
+}
+
+message WorkforceMetrics {
+    string id = 1;
+    string tenant_id = 2;
+    string period = 3;
+    string department_id = 4;
+    string location_id = 5;
+    string job_family = 6;
+    int32 headcount_start = 7;
+    int32 headcount_end = 8;
+    int32 new_hires = 9;
+    int32 terminations_voluntary = 10;
+    int32 terminations_involuntary = 11;
+    int32 internal_movements = 12;
+    double avg_tenure_months = 13;
+    double avg_age = 14;
+    int64 avg_compensation_cents = 15;
+    double avg_performance_rating = 16;
+    double diversity_female_pct = 17;
+    double diversity_minority_pct = 18;
+    double absence_rate_pct = 19;
+    double training_hours_per_employee = 20;
+    int32 open_positions = 21;
+    double time_to_fill_days = 22;
+    double turnover_rate_pct = 23;
+    double regrettable_turnover_pct = 24;
+    double span_of_control = 25;
+}
+
+// Request/Response messages
+message CreateDashboardRequest {
+    string tenant_id = 1;
+    string dashboard_code = 2;
+    string dashboard_name = 3;
+    string dashboard_type = 4;
+    string description = 5;
+    string category = 6;
+    string widgets = 7;
+    string access_roles = 8;
+}
+
+message GetDashboardRequest {
+    string id = 1;
+    string tenant_id = 2;
+}
+
+message ListDashboardsRequest {
+    string tenant_id = 1;
+    string dashboard_type = 2;
+    string status = 3;
+    int32 page_size = 4;
+    string page_token = 5;
+}
+
+message DashboardList {
+    repeated Dashboard dashboards = 1;
+    string next_page_token = 2;
+    int32 total_count = 3;
+}
+
+message GetKpiTrendRequest {
+    string kpi_id = 1;
+    string tenant_id = 2;
+    string from_date = 3;
+    string to_date = 4;
+}
+
+message KpiTrendResponse {
+    repeated KpiSnapshot snapshots = 1;
+}
+
+message RefreshKpisRequest {
+    string tenant_id = 1;
+    repeated string kpi_ids = 2;
+}
+
+message RefreshKpisResponse {
+    int32 refreshed_count = 1;
+}
+
+message GetWorkforceMetricsRequest {
+    string tenant_id = 1;
+    string period = 2;
+    string department_id = 3;
+    string location_id = 4;
+    int32 page_size = 5;
+    string page_token = 6;
+}
+
+message WorkforceMetricsList {
+    repeated WorkforceMetrics metrics = 1;
+    string next_page_token = 2;
+}
+
+message CalculateMetricsRequest {
+    string tenant_id = 1;
+    string period = 2;
+}
+
+message CalculateMetricsResponse {
+    int32 metrics_calculated = 1;
+}
+
+message ExecuteReportRequest {
+    string tenant_id = 1;
+    string report_id = 2;
+    string filters = 3;
+    string output_format = 4;
+}
+
+message ReportExecutionResult {
+    string execution_id = 1;
+    string report_id = 2;
+    int32 row_count = 3;
+    string output_path = 4;
+    string status = 5;
+}
 ```
 
 ## 6. Migration Order
 
 | Migration | Table | Dependencies |
 |-----------|-------|-------------|
-| V001 | ha_dashboards | — |
-| V002 | ha_kpi_definitions | — |
+| V001 | ha_dashboards | -- |
+| V002 | ha_kpi_definitions | -- |
 | V003 | ha_kpi_snapshots | V002 |
-| V004 | ha_workforce_metrics | — |
-| V005 | ha_custom_reports | V001 |
+| V004 | ha_workforce_metrics | -- |
+| V005 | ha_custom_reports | -- |
 
 ---
 
