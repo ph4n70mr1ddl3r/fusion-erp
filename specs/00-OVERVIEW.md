@@ -117,6 +117,25 @@ Build a full-featured, enterprise-grade ERP system cloning the capabilities of O
 | 107 | EPM Platform | `epmplatform-service` | `117-EPM-PLATFORM.md` |
 | 108 | Freeform Planning (Essbase) | `freeform-service` | `118-FREEFORM-PLANNING.md` |
 | 109 | Strategic Workforce Planning | `strategicwf-service` | `119-STRATEGIC-WORKFORCE-PLANNING.md` |
+| 110 | Self-Service Procurement | `selfproc-service` | `120-SELF-SERVICE-PROCUREMENT.md` |
+| 111 | Process Manufacturing | `processmfg-service` | `121-PROCESS-MANUFACTURING.md` |
+| 112 | Production Scheduling | `prodsched-service` | `122-PRODUCTION-SCHEDULING.md` |
+| 113 | Smart Operations | `smartops-service` | `123-SMART-OPERATIONS.md` |
+| 114 | Sourcing | `sourcing-service` | `124-SOURCING.md` |
+| 115 | Supply Chain Execution | `scexec-service` | `125-SUPPLY-CHAIN-EXECUTION.md` |
+| 116 | B2C Service | `b2cservice-service` | `126-B2C-SERVICE.md` |
+| 117 | Intelligent Advisor | `advisor-service` | `127-INTELLIGENT-ADVISOR.md` |
+| 118 | Live Experience | `liveexp-service` | `128-LIVE-EXPERIENCE.md` |
+| 119 | Service Center | `svccenter-service` | `129-SERVICE-CENTER.md` |
+| 120 | Partner Relationship Management | `prm-service` | `130-PARTNER-RELATIONSHIP-MANAGEMENT.md` |
+| 121 | CX Analytics | `cxanalytics-service` | `131-CX-ANALYTICS.md` |
+| 122 | Deskless Workforce | `deskless-service` | `132-DESKLESS-WORKFORCE.md` |
+| 123 | Payroll Interface & Connect | `payrollint-service` | `133-PAYROLL-INTERFACE-CONNECT.md` |
+| 124 | AI Agents Suite | `aiagents-service` | `134-AI-AGENTS-SUITE.md` |
+| 125 | Document IO Agent | `docio-service` | `135-DOCUMENT-IO-AGENT.md` |
+| 126 | Higher Education | `highered-service` | `136-HIGHER-EDUCATION.md` |
+| 127 | Public Sector | `publicsector-service` | `137-PUBLIC-SECTOR.md` |
+| 128 | Communications | `comms-service` | `138-COMMUNICATIONS.md` |
 
 ## Supporting Infrastructure
 
